@@ -4,6 +4,9 @@
 
 Ever stood in front of your closet for 20 minutes trying to pick an outfit? Spent hours comparing products online only to buy nothing? Felt overwhelmed by the endless choices in our modern world? You're not alone. We live in an age of infinite options, and it's making us miserable. The average person makes 35,000 decisions per day, and most of them feel like work.
 
+**Our Target: Gen Z and Millennial Decision-Makers**
+ThisOrThat is built for the 18-35 demographic who grew up with social media but crave authentic connections. These are the fashion-conscious, tech-savvy users who post outfit checks on Instagram, compare products on TikTok, and value their friend groups' opinions. They're tired of endless scrolling and want quick, helpful decisions from people they actually trust.
+
 ## The Solution: This or That, That Simple
 
 ThisOrThat turns decision-making into a game your friends play with you. Instead of agonizing over choices alone, you create a fun poll, share it with your crew, and let them help you decide. Two photos, 24 hours, and boom - you have your answer. No more endless scrolling through options. No more decision fatigue. Just simple, binary choices that actually get resolved.
@@ -72,4 +75,15 @@ We're not trying to get rich quick. ThisOrThat is about solving a real problem a
 
 Decision paralysis is a modern epidemic, and ThisOrThat is the cure. Stop overthinking, start deciding, and have fun doing it. Your friends are waiting to help you choose.
 
-*Coming soon to a browser near you.*
+**Early Adopter Program - Be the First to Decide**
+We're building ThisOrThat with our community, not for them. Join our early adopter program to:
+
+- **Get Early Access**: Be among the first to create polls when we launch
+- **Shape the Product**: Share feedback on features, characters, and user experience
+- **Build Your Squad**: Invite your friend group to be founding members
+- **Influence Development**: Help us prioritize which features to build first
+
+**Ready to Stop Overthinking?**
+Sign up for our waitlist at [ThisOrThat.com/waitlist](https://ThisOrThat.com/waitlist) and be the first to know when we launch. Follow us on social media for behind-the-scenes development updates and early sneak peeks at our character designs.
+
+*Coming soon to a browser near you - but you can get there first.*
