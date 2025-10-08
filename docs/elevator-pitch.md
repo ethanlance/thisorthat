@@ -20,7 +20,7 @@ Upload two photos or pick from our suggested icons. "Pizza or sushi for dinner?"
 Send a link to your friends. No app downloads required for them - they just click and vote. Your poll is private to your friend group, so you get honest feedback without the pressure of public social media.
 
 **Step 3: Watch the Magic Happen**
-See real-time results as your friends vote. Watch cute characters react to the results. Read comments from your crew. In 24 hours, your poll closes and you have your answer. No more waffling, no more second-guessing.
+See real-time results as your friends vote. Read comments from your crew. In 24 hours, your poll closes and you have your answer. No more waffling, no more second-guessing.
 
 ## Why ThisOrThat is Different
 
@@ -33,8 +33,8 @@ We're not trying to build another public social network. ThisOrThat is about you
 **Time Pressure That Actually Helps**
 The 24-hour limit isn't arbitrary - it creates urgency that forces decisions. No more "I'll think about it" that turns into weeks of indecision. You get 24 hours, then you move forward.
 
-**Characters That Care**
-Meet our cast of adorable creatures who react to your poll results. They celebrate wins, commiserate with losses, and add personality to every decision. Think Tamagotchi meets decision-making.
+**Characters That Care (Coming Soon)**
+Why characters? Because our Gen Z and Millennial users grew up with Tamagotchi, Pokemon, and virtual pets. They're used to digital companions that have personality and react to their choices. Our characters will celebrate wins, commiserate with losses, and add personality to every decision - making the app feel more like a game and less like work. Think Tamagotchi meets decision-making, but this feature launches after our core polling platform is proven.
 
 ## The MVP: What You'll Get First
 
@@ -45,7 +45,7 @@ Start simple with a web app that works on any device. No app store downloads req
 Upload two photos from your camera or photo library. Can't decide between two outfits? Snap pics and let your friends choose. Product comparison? Upload both and get instant feedback.
 
 **Real-Time Results**
-Watch votes come in live. See which option is winning, read comments from your friends, and enjoy the suspense as the 24-hour clock ticks down.
+Watch votes come in live. See which option is winning, read comments from your friends, and enjoy the suspense as the 24-hour clock ticks down. (Character reactions and animations will be added in future updates.)
 
 **Invite-Only Access**
 Quality over quantity. ThisOrThat starts as an invite-only platform to ensure good content and real friendships. No spam, no bots, no weirdos - just you and your actual friends.
@@ -55,8 +55,8 @@ Content moderation, reporting tools, and community guidelines keep things fun an
 
 ## The Vision: Where We're Going
 
-**Character Partnerships**
-Imagine voting with your favorite anime characters, Disney friends, or gaming mascots. We're building partnerships with character brands to make decision-making even more fun.
+**Character System & Partnerships**
+Our target demographic loves digital companions - they've grown up with virtual pets, collectible characters, and interactive mascots. We're building a character system that makes decision-making feel like a game, with partnerships with anime, gaming, and entertainment brands. Imagine voting with your favorite characters from popular franchises - it's not just fun, it's familiar to our users who expect personality in their digital experiences.
 
 **Smart Predictions**
 Our AI will learn your friends' preferences and start predicting what they'll choose before they even vote. "Your friends are 85% likely to choose the red dress" - now that's helpful.
