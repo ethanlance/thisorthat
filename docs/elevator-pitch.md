@@ -1,0 +1,7 @@
+# ThisOrThat MVP Elevator Pitch
+
+ThisOrThat is a social polling platform that solves decision anxiety by creating fun, time-limited polls within friend groups. The MVP focuses on a simple web application where users create 24-hour polls by uploading two photos or selecting from suggested icons, then share a link with their friends to vote. The platform emphasizes friend group intimacy over public social media, creating a safe space for decision-making without the pressure of broader social networks.
+
+The core value proposition is reducing the overwhelming nature of modern decision-making through binary choices and time pressure. Users can ask friends to help choose between outfits, products, or any two options, with real-time voting results and comments. The 24-hour time limit creates urgency and relevance, while the friend group focus ensures authentic, helpful feedback. The MVP includes basic content moderation and invite-only access to maintain quality and safety.
+
+The platform is designed to be useful and playful rather than addictive, with a gamer aesthetic featuring cute characters that react to voting results. The MVP will be web and mobile web first, with an iOS app planned for later phases. The business model focuses on growth over monetization initially, with future revenue streams including character partnerships, brand polling data, and affiliate recommendations. The goal is to create a tool that genuinely helps people make decisions while building a community around collaborative choice-making.
