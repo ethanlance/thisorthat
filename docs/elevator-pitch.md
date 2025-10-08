@@ -36,6 +36,9 @@ The 24-hour limit isn't arbitrary - it creates urgency that forces decisions. No
 **Characters That Care (Coming Soon)**
 Why characters? Because our Gen Z and Millennial users grew up with Tamagotchi, Pokemon, and virtual pets. They're used to digital companions that have personality and react to their choices. Our characters will celebrate wins, commiserate with losses, and add personality to every decision - making the app feel more like a game and less like work. Think Tamagotchi meets decision-making, but this feature launches after our core polling platform is proven.
 
+![Character Examples](characters.JPG)
+*Early character concepts - cute, furry companions that will react to your poll results*
+
 ## The MVP: What You'll Get First
 
 **Web & Mobile Web App**
