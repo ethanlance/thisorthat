@@ -7,11 +7,13 @@ This document provides detailed wireframe specifications for all screens in the 
 **Target Platforms:** Web and Mobile Web (responsive design)
 
 **Design Principles:**
-- Mobile-first approach
+- Mobile-first approach (Tailwind responsive design)
 - Gamer aesthetic with playful, quirky design
 - Simple, intuitive interactions
 - Fast, responsive feedback
 - Minimal cognitive load
+- Utility-first CSS with Tailwind
+- Component-based UI with Shadcn/ui
 
 ---
 
@@ -862,94 +864,121 @@ graph TD
 
 ---
 
-## Design System
+## Design System (Tailwind Configuration)
 
-### Colors
+### Colors (Tailwind Palette)
 
 **Primary Palette:**
-- Primary: #FF6B6B (Coral Red - energetic, playful)
-- Secondary: #4ECDC4 (Turquoise - friendly, modern)
-- Accent: #FFE66D (Yellow - attention, urgency)
+- Primary: #FF6B6B (Coral Red - energetic, playful) - `bg-primary-500`
+- Secondary: #4ECDC4 (Turquoise - friendly, modern) - `bg-secondary-500`
+- Accent: #FFE66D (Yellow - attention, urgency) - `bg-accent-500`
 
 **Neutral Palette:**
-- Background: #FFFFFF
-- Surface: #F7F7F7
-- Border: #E0E0E0
-- Text Primary: #2D3748
-- Text Secondary: #718096
+- Background: #FFFFFF - `bg-white`
+- Surface: #F7F7F7 - `bg-gray-50`
+- Border: #E0E0E0 - `border-gray-300`
+- Text Primary: #2D3748 - `text-gray-800`
+- Text Secondary: #718096 - `text-gray-600`
 
 **Status Colors:**
-- Success: #48BB78
-- Warning: #ECC94B
-- Error: #F56565
-- Info: #4299E1
+- Success: #48BB78 - `bg-green-500`
+- Warning: #ECC94B - `bg-yellow-400`
+- Error: #F56565 - `bg-red-500`
+- Info: #4299E1 - `bg-blue-500`
+
+**Tailwind Config Example:**
+```js
+colors: {
+  primary: {
+    500: '#FF6B6B',
+  },
+  secondary: {
+    500: '#4ECDC4',
+  },
+  accent: {
+    500: '#FFE66D',
+  }
+}
+```
 
 ### Typography
 
-**Font Family:**
-- Primary: Inter or similar modern sans-serif
-- Headings: Poppins or similar playful font
+**Font Family (Tailwind):**
+- Primary: Inter or similar modern sans-serif - `font-sans`
+- Headings: Poppins or similar playful font - `font-display`
 
-**Font Sizes:**
-- H1: 32px (mobile: 24px)
-- H2: 24px (mobile: 20px)
-- H3: 20px (mobile: 18px)
-- Body: 16px
-- Small: 14px
-- Tiny: 12px
+**Font Sizes (Tailwind Classes):**
+- H1: 32px (mobile: 24px) - `text-3xl md:text-4xl`
+- H2: 24px (mobile: 20px) - `text-xl md:text-2xl`
+- H3: 20px (mobile: 18px) - `text-lg md:text-xl`
+- Body: 16px - `text-base`
+- Small: 14px - `text-sm`
+- Tiny: 12px - `text-xs`
 
-**Font Weights:**
-- Regular: 400
-- Medium: 500
-- Semibold: 600
-- Bold: 700
+**Font Weights (Tailwind Classes):**
+- Regular: 400 - `font-normal`
+- Medium: 500 - `font-medium`
+- Semibold: 600 - `font-semibold`
+- Bold: 700 - `font-bold`
 
-### Spacing
+### Spacing (Tailwind Scale)
 
-**Base Unit:** 8px
+**Base Unit:** 4px (Tailwind default)
 
-**Scale:**
-- xs: 4px
-- sm: 8px
-- md: 16px
-- lg: 24px
-- xl: 32px
-- 2xl: 48px
-- 3xl: 64px
+**Scale (Tailwind Classes):**
+- xs: 4px - `p-1` / `m-1`
+- sm: 8px - `p-2` / `m-2`
+- md: 16px - `p-4` / `m-4`
+- lg: 24px - `p-6` / `m-6`
+- xl: 32px - `p-8` / `m-8`
+- 2xl: 48px - `p-12` / `m-12`
+- 3xl: 64px - `p-16` / `m-16`
 
-### Border Radius
+### Border Radius (Tailwind Classes)
 
-- Small: 4px (inputs, tags)
-- Medium: 8px (buttons, cards)
-- Large: 16px (modals, large cards)
-- Round: 50% (avatars, icons)
+- Small: 4px - `rounded` (inputs, tags)
+- Medium: 8px - `rounded-lg` (buttons, cards)
+- Large: 16px - `rounded-2xl` (modals, large cards)
+- Round: 50% - `rounded-full` (avatars, icons)
 
-### Shadows
+### Shadows (Tailwind Classes)
 
-- Small: 0 1px 3px rgba(0,0,0,0.12)
-- Medium: 0 4px 6px rgba(0,0,0,0.1)
-- Large: 0 10px 25px rgba(0,0,0,0.15)
+- Small: `shadow-sm` - 0 1px 2px rgba(0,0,0,0.05)
+- Medium: `shadow-md` - 0 4px 6px rgba(0,0,0,0.1)
+- Large: `shadow-xl` - 0 20px 25px rgba(0,0,0,0.15)
 
 ---
 
-## Responsive Breakpoints
+## Responsive Breakpoints (Tailwind)
 
-**Mobile:** 0 - 640px
+**Mobile:** 0 - 640px (default, no prefix)
 - Single column layouts
 - Bottom navigation
 - Full-width components
 - Larger touch targets (min 44px)
 
-**Tablet:** 641px - 1024px
+**Tablet:** 641px - 1024px (`md:` prefix)
 - Two-column layouts where appropriate
 - Side navigation
 - Optimized for touch and mouse
 
-**Desktop:** 1025px+
+**Desktop:** 1025px+ (`lg:` prefix)
 - Multi-column layouts
 - Hover states
 - Keyboard shortcuts
-- Max content width: 1200px
+- Max content width: 1200px (`max-w-7xl`)
+
+**Tailwind Examples:**
+```html
+<!-- Mobile: full width, Desktop: max width -->
+<div class="w-full lg:max-w-7xl">
+
+<!-- Mobile: single column, Tablet: 2 columns, Desktop: 3 columns -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+
+<!-- Mobile: stack, Desktop: flex row -->
+<div class="flex flex-col lg:flex-row">
+```
 
 ---
 

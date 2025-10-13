@@ -22,7 +22,7 @@ We will use Next.js 14+ with the App Router as our foundation, deployed on Verce
 
 ### Technical Summary
 
-ThisOrThat is built as a modern Jamstack application using Next.js 14+ with the App Router, deployed on Vercel's edge network for optimal performance. The frontend leverages React Server Components for improved performance and SEO, while the backend utilizes Supabase for authentication, database, and real-time functionality. The architecture follows a serverless approach with API routes handling business logic and Supabase Edge Functions for complex operations. This stack enables rapid development with built-in authentication, real-time updates for poll voting, and automatic scaling to handle viral growth. The architecture achieves the PRD goals of creating a fast, responsive polling platform that works seamlessly on web and mobile web, with invite-only access control and content moderation capabilities.
+ThisOrThat is built as a modern Jamstack application using Next.js 14+ with the App Router, deployed on Vercel's edge network for optimal performance. The frontend leverages React Server Components for improved performance and SEO, styled with Tailwind CSS for rapid UI development and Shadcn/ui for accessible, customizable components. The backend utilizes Supabase for authentication, database, and real-time functionality. The architecture follows a serverless approach with API routes handling business logic and Supabase Edge Functions for complex operations. This stack enables rapid development with built-in authentication, real-time updates for poll voting, and automatic scaling to handle viral growth. The Tailwind-first approach ensures consistent design, fast iteration, and excellent mobile responsiveness. The architecture achieves the PRD goals of creating a fast, responsive polling platform that works seamlessly on web and mobile web, with invite-only access control and content moderation capabilities.
 
 ### Platform and Infrastructure Choice
 
@@ -131,7 +131,8 @@ graph TB
 | CI/CD | GitHub Actions + Vercel | Latest | Automated deployment | Free for public repos, integrates with Vercel |
 | Monitoring | Vercel Analytics | Built-in | Performance monitoring | Real user metrics, Core Web Vitals |
 | Logging | Vercel Logs + Supabase Logs | Built-in | Application logging | Centralized logging, searchable |
-| CSS Framework | Tailwind CSS | 3.4+ | Utility-first CSS | Rapid styling, consistent design system, small bundle size |
+| CSS Framework | Tailwind CSS | 3.4+ | Utility-first CSS framework | Rapid styling, consistent design system, small bundle size, perfect for Next.js |
+| CSS Components | Shadcn/ui | Latest | Pre-built components | Built on Tailwind + Radix UI, fully customizable, copy-paste approach |
 
 ## Data Models
 
@@ -593,7 +594,7 @@ components:
 
 **Dependencies:** Supabase Storage API, API Routes
 
-**Technology Stack:** React Server Component for initial render, Client Component for interactivity, Supabase Storage SDK
+**Technology Stack:** React Server Component for initial render, Client Component for interactivity, Tailwind CSS for styling, Supabase Storage SDK
 
 #### PollViewer
 **Responsibility:** Display poll with real-time voting results
@@ -604,7 +605,7 @@ components:
 
 **Dependencies:** Supabase Realtime, API Routes
 
-**Technology Stack:** React Client Component with Supabase Realtime subscriptions
+**Technology Stack:** React Client Component with Tailwind CSS styling, Supabase Realtime subscriptions
 
 #### CommentSection
 **Responsibility:** Display and manage poll comments
@@ -615,7 +616,7 @@ components:
 
 **Dependencies:** API Routes, Supabase Realtime
 
-**Technology Stack:** React Client Component with optimistic updates
+**Technology Stack:** React Client Component with Tailwind CSS styling, optimistic updates
 
 ### Backend Services
 
@@ -2137,6 +2138,8 @@ test.describe('Poll Lifecycle', () => {
 - **Authentication:** Use Supabase Auth helpers, never implement custom auth logic
 - **File Uploads:** Validate file type and size before upload, max 5MB per image
 - **Real-time Subscriptions:** Always clean up subscriptions in useEffect cleanup
+- **Styling:** Use Tailwind utility classes, never inline styles or CSS modules. Use Shadcn/ui components as base
+- **Responsive Design:** Always use Tailwind responsive prefixes (sm:, md:, lg:) for mobile-first design
 
 ### Naming Conventions
 
