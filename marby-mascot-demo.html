@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marby the Decision Cat - ThisOrThat Mascot Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5865F2', // Discord blurple
+                        secondary: '#57F287', // Discord green
+                        accent: '#FEE75C', // Discord yellow
+                        dark: '#2C2F33', // Discord dark
+                        darker: '#23272A', // Discord darker
+                        light: '#99AAB5', // Discord light gray
+                    },
+                    fontFamily: {
+                        'discord': ['Whitney', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .discord-card {
+            background: rgba(44, 47, 51, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .marby-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .marby {
+            font-size: 4rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .marby:hover {
+            transform: scale(1.1);
+        }
+        
+        .marby.bounce {
+            animation: bounce 0.6s ease-in-out;
+        }
+        
+        .marby.wiggle {
+            animation: wiggle 0.5s ease-in-out;
+        }
+        
+        .marby.spin {
+            animation: spin 1s linear;
+        }
+        
+        .marby.pulse {
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        .marby.dance {
+            animation: dance 2s ease-in-out infinite;
+        }
+        
+        .marby.sleep {
+            animation: sleep 3s ease-in-out infinite;
+        }
+        
+        .marby.excited {
+            animation: excited 0.8s ease-in-out;
+        }
+        
+        .marby.thinking {
+            animation: thinking 2s ease-in-out infinite;
+        }
+        
+        .marby.celebrate {
+            animation: celebrate 1.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes dance {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.05); }
+            50% { transform: rotate(0deg) scale(1.1); }
+            75% { transform: rotate(-5deg) scale(1.05); }
+        }
+        
+        @keyframes sleep {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        @keyframes excited {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes thinking {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        @keyframes celebrate {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(5deg); }
+            50% { transform: scale(1.3) rotate(0deg); }
+            75% { transform: scale(1.2) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            background: white;
+            border-radius: 20px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 200px;
+            font-size: 14px;
+            color: #2C2F33;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .speech-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        
+        .mood-indicator {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+        
+        .mood-happy { background: #57F287; }
+        .mood-excited { background: #FEE75C; }
+        .mood-thinking { background: #5865F2; }
+        .mood-sleepy { background: #99AAB5; }
+        .mood-celebrating { background: #FF6B6B; }
+        
+        .character-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .character-card.selected {
+            border: 2px solid #57F287;
+            transform: translateY(-5px);
+        }
+        
+        .floating-emoji {
+            position: absolute;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: floatUp 2s ease-out forwards;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.2);
+            }
+        }
+        
+        .interaction-button {
+            transition: all 0.3s ease;
+        }
+        
+        .interaction-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .interaction-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+    <!-- Header -->
+    <div class="discord-card rounded-b-2xl p-4 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">T</span>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl">ThisOrThat</h1>
+                    <p class="text-light text-sm">Meet Marby the Decision Cat</p>
+                </div>
+            </div>
+            <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                <span class="text-dark font-bold text-lg">🐱</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="px-4 pb-4">
+        <!-- Marby Showcase -->
+        <div class="discord-card rounded-2xl p-6 mb-6">
+            <h2 class="text-white text-2xl font-bold mb-4 text-center">Meet Marby! 🐱</h2>
+            <p class="text-light text-center mb-6">Your friendly decision-making companion who helps you choose with confidence!</p>
+            
+            <!-- Main Marby Display -->
+            <div class="flex justify-center mb-6">
+                <div class="marby-container" id="mainMarby">
+                    <div class="marby" id="marbyCharacter">🐱</div>
+                    <div class="mood-indicator mood-happy" id="moodIndicator">😊</div>
+                    <div class="speech-bubble" id="speechBubble">
+                        Hi! I'm Marby! Click me to see my different moods! 🎉
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Interaction Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                <button class="interaction-button bg-primary hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="animateMarby('bounce')">
+                    🎾 Bounce
+                </button>
+                <button class="interaction-button bg-secondary hover:bg-green-600 text-dark font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="animateMarby('dance')">
+                    💃 Dance
+                </button>
+                <button class="interaction-button bg-accent hover:bg-yellow-500 text-dark font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="animateMarby('spin')">
+                    🌪️ Spin
+                </button>
+                <button class="interaction-button bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="animateMarby('celebrate')">
+                    🎉 Celebrate
+                </button>
+            </div>
+            
+            <!-- Mood Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button class="interaction-button bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="changeMood('happy')">
+                    😊 Happy
+                </button>
+                <button class="interaction-button bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="changeMood('excited')">
+                    🤩 Excited
+                </button>
+                <button class="interaction-button bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="changeMood('thinking')">
+                    🤔 Thinking
+                </button>
+                <button class="interaction-button bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
+                        onclick="changeMood('sleepy')">
+                    😴 Sleepy
+                </button>
+            </div>
+        </div>
+
+        <!-- Different Marby Versions -->
+        <div class="discord-card rounded-2xl p-6 mb-6">
+            <h3 class="text-white text-xl font-bold mb-4">Marby's Different Looks</h3>
+            <p class="text-light text-sm mb-6">Marby can change appearance based on the situation and your preferences!</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Default Marby -->
+                <div class="character-card discord-card rounded-xl p-4 text-center" onclick="selectMarby('default')">
+                    <div class="text-4xl mb-2">🐱</div>
+                    <h4 class="text-white font-medium">Default Marby</h4>
+                    <p class="text-light text-xs">Friendly and approachable</p>
+                </div>
+                
+                <!-- Party Marby -->
+                <div class="character-card discord-card rounded-xl p-4 text-center" onclick="selectMarby('party')">
+                    <div class="text-4xl mb-2">🎉</div>
+                    <h4 class="text-white font-medium">Party Marby</h4>
+                    <p class="text-light text-xs">Ready to celebrate!</p>
+                </div>
+                
+                <!-- Thinking Marby -->
+                <div class="character-card discord-card rounded-xl p-4 text-center" onclick="selectMarby('thinking')">
+                    <div class="text-4xl mb-2">🤔</div>
+                    <h4 class="text-white font-medium">Thinking Marby</h4>
+                    <p class="text-light text-xs">Deep in thought</p>
+                </div>
+                
+                <!-- Sleepy Marby -->
+                <div class="character-card discord-card rounded-xl p-4 text-center" onclick="selectMarby('sleepy')">
+                    <div class="text-4xl mb-2">😴</div>
+                    <h4 class="text-white font-medium">Sleepy Marby</h4>
+                    <p class="text-light text-xs">Taking a nap</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Poll Scenarios -->
+        <div class="discord-card rounded-2xl p-6 mb-6">
+            <h3 class="text-white text-xl font-bold mb-4">Marby in Action</h3>
+            <p class="text-light text-sm mb-6">See how Marby reacts to different poll scenarios!</p>
+            
+            <div class="space-y-4">
+                <!-- Scenario 1 -->
+                <div class="bg-darker rounded-xl p-4">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="text-2xl">🍕</div>
+                        <div>
+                            <h4 class="text-white font-medium">Food Decision</h4>
+                            <p class="text-light text-sm">"Pizza or Sushi for dinner?"</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🐱</div>
+                        <div class="flex-1">
+                            <p class="text-white text-sm">"I love both! But pizza is perfect for sharing with friends! 🍕✨"</p>
+                        </div>
+                        <button class="bg-primary hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm transition-colors" 
+                                onclick="showMarbyReaction('food')">
+                            See Reaction
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Scenario 2 -->
+                <div class="bg-darker rounded-xl p-4">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="text-2xl">👗</div>
+                        <div>
+                            <h4 class="text-white font-medium">Fashion Choice</h4>
+                            <p class="text-light text-sm">"Red dress or blue jeans?"</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🐱</div>
+                        <div class="flex-1">
+                            <p class="text-white text-sm">"Red dress for sure! You'll look amazing and confident! 🔥💃"</p>
+                        </div>
+                        <button class="bg-primary hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm transition-colors" 
+                                onclick="showMarbyReaction('fashion')">
+                            See Reaction
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Scenario 3 -->
+                <div class="bg-darker rounded-xl p-4">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="text-2xl">🎮</div>
+                        <div>
+                            <h4 class="text-white font-medium">Entertainment Choice</h4>
+                            <p class="text-light text-sm">"Movie night or gaming session?"</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">🐱</div>
+                        <div class="flex-1">
+                            <p class="text-white text-sm">"Gaming with friends sounds like so much fun! Let's play together! 🎮🎉"</p>
+                        </div>
+                        <button class="bg-primary hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm transition-colors" 
+                                onclick="showMarbyReaction('gaming')">
+                            See Reaction
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Character Personality -->
+        <div class="discord-card rounded-2xl p-6">
+            <h3 class="text-white text-xl font-bold mb-4">Marby's Personality</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="text-white font-medium mb-3">🌟 Traits</h4>
+                    <ul class="space-y-2 text-light text-sm">
+                        <li>• <strong>Encouraging:</strong> Always supports your decisions</li>
+                        <li>• <strong>Playful:</strong> Makes decision-making fun</li>
+                        <li>• <strong>Wise:</strong> Gives thoughtful advice</li>
+                        <li>• <strong>Loyal:</strong> Your constant companion</li>
+                        <li>• <strong>Celebratory:</strong> Loves to celebrate wins</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-medium mb-3">💬 Catchphrases</h4>
+                    <ul class="space-y-2 text-light text-sm">
+                        <li>• "That's what friends are for! 🎉"</li>
+                        <li>• "You've got this! ✨"</li>
+                        <li>• "Great choice! 🔥"</li>
+                        <li>• "Let's decide together! 🤝"</li>
+                        <li>• "I believe in you! 💪"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMarby = 'default';
+        let currentMood = 'happy';
+        let isAnimating = false;
+
+        // Marby character variations
+        const marbyVariations = {
+            default: '🐱',
+            party: '🎉',
+            thinking: '🤔',
+            sleepy: '😴',
+            excited: '🤩',
+            happy: '😊',
+            celebrating: '🎊'
+        };
+
+        // Mood indicators
+        const moodIndicators = {
+            happy: { emoji: '😊', class: 'mood-happy' },
+            excited: { emoji: '🤩', class: 'mood-excited' },
+            thinking: { emoji: '🤔', class: 'mood-thinking' },
+            sleepy: { emoji: '😴', class: 'mood-sleepy' },
+            celebrating: { emoji: '🎉', class: 'mood-celebrating' }
+        };
+
+        // Speech bubble messages
+        const speechMessages = {
+            default: "Hi! I'm Marby! Click me to see my different moods! 🎉",
+            happy: "I'm so happy to help you decide! 😊",
+            excited: "This is so exciting! I love helping with decisions! 🤩",
+            thinking: "Hmm, let me think about this... 🤔",
+            sleepy: "I'm a bit sleepy, but I'm still here to help! 😴",
+            celebrating: "Yay! Great decision! Let's celebrate! 🎉"
+        };
+
+        // Poll scenario reactions
+        const pollReactions = {
+            food: [
+                "I love both! But pizza is perfect for sharing with friends! 🍕✨",
+                "Sushi is so elegant, but pizza brings people together! 🍕❤️",
+                "Why not both? Life's too short to choose! 😄"
+            ],
+            fashion: [
+                "Red dress for sure! You'll look amazing and confident! 🔥💃",
+                "Blue jeans are comfy, but red dress makes a statement! 👗✨",
+                "You'll look great in either! Trust your instincts! 💪"
+            ],
+            gaming: [
+                "Gaming with friends sounds like so much fun! Let's play together! 🎮🎉",
+                "Movie night is cozy, but gaming creates memories! 🎮✨",
+                "Both sound amazing! Follow your mood! 🎯"
+            ]
+        };
+
+        function animateMarby(animation) {
+            if (isAnimating) return;
+            
+            const marby = document.getElementById('marbyCharacter');
+            const moodIndicator = document.getElementById('moodIndicator');
+            
+            // Remove any existing animation classes
+            marby.className = 'marby';
+            
+            // Add the new animation
+            marby.classList.add(animation);
+            isAnimating = true;
+            
+            // Show floating emoji
+            showFloatingEmoji();
+            
+            // Update mood based on animation
+            if (animation === 'celebrate') {
+                changeMood('celebrating');
+            } else if (animation === 'dance') {
+                changeMood('excited');
+            } else if (animation === 'thinking') {
+                changeMood('thinking');
+            }
+            
+            // Reset after animation
+            setTimeout(() => {
+                marby.classList.remove(animation);
+                isAnimating = false;
+            }, getAnimationDuration(animation));
+        }
+
+        function getAnimationDuration(animation) {
+            const durations = {
+                bounce: 600,
+                wiggle: 500,
+                spin: 1000,
+                pulse: 1000,
+                dance: 2000,
+                sleep: 3000,
+                excited: 800,
+                thinking: 2000,
+                celebrate: 1500
+            };
+            return durations[animation] || 1000;
+        }
+
+        function changeMood(mood) {
+            currentMood = mood;
+            const moodIndicator = document.getElementById('moodIndicator');
+            const speechBubble = document.getElementById('speechBubble');
+            
+            // Update mood indicator
+            moodIndicator.className = `mood-indicator ${moodIndicators[mood].class}`;
+            moodIndicator.textContent = moodIndicators[mood].emoji;
+            
+            // Update speech bubble
+            speechBubble.textContent = speechMessages[mood];
+            showSpeechBubble();
+            
+            // Update Marby character if needed
+            if (mood === 'celebrating') {
+                selectMarby('party');
+            } else if (mood === 'thinking') {
+                selectMarby('thinking');
+            } else if (mood === 'sleepy') {
+                selectMarby('sleepy');
+            } else {
+                selectMarby('default');
+            }
+        }
+
+        function selectMarby(variation) {
+            currentMarby = variation;
+            const marby = document.getElementById('marbyCharacter');
+            
+            marby.textContent = marbyVariations[variation];
+            
+            // Update selected state
+            document.querySelectorAll('.character-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.character-card').classList.add('selected');
+            
+            // Show speech bubble
+            showSpeechBubble();
+        }
+
+        function showSpeechBubble() {
+            const speechBubble = document.getElementById('speechBubble');
+            speechBubble.classList.add('show');
+            
+            setTimeout(() => {
+                speechBubble.classList.remove('show');
+            }, 3000);
+        }
+
+        function showMarbyReaction(scenario) {
+            const reactions = pollReactions[scenario];
+            const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+            
+            // Update speech bubble with reaction
+            const speechBubble = document.getElementById('speechBubble');
+            speechBubble.textContent = `"${randomReaction}"`;
+            speechBubble.classList.add('show');
+            
+            // Animate Marby
+            animateMarby('excited');
+            
+            // Show floating emojis
+            setTimeout(() => {
+                showFloatingEmoji();
+            }, 500);
+            
+            setTimeout(() => {
+                speechBubble.classList.remove('show');
+            }, 4000);
+        }
+
+        function showFloatingEmoji() {
+            const emojis = ['✨', '🎉', '💫', '⭐', '🌟'];
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            const floatingEmoji = document.createElement('div');
+            floatingEmoji.className = 'floating-emoji';
+            floatingEmoji.textContent = emoji;
+            
+            const marbyContainer = document.getElementById('mainMarby');
+            const rect = marbyContainer.getBoundingClientRect();
+            
+            floatingEmoji.style.left = (rect.left + rect.width / 2) + 'px';
+            floatingEmoji.style.top = (rect.top + rect.height / 2) + 'px';
+            
+            document.body.appendChild(floatingEmoji);
+            
+            setTimeout(() => {
+                document.body.removeChild(floatingEmoji);
+            }, 2000);
+        }
+
+        // Click Marby to show speech bubble
+        document.getElementById('marbyCharacter').addEventListener('click', function() {
+            showSpeechBubble();
+            animateMarby('bounce');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show initial speech bubble
+            setTimeout(() => {
+                showSpeechBubble();
+            }, 1000);
+            
+            // Random mood changes
+            setInterval(() => {
+                if (!isAnimating && Math.random() < 0.1) {
+                    const moods = ['happy', 'excited', 'thinking'];
+                    const randomMood = moods[Math.floor(Math.random() * moods.length)];
+                    changeMood(randomMood);
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
