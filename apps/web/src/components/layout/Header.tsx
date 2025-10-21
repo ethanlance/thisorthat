@@ -1,13 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut, loading } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
@@ -33,18 +44,45 @@ export default function Header() {
             >
               Polls
             </a>
-            <a
-              href="/create"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Create
-            </a>
+            {user && (
+              <a
+                href="/poll/create"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Create
+              </a>
+            )}
             <a
               href="/about"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               About
             </a>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <a
+                  href="/profile"
+                  className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <User className="h-4 w-4" />
+                  <span>{user.user_metadata?.full_name || user.email}</span>
+                </a>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <a
+                href="/login"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Sign In
+              </a>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -75,13 +113,15 @@ export default function Header() {
               >
                 Polls
               </a>
-              <a
-                href="/create"
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Create
-              </a>
+              {user && (
+                <a
+                  href="/poll/create"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Create
+                </a>
+              )}
               <a
                 href="/about"
                 className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
@@ -89,6 +129,34 @@ export default function Header() {
               >
                 About
               </a>
+              {user ? (
+                <>
+                  <a
+                    href="/profile"
+                    className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </a>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors text-left"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <a
+                  href="/login"
+                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign In
+                </a>
+              )}
             </nav>
           </div>
         )}
