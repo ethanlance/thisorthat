@@ -120,3 +120,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Focus visible for better keyboard navigation */
+  .focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
+
+  /* Skip link for keyboard navigation */
+  .skip-link {
+    @apply absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 rounded-md transform -translate-y-full focus:translate-y-0 transition-transform;
+  }
+}

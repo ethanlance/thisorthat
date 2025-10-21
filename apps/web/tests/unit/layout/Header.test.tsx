@@ -39,13 +39,13 @@ describe('Header Component', () => {
 
   it('renders mobile menu button', () => {
     renderWithAuth(<Header />);
-    const menuButton = screen.getByLabelText('Toggle menu');
+    const menuButton = screen.getByLabelText('Toggle mobile menu');
     expect(menuButton).toBeInTheDocument();
   });
 
   it('has proper accessibility attributes', () => {
     renderWithAuth(<Header />);
-    const menuButton = screen.getByLabelText('Toggle menu');
-    expect(menuButton).toHaveAttribute('aria-label', 'Toggle menu');
+    const menuButton = screen.getByLabelText('Toggle mobile menu');
+    expect(menuButton).toHaveAttribute('aria-label', 'Toggle mobile menu');
   });
 });

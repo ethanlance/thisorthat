@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -36,11 +34,7 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <AuthProvider>
-            <Header />
-            <main className="flex-1 container mx-auto px-4 py-8">
-              {children}
-            </main>
-            <Footer />
+            {children}
           </AuthProvider>
         </ErrorBoundary>
       </body>

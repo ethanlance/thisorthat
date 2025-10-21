@@ -1,21 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import MobileNav from './MobileNav';
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut, loading } = useAuth();
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      setIsMenuOpen(false);
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -32,134 +28,63 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a
+            <Link
               href="/"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
-            </a>
-            <a
+            </Link>
+            <Link
               href="/polls"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Polls
-            </a>
+            </Link>
             {user && (
-              <a
+              <Link
                 href="/poll/create"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Create
-              </a>
+              </Link>
             )}
-            <a
+            <Link
               href="/about"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               About
-            </a>
+            </Link>
             {user ? (
               <div className="flex items-center space-x-4">
-                <a
+                <Link
                   href="/profile"
                   className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <User className="h-4 w-4" />
                   <span>{user.user_metadata?.full_name || user.email}</span>
-                </a>
-                <button
+                </Link>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleSignOut}
-                  className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center space-x-2"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
-                </button>
+                </Button>
               </div>
             ) : (
-              <a
-                href="/login"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Sign In
-              </a>
+              <Link href="/login">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </Link>
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 rounded-md hover:bg-accent transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Mobile Navigation */}
+          <MobileNav />
         </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden border-t bg-background">
-            <nav className="flex flex-col space-y-2 py-4">
-              <a
-                href="/"
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </a>
-              <a
-                href="/polls"
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Polls
-              </a>
-              {user && (
-                <a
-                  href="/poll/create"
-                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Create
-                </a>
-              )}
-              <a
-                href="/about"
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </a>
-              {user ? (
-                <>
-                  <a
-                    href="/profile"
-                    className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </a>
-                  <button
-                    onClick={() => {
-                      handleSignOut();
-                      setIsMenuOpen(false);
-                    }}
-                    className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors text-left"
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <a
-                  href="/login"
-                  className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign In
-                </a>
-              )}
-            </nav>
-          </div>
-        )}
       </div>
     </header>
   );
