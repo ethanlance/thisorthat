@@ -72,13 +72,12 @@ export default function PollCreationForm({
     });
   };
 
-  const handleImageUpload =
-    async (option: 'a' | 'b') => async (url: string) => {
-      setUploadStatus(prev => ({
-        ...prev,
-        [`option${option.toUpperCase()}`]: { status: 'success', progress: 100 },
-      }));
-    };
+  const handleImageUpload = (option: 'a' | 'b') => (url: string) => {
+    setUploadStatus(prev => ({
+      ...prev,
+      [`option${option.toUpperCase()}`]: { status: 'success', progress: 100 },
+    }));
+  };
 
   const handleImageError = (option: 'a' | 'b') => (error: string) => {
     setUploadStatus(prev => ({
