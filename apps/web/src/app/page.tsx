@@ -14,7 +14,7 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="/create"
+            href="/poll/create"
             className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
           >
             Create Poll
@@ -67,7 +67,7 @@ export default function Home() {
           Join thousands of people who use ThisOrThat to make better decisions every day.
         </p>
         <a
-          href="/create"
+          href="/poll/create"
           className="inline-flex items-center px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
           Create Your First Poll
