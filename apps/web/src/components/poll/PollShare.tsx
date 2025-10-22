@@ -47,7 +47,7 @@ export default function PollShare({
         await handleClipboardShare();
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
+      if (error instanceof Error && error.name !== 'AbortError') {
         setShareError('Failed to share poll');
       }
     }
@@ -64,7 +64,7 @@ export default function PollShare({
     }
   };
 
-  const handleSocialShare = (platform: string) => {
+  const handleSocialShare = (platform: 'twitter' | 'facebook' | 'whatsapp' | 'telegram') => {
     const encodedUrl = encodeURIComponent(shareUrl);
     const encodedText = encodeURIComponent(shareText);
 

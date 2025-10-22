@@ -91,7 +91,7 @@ export default function PollResults({
       {/* Enhanced Share Component */}
       <ResultsShare
         pollId={poll.id}
-        pollTitle={poll.description}
+        pollTitle={poll.description || 'Poll Results'}
         voteCounts={voteCounts}
         optionLabels={{
           option_a: poll.option_a_label || 'Option A',
