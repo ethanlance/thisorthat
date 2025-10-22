@@ -157,4 +157,43 @@ export class PollsService {
 
     if (error) throw error;
   }
+
+  // Get polls that are expiring soon (within the next hour)
+  static async getPollsExpiringSoon() {
+    const now = new Date();
+    const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+    
+    const { data, error } = await supabase
+      .from('polls')
+      .select('*')
+      .eq('status', 'active')
+      .gte('expires_at', now.toISOString())
+      .lte('expires_at', oneHourFromNow.toISOString())
+      .order('expires_at', { ascending: true });
+      
+    if (error) throw error;
+    return data || [];
+  }
+
+  // Close a specific poll by ID
+  static async closePoll(id: string) {
+    const { error } = await supabase
+      .from('polls')
+      .update({ status: 'closed' })
+      .eq('id', id);
+      
+    if (error) throw error;
+  }
+
+  // Get polls by status
+  static async getPollsByStatus(status: 'active' | 'closed' | 'deleted') {
+    const { data, error } = await supabase
+      .from('polls')
+      .select('*')
+      .eq('status', status)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  }
 }
