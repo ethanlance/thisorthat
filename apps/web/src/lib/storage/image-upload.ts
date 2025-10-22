@@ -15,14 +15,14 @@ export const uploadPollImage = async (
     const supabase = createClient();
     const fileExt = file.name.split('.').pop();
     const fileName = `${pollId}-${option}.${fileExt}`;
-    
+
     const { data, error } = await supabase.storage
       .from('poll-images')
       .upload(fileName, file, {
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
       });
-      
+
     if (error) {
       return { success: false, error: error.message };
     }
@@ -34,9 +34,9 @@ export const uploadPollImage = async (
 
     return { success: true, url: urlData.publicUrl };
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Upload failed' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Upload failed',
     };
   }
 };
@@ -48,20 +48,20 @@ export const deletePollImage = async (
   try {
     const supabase = createClient();
     const fileName = `${pollId}-${option}`;
-    
+
     const { error } = await supabase.storage
       .from('poll-images')
       .remove([fileName]);
-      
+
     if (error) {
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (error) {
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Delete failed' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Delete failed',
     };
   }
 };

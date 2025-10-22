@@ -6,7 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Plus, TrendingUp, Clock, Users, Share2, AlertTriangle } from 'lucide-react';
+import {
+  Plus,
+  TrendingUp,
+  Clock,
+  Users,
+  Share2,
+  AlertTriangle,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserPolls } from '@/lib/hooks/useUserPolls';
 import { DashboardService, DashboardStats } from '@/lib/services/dashboard';
@@ -26,29 +33,36 @@ export default function UserDashboard({ className }: UserDashboardProps) {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
+    null
+  );
 
-  const { 
-    polls, 
-    loading: pollsLoading, 
-    error: pollsError, 
+  const {
+    polls,
+    loading: pollsLoading,
+    error: pollsError,
     refetch: refetchPolls,
     deletePoll,
-    sharePoll 
+    sharePoll,
   } = useUserPolls(user?.id);
 
   // Fetch dashboard stats
   useEffect(() => {
     const fetchStats = async () => {
       if (!user?.id) return;
-      
+
       try {
         setStatsLoading(true);
         setStatsError(null);
-        const dashboardStats = await DashboardService.getDashboardStats(user.id);
+        const dashboardStats = await DashboardService.getDashboardStats(
+          user.id
+        );
         setStats(dashboardStats);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard stats';
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : 'Failed to fetch dashboard stats';
         setStatsError(errorMessage);
         console.error('Error fetching dashboard stats:', err);
       } finally {
@@ -63,11 +77,11 @@ export default function UserDashboard({ className }: UserDashboardProps) {
   const expiringSoonPolls = polls.filter(poll => {
     const status = getPollStatus(poll);
     if (status !== 'active') return false;
-    
+
     const now = new Date();
     const expiresAt = new Date(poll.expires_at);
     const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
-    
+
     return expiresAt >= now && expiresAt <= oneHourFromNow;
   });
 
@@ -118,9 +132,7 @@ export default function UserDashboard({ className }: UserDashboardProps) {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">My Polls</h1>
-          <p className="text-muted-foreground">
-            Manage and track your polls
-          </p>
+          <p className="text-muted-foreground">Manage and track your polls</p>
         </div>
         <Button onClick={handleCreatePoll} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -176,7 +188,9 @@ export default function UserDashboard({ className }: UserDashboardProps) {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Polls</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Active Polls
+              </CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -189,11 +203,15 @@ export default function UserDashboard({ className }: UserDashboardProps) {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Expiring Soon
+              </CardTitle>
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{expiringSoonPolls.length}</div>
+              <div className="text-2xl font-bold">
+                {expiringSoonPolls.length}
+              </div>
               <p className="text-xs text-muted-foreground">
                 Within the next hour
               </p>
@@ -207,7 +225,9 @@ export default function UserDashboard({ className }: UserDashboardProps) {
         <Alert className="border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-800 dark:bg-orange-900/20 dark:text-orange-400">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            You have {expiringSoonPolls.length} poll{expiringSoonPolls.length > 1 ? 's' : ''} expiring within the next hour.
+            You have {expiringSoonPolls.length} poll
+            {expiringSoonPolls.length > 1 ? 's' : ''} expiring within the next
+            hour.
           </AlertDescription>
         </Alert>
       )}

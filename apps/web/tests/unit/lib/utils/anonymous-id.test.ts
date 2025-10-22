@@ -9,7 +9,7 @@ import {
   clearAllAnonymousIds,
   isValidAnonymousId,
   getAnonymousIdTimestamp,
-  isAnonymousIdExpired
+  isAnonymousIdExpired,
 } from '@/lib/utils/anonymous-id';
 
 // Mock localStorage
@@ -19,11 +19,11 @@ const localStorageMock = {
   removeItem: vi.fn(),
   clear: vi.fn(),
   length: 0,
-  key: vi.fn()
+  key: vi.fn(),
 };
 
 Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
+  value: localStorageMock,
 });
 
 describe('anonymous-id utilities', () => {
@@ -39,7 +39,7 @@ describe('anonymous-id utilities', () => {
   describe('generateAnonymousId', () => {
     it('should generate a valid anonymous ID', () => {
       const id = generateAnonymousId();
-      
+
       expect(id).toMatch(/^anon_\d+_[a-z0-9]+$/);
       expect(id.startsWith('anon_')).toBe(true);
     });
@@ -47,7 +47,7 @@ describe('anonymous-id utilities', () => {
     it('should generate unique IDs', () => {
       const id1 = generateAnonymousId();
       const id2 = generateAnonymousId();
-      
+
       expect(id1).not.toBe(id2);
     });
 
@@ -55,7 +55,7 @@ describe('anonymous-id utilities', () => {
       const before = Date.now();
       const id = generateAnonymousId();
       const after = Date.now();
-      
+
       const timestamp = getAnonymousIdTimestamp(id);
       expect(timestamp).toBeGreaterThanOrEqual(before);
       expect(timestamp).toBeLessThanOrEqual(after);
@@ -66,20 +66,22 @@ describe('anonymous-id utilities', () => {
     it('should return stored anonymous ID', () => {
       const pollId = 'poll-123';
       const anonymousId = 'anon_1234567890_abc123';
-      
+
       localStorageMock.getItem.mockReturnValue(anonymousId);
-      
+
       const result = getStoredAnonymousId(pollId);
-      
+
       expect(result).toBe(anonymousId);
-      expect(localStorageMock.getItem).toHaveBeenCalledWith('anonymous_id_poll-123');
+      expect(localStorageMock.getItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-123'
+      );
     });
 
     it('should return null if no ID is stored', () => {
       localStorageMock.getItem.mockReturnValue(null);
-      
+
       const result = getStoredAnonymousId('poll-123');
-      
+
       expect(result).toBeNull();
     });
 
@@ -87,9 +89,9 @@ describe('anonymous-id utilities', () => {
       localStorageMock.getItem.mockImplementation(() => {
         throw new Error('localStorage error');
       });
-      
+
       const result = getStoredAnonymousId('poll-123');
-      
+
       expect(result).toBeNull();
     });
 
@@ -98,11 +100,11 @@ describe('anonymous-id utilities', () => {
       const originalWindow = global.window;
       // @ts-ignore
       delete global.window;
-      
+
       const result = getStoredAnonymousId('poll-123');
-      
+
       expect(result).toBeNull();
-      
+
       // Restore window
       global.window = originalWindow;
     });
@@ -112,17 +114,20 @@ describe('anonymous-id utilities', () => {
     it('should store anonymous ID', () => {
       const pollId = 'poll-123';
       const anonymousId = 'anon_1234567890_abc123';
-      
+
       storeAnonymousId(pollId, anonymousId);
-      
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('anonymous_id_poll-123', anonymousId);
+
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-123',
+        anonymousId
+      );
     });
 
     it('should handle localStorage errors gracefully', () => {
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('localStorage error');
       });
-      
+
       expect(() => {
         storeAnonymousId('poll-123', 'anon_1234567890_abc123');
       }).not.toThrow();
@@ -133,12 +138,12 @@ describe('anonymous-id utilities', () => {
       const originalWindow = global.window;
       // @ts-ignore
       delete global.window;
-      
+
       storeAnonymousId('poll-123', 'anon_1234567890_abc123');
-      
+
       // Should not throw
       expect(true).toBe(true);
-      
+
       // Restore window
       global.window = originalWindow;
     });
@@ -147,17 +152,17 @@ describe('anonymous-id utilities', () => {
   describe('hasVotedAnonymously', () => {
     it('should return true if anonymous ID is stored', () => {
       localStorageMock.getItem.mockReturnValue('anon_1234567890_abc123');
-      
+
       const result = hasVotedAnonymously('poll-123');
-      
+
       expect(result).toBe(true);
     });
 
     it('should return false if no anonymous ID is stored', () => {
       localStorageMock.getItem.mockReturnValue(null);
-      
+
       const result = hasVotedAnonymously('poll-123');
-      
+
       expect(result).toBe(false);
     });
   });
@@ -165,15 +170,17 @@ describe('anonymous-id utilities', () => {
   describe('clearAnonymousId', () => {
     it('should remove stored anonymous ID', () => {
       clearAnonymousId('poll-123');
-      
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('anonymous_id_poll-123');
+
+      expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-123'
+      );
     });
 
     it('should handle localStorage errors gracefully', () => {
       localStorageMock.removeItem.mockImplementation(() => {
         throw new Error('localStorage error');
       });
-      
+
       expect(() => {
         clearAnonymousId('poll-123');
       }).not.toThrow();
@@ -187,16 +194,16 @@ describe('anonymous-id utilities', () => {
         .mockReturnValueOnce('anonymous_id_poll-1')
         .mockReturnValueOnce('other_key')
         .mockReturnValueOnce('anonymous_id_poll-2');
-      
+
       localStorageMock.getItem
         .mockReturnValueOnce('anon_123_abc')
         .mockReturnValueOnce('anon_456_def');
-      
+
       const result = getAllStoredAnonymousIds();
-      
+
       expect(result).toEqual({
         'poll-1': 'anon_123_abc',
-        'poll-2': 'anon_456_def'
+        'poll-2': 'anon_456_def',
       });
     });
 
@@ -205,9 +212,9 @@ describe('anonymous-id utilities', () => {
       localStorageMock.key
         .mockReturnValueOnce('other_key_1')
         .mockReturnValueOnce('other_key_2');
-      
+
       const result = getAllStoredAnonymousIds();
-      
+
       expect(result).toEqual({});
     });
   });
@@ -219,11 +226,15 @@ describe('anonymous-id utilities', () => {
         .mockReturnValueOnce('anonymous_id_poll-1')
         .mockReturnValueOnce('other_key')
         .mockReturnValueOnce('anonymous_id_poll-2');
-      
+
       clearAllAnonymousIds();
-      
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('anonymous_id_poll-1');
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('anonymous_id_poll-2');
+
+      expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-1'
+      );
+      expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-2'
+      );
       expect(localStorageMock.removeItem).not.toHaveBeenCalledWith('other_key');
     });
   });
@@ -248,9 +259,9 @@ describe('anonymous-id utilities', () => {
     it('should extract timestamp from valid anonymous ID', () => {
       const timestamp = 1234567890;
       const id = `anon_${timestamp}_abc123`;
-      
+
       const result = getAnonymousIdTimestamp(id);
-      
+
       expect(result).toBe(timestamp);
     });
 
@@ -263,14 +274,14 @@ describe('anonymous-id utilities', () => {
   describe('isAnonymousIdExpired', () => {
     it('should return false for recent anonymous ID', () => {
       const recentId = `anon_${Date.now()}_abc123`;
-      
+
       expect(isAnonymousIdExpired(recentId)).toBe(false);
     });
 
     it('should return true for old anonymous ID', () => {
-      const thirtyOneDaysAgo = Date.now() - (31 * 24 * 60 * 60 * 1000);
+      const thirtyOneDaysAgo = Date.now() - 31 * 24 * 60 * 60 * 1000;
       const oldId = `anon_${thirtyOneDaysAgo}_abc123`;
-      
+
       expect(isAnonymousIdExpired(oldId)).toBe(true);
     });
 

@@ -8,18 +8,21 @@ interface AnimatedProgressBarProps {
   showPercentage?: boolean;
 }
 
-export default function AnimatedProgressBar({ 
-  value, 
-  max, 
-  color, 
+export default function AnimatedProgressBar({
+  value,
+  max,
+  color,
   className,
-  showPercentage = false
+  showPercentage = false,
 }: AnimatedProgressBarProps) {
   const percentage = max > 0 ? (value / max) * 100 : 0;
-  
+
   return (
-    <div 
-      className={cn('w-full bg-muted rounded-full h-3 overflow-hidden relative', className)}
+    <div
+      className={cn(
+        'w-full bg-muted rounded-full h-3 overflow-hidden relative',
+        className
+      )}
       role="progressbar"
       aria-valuenow={value}
       aria-valuemin={0}

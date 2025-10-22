@@ -14,8 +14,8 @@ vi.mock('@/lib/services/dashboard');
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: mockPush
-  })
+    push: mockPush,
+  }),
 }));
 
 describe('Dashboard Integration', () => {
@@ -36,7 +36,7 @@ describe('Dashboard Integration', () => {
       updated_at: new Date().toISOString(),
       vote_counts: { option_a: 5, option_b: 3 },
       share_count: 2,
-      last_activity: new Date().toISOString()
+      last_activity: new Date().toISOString(),
     },
     {
       id: 'poll-2',
@@ -53,8 +53,8 @@ describe('Dashboard Integration', () => {
       updated_at: new Date().toISOString(),
       vote_counts: { option_a: 2, option_b: 8 },
       share_count: 1,
-      last_activity: new Date().toISOString()
-    }
+      last_activity: new Date().toISOString(),
+    },
   ];
 
   const mockStats = {
@@ -62,7 +62,7 @@ describe('Dashboard Integration', () => {
     activePolls: 1,
     closedPolls: 1,
     totalVotes: 18,
-    averageVotesPerPoll: 9
+    averageVotesPerPoll: 9,
   };
 
   beforeEach(() => {
@@ -74,7 +74,7 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
     (DashboardService.getDashboardStats as any).mockResolvedValue(mockStats);
   });
@@ -84,7 +84,9 @@ describe('Dashboard Integration', () => {
 
     expect(screen.getByText('My Polls')).toBeInTheDocument();
     expect(screen.getByText('Manage and track your polls')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create Poll' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Create Poll' })
+    ).toBeInTheDocument();
   });
 
   it('displays dashboard statistics', async () => {
@@ -107,7 +109,9 @@ describe('Dashboard Integration', () => {
   });
 
   it('shows loading state for stats', () => {
-    (DashboardService.getDashboardStats as any).mockReturnValue(new Promise(() => {})); // Never resolve
+    (DashboardService.getDashboardStats as any).mockReturnValue(
+      new Promise(() => {})
+    ); // Never resolve
 
     render(<DashboardPage />);
 
@@ -122,7 +126,7 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
@@ -132,7 +136,9 @@ describe('Dashboard Integration', () => {
   });
 
   it('handles stats fetch error', async () => {
-    (DashboardService.getDashboardStats as any).mockRejectedValue(new Error('Stats fetch failed'));
+    (DashboardService.getDashboardStats as any).mockRejectedValue(
+      new Error('Stats fetch failed')
+    );
 
     render(<DashboardPage />);
 
@@ -148,7 +154,7 @@ describe('Dashboard Integration', () => {
       error: 'Polls fetch failed',
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
@@ -170,22 +176,26 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
 
     expect(screen.getByText('No polls yet')).toBeInTheDocument();
-    expect(screen.getByText('Create your first poll to get started!')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create Your First Poll' })).toBeInTheDocument();
+    expect(
+      screen.getByText('Create your first poll to get started!')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Create Your First Poll' })
+    ).toBeInTheDocument();
   });
 
   it('shows expiring soon alert when polls are expiring', () => {
     const expiringPolls = [
       {
         ...mockPolls[0],
-        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutes from now
-      }
+        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
+      },
     ];
 
     (useUserPolls as any).mockReturnValue({
@@ -194,12 +204,14 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
 
-    expect(screen.getByText(/You have 1 poll expiring within the next hour/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/You have 1 poll expiring within the next hour/)
+    ).toBeInTheDocument();
   });
 
   it('handles poll deletion', async () => {
@@ -210,7 +222,7 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: mockDeletePoll,
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
@@ -238,14 +250,14 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: vi.fn(),
-      sharePoll: mockSharePoll
+      sharePoll: mockSharePoll,
     });
 
     // Mock clipboard API
     Object.assign(navigator, {
       clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined)
-      }
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
     });
 
     render(<DashboardPage />);
@@ -277,7 +289,7 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: vi.fn(),
       deletePoll: mockDeletePoll,
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);
@@ -298,7 +310,9 @@ describe('Dashboard Integration', () => {
 
     render(<DashboardPage />);
 
-    expect(screen.getByText('You must be logged in to view your dashboard.')).toBeInTheDocument();
+    expect(
+      screen.getByText('You must be logged in to view your dashboard.')
+    ).toBeInTheDocument();
   });
 
   it('refreshes polls when refresh button clicked', () => {
@@ -309,7 +323,7 @@ describe('Dashboard Integration', () => {
       error: null,
       refetch: mockRefetch,
       deletePoll: vi.fn(),
-      sharePoll: vi.fn()
+      sharePoll: vi.fn(),
     });
 
     render(<DashboardPage />);

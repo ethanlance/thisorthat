@@ -5,7 +5,11 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
-import { validateImageFile, compressImage, getFileSizeString } from '@/lib/storage/image-validation';
+import {
+  validateImageFile,
+  compressImage,
+  getFileSizeString,
+} from '@/lib/storage/image-validation';
 import { uploadPollImage } from '@/lib/storage/image-upload';
 
 interface ImageUploadProps {
@@ -27,7 +31,7 @@ export default function ImageUpload({
   disabled = false,
   option,
   pollId,
-  currentImage
+  currentImage,
 }: ImageUploadProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -36,76 +40,89 @@ export default function ImageUpload({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = useCallback(async (file: File) => {
-    setError(null);
-    
-    // Validate file
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      setError(validation.error || 'Invalid file');
-      onError(validation.error || 'Invalid file');
-      return;
-    }
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      setError(null);
 
-    try {
-      // Compress image if needed
-      const compressedFile = await compressImage(file);
-      setPreview(URL.createObjectURL(compressedFile));
-      onImageSelect(compressedFile);
-
-      // Upload if pollId is provided
-      if (pollId) {
-        setIsUploading(true);
-        setUploadProgress(0);
-        
-        const result = await uploadPollImage(compressedFile, pollId, option);
-        
-        if (result.success && result.url) {
-          onUploadComplete(result.url);
-          setUploadProgress(100);
-        } else {
-          throw new Error(result.error || 'Upload failed');
-        }
+      // Validate file
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        setError(validation.error || 'Invalid file');
+        onError(validation.error || 'Invalid file');
+        return;
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
-      setError(errorMessage);
-      onError(errorMessage);
-    } finally {
-      setIsUploading(false);
-    }
-  }, [onImageSelect, onUploadComplete, onError, pollId, option]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    if (!disabled) {
-      setIsDragOver(true);
-    }
-  }, [disabled]);
+      try {
+        // Compress image if needed
+        const compressedFile = await compressImage(file);
+        setPreview(URL.createObjectURL(compressedFile));
+        onImageSelect(compressedFile);
+
+        // Upload if pollId is provided
+        if (pollId) {
+          setIsUploading(true);
+          setUploadProgress(0);
+
+          const result = await uploadPollImage(compressedFile, pollId, option);
+
+          if (result.success && result.url) {
+            onUploadComplete(result.url);
+            setUploadProgress(100);
+          } else {
+            throw new Error(result.error || 'Upload failed');
+          }
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Upload failed';
+        setError(errorMessage);
+        onError(errorMessage);
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [onImageSelect, onUploadComplete, onError, pollId, option]
+  );
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      if (!disabled) {
+        setIsDragOver(true);
+      }
+    },
+    [disabled]
+  );
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    if (disabled) return;
-    
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
-    }
-  }, [disabled, handleFileSelect]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
 
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileSelect(files[0]);
-    }
-  }, [handleFileSelect]);
+      if (disabled) return;
+
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) {
+        handleFileSelect(files[0]);
+      }
+    },
+    [disabled, handleFileSelect]
+  );
+
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleFileSelect(files[0]);
+      }
+    },
+    [handleFileSelect]
+  );
 
   const handleRemove = useCallback(() => {
     setPreview(null);
@@ -121,10 +138,10 @@ export default function ImageUpload({
 
   return (
     <div className="w-full">
-      <Card 
+      <Card
         className={`relative border-2 border-dashed transition-colors cursor-pointer ${
-          isDragOver 
-            ? 'border-primary bg-primary/5' 
+          isDragOver
+            ? 'border-primary bg-primary/5'
             : 'border-muted-foreground/25 hover:border-primary/50'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         onDragOver={handleDragOver}
@@ -144,7 +161,7 @@ export default function ImageUpload({
                 variant="destructive"
                 size="icon"
                 className="absolute top-2 right-2"
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   handleRemove();
                 }}
@@ -165,7 +182,9 @@ export default function ImageUpload({
               </div>
               <div>
                 <p className="text-sm font-medium">
-                  {isUploading ? 'Uploading...' : `Upload Option ${option.toUpperCase()}`}
+                  {isUploading
+                    ? 'Uploading...'
+                    : `Upload Option ${option.toUpperCase()}`}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Drag and drop or click to select
@@ -174,11 +193,11 @@ export default function ImageUpload({
             </div>
           )}
         </div>
-        
+
         {isUploading && (
           <div className="absolute bottom-0 left-0 right-0 p-2">
             <div className="w-full bg-muted rounded-full h-2">
-              <div 
+              <div
                 className="bg-primary h-2 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />

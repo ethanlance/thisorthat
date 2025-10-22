@@ -7,12 +7,12 @@ export const formatRelativeTime = (timestamp: string): string => {
   const now = new Date();
   const date = new Date(timestamp);
   const diff = now.getTime() - date.getTime();
-  
+
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  
+
   if (days > 0) {
     return `${days} day${days > 1 ? 's' : ''} ago`;
   } else if (hours > 0) {
@@ -31,16 +31,16 @@ export const formatFutureRelativeTime = (timestamp: string): string => {
   const now = new Date();
   const date = new Date(timestamp);
   const diff = date.getTime() - now.getTime();
-  
+
   if (diff <= 0) {
     return 'Expired';
   }
-  
+
   const seconds = Math.floor(diff / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  
+
   if (days > 0) {
     return `in ${days} day${days > 1 ? 's' : ''}`;
   } else if (hours > 0) {
@@ -62,7 +62,7 @@ export const formatDate = (timestamp: string): string => {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -75,7 +75,7 @@ export const formatShortDate = (timestamp: string): string => {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -96,7 +96,10 @@ export const isFuture = (timestamp: string): boolean => {
 /**
  * Get the difference between two timestamps in milliseconds
  */
-export const getTimeDifference = (timestamp1: string, timestamp2: string): number => {
+export const getTimeDifference = (
+  timestamp1: string,
+  timestamp2: string
+): number => {
   const date1 = new Date(timestamp1);
   const date2 = new Date(timestamp2);
   return Math.abs(date1.getTime() - date2.getTime());
@@ -105,16 +108,20 @@ export const getTimeDifference = (timestamp1: string, timestamp2: string): numbe
 /**
  * Add time to a timestamp
  */
-export const addTime = (timestamp: string, amount: number, unit: 'seconds' | 'minutes' | 'hours' | 'days'): string => {
+export const addTime = (
+  timestamp: string,
+  amount: number,
+  unit: 'seconds' | 'minutes' | 'hours' | 'days'
+): string => {
   const date = new Date(timestamp);
   const multipliers = {
     seconds: 1000,
     minutes: 60 * 1000,
     hours: 60 * 60 * 1000,
-    days: 24 * 60 * 60 * 1000
+    days: 24 * 60 * 60 * 1000,
   };
-  
-  date.setTime(date.getTime() + (amount * multipliers[unit]));
+
+  date.setTime(date.getTime() + amount * multipliers[unit]);
   return date.toISOString();
 };
 
@@ -126,7 +133,7 @@ export const formatDuration = (milliseconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  
+
   if (days > 0) {
     return `${days}d ${hours % 24}h ${minutes % 60}m`;
   } else if (hours > 0) {
@@ -145,10 +152,10 @@ export const getTimeUntil = (timestamp: string): string => {
   const now = new Date();
   const target = new Date(timestamp);
   const diff = target.getTime() - now.getTime();
-  
+
   if (diff <= 0) {
     return 'Expired';
   }
-  
+
   return formatDuration(diff);
 };

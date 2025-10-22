@@ -8,11 +8,11 @@ interface LoadingStateProps {
   children?: React.ReactNode;
 }
 
-export default function LoadingState({ 
-  type = 'spinner', 
+export default function LoadingState({
+  type = 'spinner',
   text,
   className = '',
-  children 
+  children,
 }: LoadingStateProps) {
   if (type === 'skeleton') {
     return (
@@ -28,10 +28,5 @@ export default function LoadingState({
     );
   }
 
-  return (
-    <LoadingSpinner 
-      text={text}
-      className={className}
-    />
-  );
+  return <LoadingSpinner text={text} className={className} />;
 }

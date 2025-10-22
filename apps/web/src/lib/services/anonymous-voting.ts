@@ -1,12 +1,12 @@
 import { VotesService, VoteResult } from './votes';
-import { 
-  generateAnonymousId, 
-  getStoredAnonymousId, 
+import {
+  generateAnonymousId,
+  getStoredAnonymousId,
   storeAnonymousId,
   hasVotedAnonymously,
   clearAnonymousId,
   isValidAnonymousId,
-  isAnonymousIdExpired
+  isAnonymousIdExpired,
 } from '@/lib/utils/anonymous-id';
 
 export interface AnonymousVoteSubmission {
@@ -26,26 +26,33 @@ export class AnonymousVotingService {
    * @returns Promise with vote result
    */
   static async submitAnonymousVote(
-    pollId: string, 
+    pollId: string,
     choice: 'option_a' | 'option_b'
   ): Promise<AnonymousVoteResult> {
     try {
       // Get or generate anonymous ID
       let anonymousId = getStoredAnonymousId(pollId);
-      
+
       // If no stored ID or ID is expired, generate a new one
-      if (!anonymousId || !isValidAnonymousId(anonymousId) || isAnonymousIdExpired(anonymousId)) {
+      if (
+        !anonymousId ||
+        !isValidAnonymousId(anonymousId) ||
+        isAnonymousIdExpired(anonymousId)
+      ) {
         anonymousId = generateAnonymousId();
         storeAnonymousId(pollId, anonymousId);
       }
 
       // Check for existing vote with this anonymous ID
-      const existingVote = await VotesService.getAnonymousVote(pollId, anonymousId);
+      const existingVote = await VotesService.getAnonymousVote(
+        pollId,
+        anonymousId
+      );
       if (existingVote) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: 'You have already voted on this poll',
-          anonymousId 
+          anonymousId,
         };
       }
 
@@ -53,18 +60,18 @@ export class AnonymousVotingService {
       const result = await VotesService.submitVote({
         pollId,
         choice,
-        anonymousId
+        anonymousId,
       });
 
       return {
         ...result,
-        anonymousId
+        anonymousId,
       };
     } catch (error) {
       console.error('Anonymous vote submission error:', error);
-      return { 
-        success: false, 
-        error: 'An unexpected error occurred while submitting your vote' 
+      return {
+        success: false,
+        error: 'An unexpected error occurred while submitting your vote',
       };
     }
   }
@@ -92,7 +99,9 @@ export class AnonymousVotingService {
    * @param pollId - The poll ID to get the vote for
    * @returns The vote choice or null if not found
    */
-  static async getAnonymousVote(pollId: string): Promise<'option_a' | 'option_b' | null> {
+  static async getAnonymousVote(
+    pollId: string
+  ): Promise<'option_a' | 'option_b' | null> {
     const anonymousId = getStoredAnonymousId(pollId);
     if (!anonymousId) return null;
 
@@ -139,7 +148,7 @@ export class AnonymousVotingService {
       hasStoredId,
       isValidId,
       isExpired,
-      hasVoted
+      hasVoted,
     };
   }
 
@@ -154,7 +163,12 @@ export class AnonymousVotingService {
     pollsWithVotes: number;
   } {
     if (typeof window === 'undefined') {
-      return { totalStoredIds: 0, validIds: 0, expiredIds: 0, pollsWithVotes: 0 };
+      return {
+        totalStoredIds: 0,
+        validIds: 0,
+        expiredIds: 0,
+        pollsWithVotes: 0,
+      };
     }
 
     let totalStoredIds = 0;
@@ -167,7 +181,7 @@ export class AnonymousVotingService {
         const key = localStorage.key(i);
         if (key && key.startsWith('anonymous_id_')) {
           totalStoredIds++;
-          
+
           const anonymousId = localStorage.getItem(key);
           if (anonymousId) {
             if (isValidAnonymousId(anonymousId)) {
@@ -190,7 +204,7 @@ export class AnonymousVotingService {
       totalStoredIds,
       validIds,
       expiredIds,
-      pollsWithVotes
+      pollsWithVotes,
     };
   }
 

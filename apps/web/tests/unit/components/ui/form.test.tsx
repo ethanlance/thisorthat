@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { Form, FormField, FormLabel, FormError, FormDescription } from '@/components/ui/form';
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormError,
+  FormDescription,
+} from '@/components/ui/form';
 
 describe('Form Components', () => {
   describe('Form', () => {
@@ -97,7 +103,11 @@ describe('Form Components', () => {
     });
 
     it('applies custom className', () => {
-      render(<FormDescription className="custom-description">Description text</FormDescription>);
+      render(
+        <FormDescription className="custom-description">
+          Description text
+        </FormDescription>
+      );
       const description = screen.getByText('Description text');
       expect(description).toHaveClass('custom-description');
     });

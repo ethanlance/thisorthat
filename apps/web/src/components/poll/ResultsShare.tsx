@@ -11,12 +11,12 @@ interface ResultsShareProps {
   className?: string;
 }
 
-export default function ResultsShare({ 
-  pollId, 
-  pollTitle, 
-  voteCounts, 
+export default function ResultsShare({
+  pollId,
+  pollTitle,
+  voteCounts,
   optionLabels,
-  className 
+  className,
 }: ResultsShareProps) {
   const [shareSuccess, setShareSuccess] = useState(false);
 
@@ -29,7 +29,7 @@ export default function ResultsShare({
         await navigator.share({
           title: `Poll Results: ${pollTitle}`,
           text: shareText,
-          url: shareUrl
+          url: shareUrl,
         });
       } else {
         await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
@@ -43,10 +43,7 @@ export default function ResultsShare({
 
   return (
     <div className={cn('space-y-4', className)}>
-      <Button
-        onClick={handleShare}
-        className="w-full flex items-center gap-2"
-      >
+      <Button onClick={handleShare} className="w-full flex items-center gap-2">
         {shareSuccess ? (
           <>
             <Check className="h-4 w-4" />
@@ -59,7 +56,7 @@ export default function ResultsShare({
           </>
         )}
       </Button>
-      
+
       {shareSuccess && (
         <div className="text-center text-sm text-green-600">
           Results copied to clipboard!

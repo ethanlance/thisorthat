@@ -31,7 +31,7 @@ export function PollsList({ className }: PollsListProps) {
     try {
       setLoading(true);
       setError(null);
-      
+
       const pollsData = await PollsService.getPollsByStatus(activeTab);
       setPolls(pollsData);
     } catch (err) {
@@ -45,7 +45,7 @@ export function PollsList({ className }: PollsListProps) {
   const getPollStatus = (poll: PollWithResults) => {
     const now = new Date();
     const expiresAt = new Date(poll.expires_at);
-    
+
     if (poll.status === 'closed' || expiresAt <= now) {
       return 'closed';
     }
@@ -55,11 +55,11 @@ export function PollsList({ className }: PollsListProps) {
   const getTimeRemaining = (poll: PollWithResults) => {
     const now = new Date();
     const expiresAt = new Date(poll.expires_at);
-    
+
     if (expiresAt <= now) {
       return 'Closed';
     }
-    
+
     return `Closes ${formatDistanceToNow(expiresAt, { addSuffix: true })}`;
   };
 
@@ -100,10 +100,9 @@ export function PollsList({ className }: PollsListProps) {
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">No polls found</h3>
             <p className="text-muted-foreground">
-              {activeTab === 'active' 
-                ? "There are no active polls at the moment. Check back later or create your own!"
-                : "No closed polls to display."
-              }
+              {activeTab === 'active'
+                ? 'There are no active polls at the moment. Check back later or create your own!'
+                : 'No closed polls to display.'}
             </p>
           </div>
           {activeTab === 'active' && (
@@ -118,7 +117,10 @@ export function PollsList({ className }: PollsListProps) {
 
   return (
     <div className={cn('space-y-6', className)}>
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'active' | 'closed')}>
+      <Tabs
+        value={activeTab}
+        onValueChange={value => setActiveTab(value as 'active' | 'closed')}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="active">Active Polls</TabsTrigger>
           <TabsTrigger value="closed">Closed Polls</TabsTrigger>
@@ -126,7 +128,7 @@ export function PollsList({ className }: PollsListProps) {
 
         <TabsContent value="active" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {polls.map((poll) => (
+            {polls.map(poll => (
               <PollCard key={poll.id} poll={poll} />
             ))}
           </div>
@@ -134,7 +136,7 @@ export function PollsList({ className }: PollsListProps) {
 
         <TabsContent value="closed" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {polls.map((poll) => (
+            {polls.map(poll => (
               <PollCard key={poll.id} poll={poll} />
             ))}
           </div>
@@ -150,8 +152,14 @@ interface PollCardProps {
 
 function PollCard({ poll }: PollCardProps) {
   const totalVotes = poll.vote_counts.option_a + poll.vote_counts.option_b;
-  const optionAPercentage = getVotePercentage(poll.vote_counts.option_a, totalVotes);
-  const optionBPercentage = getVotePercentage(poll.vote_counts.option_b, totalVotes);
+  const optionAPercentage = getVotePercentage(
+    poll.vote_counts.option_a,
+    totalVotes
+  );
+  const optionBPercentage = getVotePercentage(
+    poll.vote_counts.option_b,
+    totalVotes
+  );
   const isActive = getPollStatus(poll) === 'active';
 
   return (
@@ -167,7 +175,7 @@ function PollCard({ poll }: PollCardProps) {
               {getTimeRemaining(poll)}
             </div>
           </div>
-          
+
           {poll.description && (
             <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
               {poll.description}
@@ -199,7 +207,7 @@ function PollCard({ poll }: PollCardProps) {
                 {poll.option_a_label || 'Option A'}
               </p>
             </div>
-            
+
             <div className="text-center">
               <div className="relative">
                 <Image
@@ -269,7 +277,7 @@ function PollCard({ poll }: PollCardProps) {
 function getPollStatus(poll: PollWithResults) {
   const now = new Date();
   const expiresAt = new Date(poll.expires_at);
-  
+
   if (poll.status === 'closed' || expiresAt <= now) {
     return 'closed';
   }
@@ -279,11 +287,11 @@ function getPollStatus(poll: PollWithResults) {
 function getTimeRemaining(poll: PollWithResults) {
   const now = new Date();
   const expiresAt = new Date(poll.expires_at);
-  
+
   if (expiresAt <= now) {
     return 'Closed';
   }
-  
+
   return `Closes ${formatDistanceToNow(expiresAt, { addSuffix: true })}`;
 }
 

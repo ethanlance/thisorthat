@@ -35,7 +35,10 @@ export class PollsService {
   }
 
   // Get poll by ID with vote counts
-  static async getPollById(id: string, userId?: string): Promise<PollWithResults | null> {
+  static async getPollById(
+    id: string,
+    userId?: string
+  ): Promise<PollWithResults | null> {
     // Get poll
     const { data: poll, error: pollError } = await supabase
       .from('polls')
@@ -65,7 +68,7 @@ export class PollsService {
         .eq('poll_id', id)
         .eq('user_id', userId)
         .single();
-      
+
       user_vote = userVote?.choice || null;
     }
 
@@ -87,7 +90,7 @@ export class PollsService {
         description: pollData.description || null,
         is_public: pollData.isPublic ?? true,
         status: 'active',
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       })
       .select()
       .single();
@@ -97,12 +100,16 @@ export class PollsService {
   }
 
   // Update poll with image URLs
-  static async updatePollWithImages(id: string, optionAImageUrl: string, optionBImageUrl: string): Promise<Poll> {
+  static async updatePollWithImages(
+    id: string,
+    optionAImageUrl: string,
+    optionBImageUrl: string
+  ): Promise<Poll> {
     const { data, error } = await supabase
       .from('polls')
       .update({
         option_a_image_url: optionAImageUrl,
-        option_b_image_url: optionBImageUrl
+        option_b_image_url: optionBImageUrl,
       })
       .eq('id', id)
       .select()
@@ -127,10 +134,7 @@ export class PollsService {
 
   // Delete a poll
   static async deletePoll(id: string) {
-    const { error } = await supabase
-      .from('polls')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('polls').delete().eq('id', id);
 
     if (error) throw error;
   }
@@ -162,7 +166,7 @@ export class PollsService {
   static async getPollsExpiringSoon() {
     const now = new Date();
     const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
-    
+
     const { data, error } = await supabase
       .from('polls')
       .select('*')
@@ -170,7 +174,7 @@ export class PollsService {
       .gte('expires_at', now.toISOString())
       .lte('expires_at', oneHourFromNow.toISOString())
       .order('expires_at', { ascending: true });
-      
+
     if (error) throw error;
     return data || [];
   }
@@ -181,7 +185,7 @@ export class PollsService {
       .from('polls')
       .update({ status: 'closed' })
       .eq('id', id);
-      
+
     if (error) throw error;
   }
 

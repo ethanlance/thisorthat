@@ -6,12 +6,12 @@ import { UserPollSummary } from '@/lib/services/dashboard';
 // Mock the expiration service
 vi.mock('@/lib/services/expiration', () => ({
   getPollStatus: vi.fn(),
-  isPollActive: vi.fn()
+  isPollActive: vi.fn(),
 }));
 
 // Mock time helpers
 vi.mock('@/lib/utils/time-helpers', () => ({
-  formatRelativeTime: vi.fn()
+  formatRelativeTime: vi.fn(),
 }));
 
 import { getPollStatus, isPollActive } from '@/lib/services/expiration';
@@ -33,7 +33,7 @@ describe('PollCard', () => {
     updated_at: new Date().toISOString(),
     vote_counts: { option_a: 5, option_b: 3 },
     share_count: 2,
-    last_activity: new Date().toISOString()
+    last_activity: new Date().toISOString(),
   };
 
   const mockOnDelete = vi.fn();
@@ -59,7 +59,9 @@ describe('PollCard', () => {
 
     expect(screen.getByText('Pizza')).toBeInTheDocument();
     expect(screen.getByText('Burger')).toBeInTheDocument();
-    expect(screen.getByText('What should we eat for dinner?')).toBeInTheDocument();
+    expect(
+      screen.getByText('What should we eat for dinner?')
+    ).toBeInTheDocument();
     expect(screen.getByText('8 votes')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument(); // Share count
     expect(screen.getByText('Last activity: 2 hours ago')).toBeInTheDocument();
@@ -67,7 +69,7 @@ describe('PollCard', () => {
 
   it('renders active poll with countdown timer', () => {
     (isPollActive as any).mockReturnValue(true);
-    
+
     render(<PollCard poll={mockPoll} />);
 
     expect(screen.getByText('Active')).toBeInTheDocument();
@@ -87,12 +89,7 @@ describe('PollCard', () => {
   });
 
   it('handles view button click', () => {
-    render(
-      <PollCard
-        poll={mockPoll}
-        onView={mockOnView}
-      />
-    );
+    render(<PollCard poll={mockPoll} onView={mockOnView} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'View' }));
     expect(mockOnView).toHaveBeenCalledWith('poll-123');
@@ -102,19 +99,14 @@ describe('PollCard', () => {
     // Mock clipboard API
     Object.assign(navigator, {
       clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined)
-      }
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
     });
 
-    render(
-      <PollCard
-        poll={mockPoll}
-        onShare={mockOnShare}
-      />
-    );
+    render(<PollCard poll={mockPoll} onShare={mockOnShare} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Share' }));
-    
+
     await waitFor(() => {
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
         expect.stringContaining('/poll/poll-123')
@@ -124,19 +116,14 @@ describe('PollCard', () => {
   });
 
   it('handles delete action from menu', async () => {
-    render(
-      <PollCard
-        poll={mockPoll}
-        onDelete={mockOnDelete}
-      />
-    );
+    render(<PollCard poll={mockPoll} onDelete={mockOnDelete} />);
 
     // Click the more actions button
     fireEvent.click(screen.getByLabelText('Poll actions'));
-    
+
     // Click delete in the menu
     fireEvent.click(screen.getByText('Delete Poll'));
-    
+
     // Confirm deletion
     fireEvent.click(screen.getByText('Delete'));
 
@@ -172,7 +159,7 @@ describe('PollCard', () => {
     const pollWithoutLabels = {
       ...mockPoll,
       option_a_label: null,
-      option_b_label: null
+      option_b_label: null,
     };
 
     render(<PollCard poll={pollWithoutLabels} />);
@@ -184,18 +171,20 @@ describe('PollCard', () => {
   it('handles polls without description', () => {
     const pollWithoutDescription = {
       ...mockPoll,
-      description: null
+      description: null,
     };
 
     render(<PollCard poll={pollWithoutDescription} />);
 
-    expect(screen.queryByText('What should we eat for dinner?')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('What should we eat for dinner?')
+    ).not.toBeInTheDocument();
   });
 
   it('handles polls without share count', () => {
     const pollWithoutShares = {
       ...mockPoll,
-      share_count: 0
+      share_count: 0,
     };
 
     render(<PollCard poll={pollWithoutShares} />);
@@ -206,7 +195,7 @@ describe('PollCard', () => {
   it('handles polls without last activity', () => {
     const pollWithoutActivity = {
       ...mockPoll,
-      last_activity: null
+      last_activity: null,
     };
 
     render(<PollCard poll={pollWithoutActivity} />);
@@ -225,7 +214,7 @@ describe('PollCard', () => {
     const mockOpen = vi.fn();
     Object.defineProperty(window, 'open', {
       value: mockOpen,
-      writable: true
+      writable: true,
     });
 
     render(<PollCard poll={mockPoll} />);

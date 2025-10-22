@@ -2,7 +2,12 @@
 
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { FormField, FormLabel, FormError, FormDescription } from '@/components/ui/form';
+import {
+  FormField,
+  FormLabel,
+  FormError,
+  FormDescription,
+} from '@/components/ui/form';
 import ImageUpload from '@/components/upload/ImageUpload';
 import { PollFormData } from '@/lib/validation/poll-validation';
 
@@ -10,15 +15,23 @@ interface PollFormFieldsProps {
   formData: PollFormData;
   fieldErrors: Record<string, string>;
   uploadStatus: {
-    optionA: { status: 'idle' | 'uploading' | 'success' | 'error'; progress: number };
-    optionB: { status: 'idle' | 'uploading' | 'success' | 'error'; progress: number };
+    optionA: {
+      status: 'idle' | 'uploading' | 'success' | 'error';
+      progress: number;
+    };
+    optionB: {
+      status: 'idle' | 'uploading' | 'success' | 'error';
+      progress: number;
+    };
   };
   isSubmitting: boolean;
   onImageSelect: (option: 'a' | 'b') => (file: File) => void;
   onImageUpload: (option: 'a' | 'b') => (url: string) => void;
   onImageError: (option: 'a' | 'b') => (error: string) => void;
   onImageRemove: (option: 'a' | 'b') => () => void;
-  onInputChange: (field: keyof PollFormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onInputChange: (
+    field: keyof PollFormData
+  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export default function PollFormFields({
@@ -30,7 +43,7 @@ export default function PollFormFields({
   onImageUpload,
   onImageError,
   onImageRemove,
-  onInputChange
+  onInputChange,
 }: PollFormFieldsProps) {
   return (
     <>
@@ -112,9 +125,7 @@ export default function PollFormFields({
 
       {/* Description */}
       <FormField>
-        <FormLabel htmlFor="description">
-          Description (optional)
-        </FormLabel>
+        <FormLabel htmlFor="description">Description (optional)</FormLabel>
         <Textarea
           id="description"
           value={formData.description}

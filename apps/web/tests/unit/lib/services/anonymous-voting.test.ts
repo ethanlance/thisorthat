@@ -19,7 +19,9 @@ describe('AnonymousVotingService', () => {
     it('should submit vote successfully with new anonymous ID', async () => {
       // Mock no stored ID
       (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(null);
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
@@ -30,25 +32,33 @@ describe('AnonymousVotingService', () => {
       // Mock successful vote submission
       (VotesService.submitVote as any).mockResolvedValue({
         success: true,
-        voteId: 'vote-123'
+        voteId: 'vote-123',
       });
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_a');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_a'
+      );
 
       expect(result.success).toBe(true);
       expect(result.anonymousId).toBe(mockAnonymousId);
       expect(anonymousIdUtils.generateAnonymousId).toHaveBeenCalled();
-      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(mockPollId, mockAnonymousId);
+      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(
+        mockPollId,
+        mockAnonymousId
+      );
       expect(VotesService.submitVote).toHaveBeenCalledWith({
         pollId: mockPollId,
         choice: 'option_a',
-        anonymousId: mockAnonymousId
+        anonymousId: mockAnonymousId,
       });
     });
 
     it('should submit vote successfully with existing valid anonymous ID', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
 
@@ -58,10 +68,13 @@ describe('AnonymousVotingService', () => {
       // Mock successful vote submission
       (VotesService.submitVote as any).mockResolvedValue({
         success: true,
-        voteId: 'vote-123'
+        voteId: 'vote-123',
       });
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_b');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_b'
+      );
 
       expect(result.success).toBe(true);
       expect(result.anonymousId).toBe(mockAnonymousId);
@@ -69,7 +82,7 @@ describe('AnonymousVotingService', () => {
       expect(VotesService.submitVote).toHaveBeenCalledWith({
         pollId: mockPollId,
         choice: 'option_b',
-        anonymousId: mockAnonymousId
+        anonymousId: mockAnonymousId,
       });
     });
 
@@ -77,10 +90,14 @@ describe('AnonymousVotingService', () => {
       const newAnonymousId = 'anon_9876543210_xyz789';
 
       // Mock expired existing ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(true);
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(newAnonymousId);
+      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+        newAnonymousId
+      );
       (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
 
       // Mock no existing vote
@@ -89,27 +106,38 @@ describe('AnonymousVotingService', () => {
       // Mock successful vote submission
       (VotesService.submitVote as any).mockResolvedValue({
         success: true,
-        voteId: 'vote-123'
+        voteId: 'vote-123',
       });
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_a');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_a'
+      );
 
       expect(result.success).toBe(true);
       expect(result.anonymousId).toBe(newAnonymousId);
       expect(anonymousIdUtils.generateAnonymousId).toHaveBeenCalled();
-      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(mockPollId, newAnonymousId);
+      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(
+        mockPollId,
+        newAnonymousId
+      );
     });
 
     it('should return error if user has already voted', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
 
       // Mock existing vote
       (VotesService.getAnonymousVote as any).mockResolvedValue('option_a');
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_b');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_b'
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('You have already voted on this poll');
@@ -119,7 +147,9 @@ describe('AnonymousVotingService', () => {
 
     it('should handle vote submission errors', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
 
@@ -129,10 +159,13 @@ describe('AnonymousVotingService', () => {
       // Mock vote submission error
       (VotesService.submitVote as any).mockResolvedValue({
         success: false,
-        error: 'Poll is closed'
+        error: 'Poll is closed',
       });
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_a');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_a'
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Poll is closed');
@@ -144,10 +177,15 @@ describe('AnonymousVotingService', () => {
         throw new Error('localStorage error');
       });
 
-      const result = await AnonymousVotingService.submitAnonymousVote(mockPollId, 'option_a');
+      const result = await AnonymousVotingService.submitAnonymousVote(
+        mockPollId,
+        'option_a'
+      );
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('An unexpected error occurred while submitting your vote');
+      expect(result.error).toBe(
+        'An unexpected error occurred while submitting your vote'
+      );
     });
   });
 
@@ -158,7 +196,9 @@ describe('AnonymousVotingService', () => {
       const result = AnonymousVotingService.hasVotedAnonymously(mockPollId);
 
       expect(result).toBe(true);
-      expect(anonymousIdUtils.hasVotedAnonymously).toHaveBeenCalledWith(mockPollId);
+      expect(anonymousIdUtils.hasVotedAnonymously).toHaveBeenCalledWith(
+        mockPollId
+      );
     });
 
     it('should return false if user has not voted', () => {
@@ -172,12 +212,16 @@ describe('AnonymousVotingService', () => {
 
   describe('getAnonymousId', () => {
     it('should return stored anonymous ID', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
 
       const result = AnonymousVotingService.getAnonymousId(mockPollId);
 
       expect(result).toBe(mockAnonymousId);
-      expect(anonymousIdUtils.getStoredAnonymousId).toHaveBeenCalledWith(mockPollId);
+      expect(anonymousIdUtils.getStoredAnonymousId).toHaveBeenCalledWith(
+        mockPollId
+      );
     });
 
     it('should return null if no ID is stored', () => {
@@ -191,13 +235,18 @@ describe('AnonymousVotingService', () => {
 
   describe('getAnonymousVote', () => {
     it('should return user vote if ID exists', async () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (VotesService.getAnonymousVote as any).mockResolvedValue('option_a');
 
       const result = await AnonymousVotingService.getAnonymousVote(mockPollId);
 
       expect(result).toBe('option_a');
-      expect(VotesService.getAnonymousVote).toHaveBeenCalledWith(mockPollId, mockAnonymousId);
+      expect(VotesService.getAnonymousVote).toHaveBeenCalledWith(
+        mockPollId,
+        mockAnonymousId
+      );
     });
 
     it('should return null if no ID is stored', async () => {
@@ -216,26 +265,35 @@ describe('AnonymousVotingService', () => {
 
       AnonymousVotingService.clearAnonymousData(mockPollId);
 
-      expect(anonymousIdUtils.clearAnonymousId).toHaveBeenCalledWith(mockPollId);
+      expect(anonymousIdUtils.clearAnonymousId).toHaveBeenCalledWith(
+        mockPollId
+      );
     });
   });
 
   describe('generateNewAnonymousId', () => {
     it('should generate and store new anonymous ID', () => {
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
 
       const result = AnonymousVotingService.generateNewAnonymousId(mockPollId);
 
       expect(result).toBe(mockAnonymousId);
       expect(anonymousIdUtils.generateAnonymousId).toHaveBeenCalled();
-      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(mockPollId, mockAnonymousId);
+      expect(anonymousIdUtils.storeAnonymousId).toHaveBeenCalledWith(
+        mockPollId,
+        mockAnonymousId
+      );
     });
   });
 
   describe('validateAnonymousData', () => {
     it('should return validation results for stored data', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(mockAnonymousId);
+      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+        mockAnonymousId
+      );
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
       (anonymousIdUtils.hasVotedAnonymously as any).mockReturnValue(true);
@@ -246,7 +304,7 @@ describe('AnonymousVotingService', () => {
         hasStoredId: true,
         isValidId: true,
         isExpired: false,
-        hasVoted: true
+        hasVoted: true,
       });
     });
 
@@ -260,7 +318,7 @@ describe('AnonymousVotingService', () => {
         hasStoredId: false,
         isValidId: false,
         isExpired: false,
-        hasVoted: false
+        hasVoted: false,
       });
     });
   });
@@ -270,18 +328,20 @@ describe('AnonymousVotingService', () => {
       // Mock localStorage iteration
       const mockLocalStorage = {
         length: 3,
-        key: vi.fn()
+        key: vi
+          .fn()
           .mockReturnValueOnce('anonymous_id_poll-1')
           .mockReturnValueOnce('other_key')
           .mockReturnValueOnce('anonymous_id_poll-2'),
-        getItem: vi.fn()
+        getItem: vi
+          .fn()
           .mockReturnValueOnce('anon_123_abc')
-          .mockReturnValueOnce('anon_456_def')
+          .mockReturnValueOnce('anon_456_def'),
       };
 
       Object.defineProperty(window, 'localStorage', {
         value: mockLocalStorage,
-        writable: true
+        writable: true,
       });
 
       (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
@@ -293,7 +353,7 @@ describe('AnonymousVotingService', () => {
         totalStoredIds: 2,
         validIds: 2,
         expiredIds: 0,
-        pollsWithVotes: 2
+        pollsWithVotes: 2,
       });
     });
 
@@ -309,7 +369,7 @@ describe('AnonymousVotingService', () => {
         totalStoredIds: 0,
         validIds: 0,
         expiredIds: 0,
-        pollsWithVotes: 0
+        pollsWithVotes: 0,
       });
 
       // Restore window
@@ -321,18 +381,20 @@ describe('AnonymousVotingService', () => {
     it('should clean up expired IDs', () => {
       const mockLocalStorage = {
         length: 2,
-        key: vi.fn()
+        key: vi
+          .fn()
           .mockReturnValueOnce('anonymous_id_poll-1')
           .mockReturnValueOnce('anonymous_id_poll-2'),
-        getItem: vi.fn()
+        getItem: vi
+          .fn()
           .mockReturnValueOnce('anon_123_abc')
           .mockReturnValueOnce('anon_456_def'),
-        removeItem: vi.fn()
+        removeItem: vi.fn(),
       };
 
       Object.defineProperty(window, 'localStorage', {
         value: mockLocalStorage,
-        writable: true
+        writable: true,
       });
 
       (anonymousIdUtils.isAnonymousIdExpired as any)
@@ -342,8 +404,12 @@ describe('AnonymousVotingService', () => {
       const result = AnonymousVotingService.cleanupExpiredIds();
 
       expect(result).toBe(1);
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('anonymous_id_poll-1');
-      expect(mockLocalStorage.removeItem).not.toHaveBeenCalledWith('anonymous_id_poll-2');
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(
+        'anonymous_id_poll-1'
+      );
+      expect(mockLocalStorage.removeItem).not.toHaveBeenCalledWith(
+        'anonymous_id_poll-2'
+      );
     });
 
     it('should return zero if no expired IDs found', () => {
@@ -351,12 +417,12 @@ describe('AnonymousVotingService', () => {
         length: 1,
         key: vi.fn().mockReturnValueOnce('anonymous_id_poll-1'),
         getItem: vi.fn().mockReturnValueOnce('anon_123_abc'),
-        removeItem: vi.fn()
+        removeItem: vi.fn(),
       };
 
       Object.defineProperty(window, 'localStorage', {
         value: mockLocalStorage,
-        writable: true
+        writable: true,
       });
 
       (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);

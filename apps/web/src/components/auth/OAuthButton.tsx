@@ -10,7 +10,11 @@ interface OAuthButtonProps {
   className?: string;
 }
 
-export default function OAuthButton({ provider, children, className = '' }: OAuthButtonProps) {
+export default function OAuthButton({
+  provider,
+  children,
+  className = '',
+}: OAuthButtonProps) {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
 
@@ -32,11 +36,7 @@ export default function OAuthButton({ provider, children, className = '' }: OAut
       disabled={loading}
       className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
-      {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        children
-      )}
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : children}
     </button>
   );
 }

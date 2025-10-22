@@ -41,7 +41,9 @@ export default function ProfilePage() {
     <div className="max-w-2xl mx-auto space-y-8">
       <div className="text-center">
         <h1 className="text-3xl font-bold">Your Profile</h1>
-        <p className="text-muted-foreground">Manage your account and preferences</p>
+        <p className="text-muted-foreground">
+          Manage your account and preferences
+        </p>
       </div>
 
       <div className="bg-card rounded-lg border p-6 space-y-6">

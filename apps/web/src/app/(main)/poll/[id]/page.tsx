@@ -5,13 +5,16 @@ import { generatePollMetaTags } from '@/lib/utils/meta-helpers';
 import PollViewClient from './PollViewClient';
 
 interface PollPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: PollPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PollPageProps): Promise<Metadata> {
   try {
-    const poll = await PollsService.getPollById(params.id);
-    
+    const { id } = await params;
+    const poll = await PollsService.getPollById(id);
+
     if (!poll) {
       return {
         title: 'Poll Not Found | ThisOrThat',
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: PollPageProps): Promise<Metad
     }
 
     const metaTags = generatePollMetaTags(poll);
-    
+
     return {
       title: metaTags.title,
       description: metaTags.description,
@@ -50,12 +53,13 @@ export async function generateMetadata({ params }: PollPageProps): Promise<Metad
 
 export default async function PollPage({ params }: PollPageProps) {
   try {
-    const poll = await PollsService.getPollById(params.id);
-    
+    const { id } = await params;
+    const poll = await PollsService.getPollById(id);
+
     if (!poll) {
       notFound();
     }
-    
+
     return <PollViewClient poll={poll} />;
   } catch (error) {
     console.error('Error fetching poll:', error);

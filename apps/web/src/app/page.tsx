@@ -1,4 +1,5 @@
 import { ArrowRight, BarChart3, Users, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -6,26 +7,26 @@ export default function Home() {
       {/* Hero Section */}
       <section className="text-center space-y-8">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-          Make Decisions{' '}
-          <span className="text-primary">Easier</span>
+          Make Decisions <span className="text-primary">Easier</span>
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Create quick polls, get instant feedback, and make better decisions with your community.
+          Create quick polls, get instant feedback, and make better decisions
+          with your community.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
+          <Link
             href="/poll/create"
             className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
           >
             Create Poll
             <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/polls"
             className="inline-flex items-center px-6 py-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
           >
             Browse Polls
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -55,7 +56,8 @@ export default function Home() {
           </div>
           <h3 className="text-xl font-semibold">Real-time Results</h3>
           <p className="text-muted-foreground">
-            See results update live as people vote and participate in discussions.
+            See results update live as people vote and participate in
+            discussions.
           </p>
         </div>
       </section>
@@ -64,15 +66,16 @@ export default function Home() {
       <section className="text-center space-y-6 bg-muted/50 rounded-lg p-8">
         <h2 className="text-3xl font-bold">Ready to Get Started?</h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Join thousands of people who use ThisOrThat to make better decisions every day.
+          Join thousands of people who use ThisOrThat to make better decisions
+          every day.
         </p>
-        <a
+        <Link
           href="/poll/create"
           className="inline-flex items-center px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
           Create Your First Poll
           <ArrowRight className="ml-2 h-4 w-4" />
-        </a>
+        </Link>
       </section>
     </div>
   );

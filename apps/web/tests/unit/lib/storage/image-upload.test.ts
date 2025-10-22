@@ -7,13 +7,13 @@ const mockSupabase = {
     from: vi.fn(() => ({
       upload: vi.fn(),
       getPublicUrl: vi.fn(),
-      remove: vi.fn()
-    }))
-  }
+      remove: vi.fn(),
+    })),
+  },
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('Image Upload', () => {
@@ -29,16 +29,16 @@ describe('Image Upload', () => {
 
       const mockUpload = vi.fn().mockResolvedValue({
         data: { path: 'test-poll-id-a.jpg' },
-        error: null
+        error: null,
       });
 
       const mockGetPublicUrl = vi.fn().mockReturnValue({
-        data: { publicUrl: 'https://example.com/test-poll-id-a.jpg' }
+        data: { publicUrl: 'https://example.com/test-poll-id-a.jpg' },
       });
 
       mockSupabase.storage.from.mockReturnValue({
         upload: mockUpload,
-        getPublicUrl: mockGetPublicUrl
+        getPublicUrl: mockGetPublicUrl,
       });
 
       const result = await uploadPollImage(file, pollId, option);
@@ -47,7 +47,7 @@ describe('Image Upload', () => {
       expect(result.url).toBe('https://example.com/test-poll-id-a.jpg');
       expect(mockUpload).toHaveBeenCalledWith('test-poll-id-a.jpg', file, {
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
       });
     });
 
@@ -58,12 +58,12 @@ describe('Image Upload', () => {
 
       const mockUpload = vi.fn().mockResolvedValue({
         data: null,
-        error: { message: 'Upload failed' }
+        error: { message: 'Upload failed' },
       });
 
       mockSupabase.storage.from.mockReturnValue({
         upload: mockUpload,
-        getPublicUrl: vi.fn()
+        getPublicUrl: vi.fn(),
       });
 
       const result = await uploadPollImage(file, pollId, option);
@@ -95,11 +95,11 @@ describe('Image Upload', () => {
 
       const mockRemove = vi.fn().mockResolvedValue({
         data: null,
-        error: null
+        error: null,
       });
 
       mockSupabase.storage.from.mockReturnValue({
-        remove: mockRemove
+        remove: mockRemove,
       });
 
       const result = await deletePollImage(pollId, option);
@@ -114,11 +114,11 @@ describe('Image Upload', () => {
 
       const mockRemove = vi.fn().mockResolvedValue({
         data: null,
-        error: { message: 'Delete failed' }
+        error: { message: 'Delete failed' },
       });
 
       mockSupabase.storage.from.mockReturnValue({
-        remove: mockRemove
+        remove: mockRemove,
       });
 
       const result = await deletePollImage(pollId, option);

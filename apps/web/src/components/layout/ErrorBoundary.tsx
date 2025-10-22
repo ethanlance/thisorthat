@@ -33,9 +33,12 @@ export default class ErrorBoundary extends Component<Props, State> {
         this.props.fallback || (
           <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
             <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">Something went wrong</h2>
+            <h2 className="text-2xl font-semibold mb-2">
+              Something went wrong
+            </h2>
             <p className="text-muted-foreground mb-6 max-w-md">
-              We encountered an unexpected error. Please try refreshing the page.
+              We encountered an unexpected error. Please try refreshing the
+              page.
             </p>
             <button
               onClick={() => window.location.reload()}

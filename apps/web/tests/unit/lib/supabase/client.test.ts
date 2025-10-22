@@ -32,7 +32,7 @@ describe('Supabase Client', () => {
   it('should create a client with correct configuration', async () => {
     const { createClient } = await import('@/lib/supabase/client');
     const client = createClient();
-    
+
     expect(client).toBeDefined();
     expect(client.supabaseUrl).toBe('https://test.supabase.co');
     expect(client.supabaseKey).toBe('test-anon-key');
@@ -41,7 +41,7 @@ describe('Supabase Client', () => {
   it('should have auth methods available', async () => {
     const { createClient } = await import('@/lib/supabase/client');
     const client = createClient();
-    
+
     expect(client.auth).toBeDefined();
     expect(typeof client.auth.signIn).toBe('function');
     expect(typeof client.auth.signOut).toBe('function');
@@ -51,7 +51,7 @@ describe('Supabase Client', () => {
   it('should have database methods available', async () => {
     const { createClient } = await import('@/lib/supabase/client');
     const client = createClient();
-    
+
     expect(client.from).toBeDefined();
     expect(typeof client.from).toBe('function');
   });

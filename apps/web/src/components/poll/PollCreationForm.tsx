@@ -8,43 +8,62 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert } from '@/components/ui/alert';
-import { Form, FormField, FormLabel, FormError, FormDescription } from '@/components/ui/form';
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormError,
+  FormDescription,
+} from '@/components/ui/form';
 import ImageUpload from '@/components/upload/ImageUpload';
 import { uploadPollImage } from '@/lib/storage/image-upload';
 import { PollsService } from '@/lib/services/polls';
-import { PollFormData, validatePollForm, validateField } from '@/lib/validation/poll-validation';
+import {
+  PollFormData,
+  validatePollForm,
+  validateField,
+} from '@/lib/validation/poll-validation';
 
 interface PollCreationFormProps {
   onSuccess?: (pollId: string) => void;
   onCancel?: () => void;
 }
 
-export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFormProps) {
+export default function PollCreationForm({
+  onSuccess,
+  onCancel,
+}: PollCreationFormProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  
+
   const [formData, setFormData] = useState<PollFormData>({
     optionAImage: null,
     optionBImage: null,
     optionALabel: '',
     optionBLabel: '',
-    description: ''
+    description: '',
   });
 
   const [uploadStatus, setUploadStatus] = useState({
-    optionA: { status: 'idle' as 'idle' | 'uploading' | 'success' | 'error', progress: 0 },
-    optionB: { status: 'idle' as 'idle' | 'uploading' | 'success' | 'error', progress: 0 }
+    optionA: {
+      status: 'idle' as 'idle' | 'uploading' | 'success' | 'error',
+      progress: 0,
+    },
+    optionB: {
+      status: 'idle' as 'idle' | 'uploading' | 'success' | 'error',
+      progress: 0,
+    },
   });
 
   const handleImageSelect = (option: 'a' | 'b') => (file: File) => {
     setFormData(prev => ({
       ...prev,
-      [`option${option.toUpperCase()}Image`]: file
+      [`option${option.toUpperCase()}Image`]: file,
     }));
-    
+
     // Clear field error when image is selected
     setFieldErrors(prev => {
       const newErrors = { ...prev };
@@ -53,17 +72,18 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
     });
   };
 
-  const handleImageUpload = async (option: 'a' | 'b') => async (url: string) => {
-    setUploadStatus(prev => ({
-      ...prev,
-      [`option${option.toUpperCase()}`]: { status: 'success', progress: 100 }
-    }));
-  };
+  const handleImageUpload =
+    async (option: 'a' | 'b') => async (url: string) => {
+      setUploadStatus(prev => ({
+        ...prev,
+        [`option${option.toUpperCase()}`]: { status: 'success', progress: 100 },
+      }));
+    };
 
   const handleImageError = (option: 'a' | 'b') => (error: string) => {
     setUploadStatus(prev => ({
       ...prev,
-      [`option${option.toUpperCase()}`]: { status: 'error', progress: 0 }
+      [`option${option.toUpperCase()}`]: { status: 'error', progress: 0 },
     }));
     setError(error);
   };
@@ -71,34 +91,34 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
   const handleImageRemove = (option: 'a' | 'b') => () => {
     setFormData(prev => ({
       ...prev,
-      [`option${option.toUpperCase()}Image`]: null
+      [`option${option.toUpperCase()}Image`]: null,
     }));
     setUploadStatus(prev => ({
       ...prev,
-      [`option${option.toUpperCase()}`]: { status: 'idle', progress: 0 }
+      [`option${option.toUpperCase()}`]: { status: 'idle', progress: 0 },
     }));
   };
 
-  const handleInputChange = (field: keyof PollFormData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value = e.target.value;
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Real-time validation
-    const fieldError = validateField(field, value);
-    setFieldErrors(prev => ({
-      ...prev,
-      [field]: fieldError || ''
-    }));
-  };
+  const handleInputChange =
+    (field: keyof PollFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setFormData(prev => ({
+        ...prev,
+        [field]: value,
+      }));
+
+      // Real-time validation
+      const fieldError = validateField(field, value);
+      setFieldErrors(prev => ({
+        ...prev,
+        [field]: fieldError || '',
+      }));
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       setError('You must be logged in to create a poll');
       return;
@@ -123,13 +143,13 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
         optionALabel: formData.optionALabel || undefined,
         optionBLabel: formData.optionBLabel || undefined,
         description: formData.description || undefined,
-        isPublic: true
+        isPublic: true,
       });
 
       // Upload images
       const [optionAResult, optionBResult] = await Promise.all([
         uploadPollImage(formData.optionAImage!, pollData.id, 'a'),
-        uploadPollImage(formData.optionBImage!, pollData.id, 'b')
+        uploadPollImage(formData.optionBImage!, pollData.id, 'b'),
       ]);
 
       if (!optionAResult.success || !optionBResult.success) {
@@ -161,10 +181,7 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
       <div className="max-w-2xl mx-auto">
         <Alert>
           <p>You must be logged in to create a poll.</p>
-          <Button 
-            onClick={() => router.push('/login')}
-            className="mt-2"
-          >
+          <Button onClick={() => router.push('/login')} className="mt-2">
             Sign In
           </Button>
         </Alert>
@@ -260,9 +277,7 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
 
         {/* Description */}
         <FormField>
-          <FormLabel htmlFor="description">
-            Description (optional)
-          </FormLabel>
+          <FormLabel htmlFor="description">Description (optional)</FormLabel>
           <Textarea
             id="description"
             value={formData.description}
@@ -281,11 +296,7 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
         </FormField>
 
         {/* Error Display */}
-        {error && (
-          <Alert variant="destructive">
-            {error}
-          </Alert>
-        )}
+        {error && <Alert variant="destructive">{error}</Alert>}
 
         {/* Submit Button */}
         <div className="flex justify-end space-x-4">
@@ -299,7 +310,9 @@ export default function PollCreationForm({ onSuccess, onCancel }: PollCreationFo
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting || !formData.optionAImage || !formData.optionBImage}
+            disabled={
+              isSubmitting || !formData.optionAImage || !formData.optionBImage
+            }
           >
             {isSubmitting ? 'Creating Poll...' : 'Create Poll'}
           </Button>

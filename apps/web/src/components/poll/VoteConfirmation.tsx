@@ -14,13 +14,13 @@ interface VoteConfirmationProps {
   className?: string;
 }
 
-export default function VoteConfirmation({ 
-  choice, 
-  optionLabel, 
+export default function VoteConfirmation({
+  choice,
+  optionLabel,
   onClose,
   onShare,
   showShareButton = true,
-  className 
+  className,
 }: VoteConfirmationProps) {
   // Auto-close after 3 seconds if no interaction
   useEffect(() => {
@@ -44,24 +44,29 @@ export default function VoteConfirmation({
   };
 
   return (
-    <div className={cn(
-      'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4',
-      className
-    )}>
+    <div
+      className={cn(
+        'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4',
+        className
+      )}
+    >
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm w-full text-center shadow-xl">
         {/* Success Icon */}
         <div className="mb-4">
           <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
-          
+
           {/* Success Message */}
           <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
             Vote Submitted!
           </h3>
-          
+
           <p className="text-gray-600 dark:text-gray-300 mb-4">
-            You voted for <strong className="text-gray-900 dark:text-gray-100">{optionLabel}</strong>
+            You voted for{' '}
+            <strong className="text-gray-900 dark:text-gray-100">
+              {optionLabel}
+            </strong>
           </p>
         </div>
 
@@ -77,11 +82,8 @@ export default function VoteConfirmation({
               Share Poll
             </Button>
           )}
-          
-          <Button 
-            onClick={onClose} 
-            className="w-full"
-          >
+
+          <Button onClick={onClose} className="w-full">
             Continue
           </Button>
         </div>

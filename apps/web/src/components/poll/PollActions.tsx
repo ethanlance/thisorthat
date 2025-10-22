@@ -16,12 +16,12 @@ interface PollActionsProps {
   className?: string;
 }
 
-export default function PollActions({ 
-  poll, 
-  onDelete, 
-  onShare, 
+export default function PollActions({
+  poll,
+  onDelete,
+  onShare,
   onView,
-  className 
+  className,
 }: PollActionsProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -33,15 +33,15 @@ export default function PollActions({
     try {
       setIsSharing(true);
       setShareSuccess(false);
-      
+
       const shareUrl = DashboardService.getPollShareUrl(poll.id);
-      
+
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
         setShareSuccess(true);
         setTimeout(() => setShareSuccess(false), 2000);
       }
-      
+
       onShare?.(poll.id);
       setShowMenu(false);
     } catch (error) {
@@ -85,15 +85,15 @@ export default function PollActions({
       >
         <MoreHorizontal className="h-4 w-4" />
       </Button>
-      
+
       {showMenu && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-10" 
+          <div
+            className="fixed inset-0 z-10"
             onClick={() => setShowMenu(false)}
           />
-          
+
           {/* Menu */}
           <div className="absolute right-0 top-9 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-20 min-w-[160px]">
             <div className="py-1">
@@ -104,7 +104,7 @@ export default function PollActions({
                 <Eye className="h-4 w-4" />
                 View Poll
               </button>
-              
+
               <button
                 onClick={handleShare}
                 disabled={isSharing}
@@ -117,9 +117,9 @@ export default function PollActions({
                 )}
                 {shareSuccess ? 'Copied!' : 'Share Poll'}
               </button>
-              
+
               <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
-              
+
               <button
                 onClick={() => setShowDeleteDialog(true)}
                 className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 text-red-600 dark:text-red-400"
@@ -131,16 +131,17 @@ export default function PollActions({
           </div>
         </>
       )}
-      
+
       {/* Delete Confirmation Dialog */}
       {showDeleteDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-30 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-2">Delete Poll</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Are you sure you want to delete this poll? This action cannot be undone and will remove all votes and comments.
+              Are you sure you want to delete this poll? This action cannot be
+              undone and will remove all votes and comments.
             </p>
-            
+
             <div className="flex gap-3 justify-end">
               <Button
                 variant="outline"

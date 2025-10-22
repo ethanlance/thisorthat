@@ -10,7 +10,7 @@ vi.mock('@/lib/services/polls');
 vi.mock('@/lib/services/votes');
 vi.mock('@/contexts/AuthContext');
 vi.mock('next/navigation', () => ({
-  notFound: vi.fn()
+  notFound: vi.fn(),
 }));
 
 describe('Poll Viewing Integration', () => {
@@ -30,14 +30,17 @@ describe('Poll Viewing Integration', () => {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     vote_counts: { option_a: 5, option_b: 3 },
-    user_vote: null
+    user_vote: null,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     (useAuth as any).mockReturnValue({ user: mockUser });
     (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (VotesService.submitVote as any).mockResolvedValue({ success: true, voteId: 'vote-123' });
+    (VotesService.submitVote as any).mockResolvedValue({
+      success: true,
+      voteId: 'vote-123',
+    });
   });
 
   it('renders poll view page with all elements', async () => {
@@ -84,7 +87,7 @@ describe('Poll Viewing Integration', () => {
     const closedPoll = {
       ...mockPoll,
       status: 'closed',
-      expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+      expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     };
     (PollsService.getPollById as any).mockResolvedValue(closedPoll);
 
@@ -102,7 +105,7 @@ describe('Poll Viewing Integration', () => {
   it('displays poll results with vote counts', async () => {
     const pollWithVotes = {
       ...mockPoll,
-      user_vote: 'option_a'
+      user_vote: 'option_a',
     };
     (PollsService.getPollById as any).mockResolvedValue(pollWithVotes);
 
@@ -127,9 +130,9 @@ describe('Poll Viewing Integration', () => {
   });
 
   it('handles voting errors gracefully', async () => {
-    (VotesService.submitVote as any).mockResolvedValue({ 
-      success: false, 
-      error: 'Vote failed' 
+    (VotesService.submitVote as any).mockResolvedValue({
+      success: false,
+      error: 'Vote failed',
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -170,7 +173,7 @@ describe('Poll Viewing Integration', () => {
         pollId: mockPollId,
         choice: 'option_a',
         userId: undefined,
-        anonymousId: expect.stringMatching(/^anon_\d+_[a-z0-9]+$/)
+        anonymousId: expect.stringMatching(/^anon_\d+_[a-z0-9]+$/),
       });
     });
   });
@@ -189,8 +192,8 @@ describe('Poll Viewing Integration', () => {
     // Mock clipboard API
     Object.assign(navigator, {
       clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined)
-      }
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -212,7 +215,9 @@ describe('Poll Viewing Integration', () => {
     render(<PollPage params={{ id: mockPollId }} />);
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Refresh' })
+      ).toBeInTheDocument();
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
@@ -225,7 +230,7 @@ describe('Poll Viewing Integration', () => {
     const mockBack = vi.fn();
     Object.defineProperty(window, 'history', {
       value: { back: mockBack },
-      writable: true
+      writable: true,
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -245,11 +250,17 @@ describe('Poll Viewing Integration', () => {
     await waitFor(() => {
       const pizzaImage = screen.getByAltText('Pizza');
       const burgerImage = screen.getByAltText('Burger');
-      
+
       expect(pizzaImage).toBeInTheDocument();
       expect(burgerImage).toBeInTheDocument();
-      expect(pizzaImage).toHaveAttribute('src', 'https://example.com/image-a.jpg');
-      expect(burgerImage).toHaveAttribute('src', 'https://example.com/image-b.jpg');
+      expect(pizzaImage).toHaveAttribute(
+        'src',
+        'https://example.com/image-a.jpg'
+      );
+      expect(burgerImage).toHaveAttribute(
+        'src',
+        'https://example.com/image-b.jpg'
+      );
     });
   });
 
@@ -257,7 +268,7 @@ describe('Poll Viewing Integration', () => {
     const pollWithoutLabels = {
       ...mockPoll,
       option_a_label: null,
-      option_b_label: null
+      option_b_label: null,
     };
     (PollsService.getPollById as any).mockResolvedValue(pollWithoutLabels);
 
@@ -272,14 +283,16 @@ describe('Poll Viewing Integration', () => {
   it('handles polls without description', async () => {
     const pollWithoutDescription = {
       ...mockPoll,
-      description: null
+      description: null,
     };
     (PollsService.getPollById as any).mockResolvedValue(pollWithoutDescription);
 
     render(<PollPage params={{ id: mockPollId }} />);
 
     await waitFor(() => {
-      expect(screen.queryByText('What to eat for lunch?')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('What to eat for lunch?')
+      ).not.toBeInTheDocument();
     });
   });
 });

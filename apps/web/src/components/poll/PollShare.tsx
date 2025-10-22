@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Share2, Twitter, Facebook, MessageCircle, Send, Copy, Check } from 'lucide-react';
+import {
+  Share2,
+  Twitter,
+  Facebook,
+  MessageCircle,
+  Send,
+  Copy,
+  Check,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PollShareProps {
@@ -11,18 +19,18 @@ interface PollShareProps {
   className?: string;
 }
 
-export default function PollShare({ 
-  pollId, 
-  pollTitle, 
+export default function PollShare({
+  pollId,
+  pollTitle,
   pollDescription,
   pollImages,
-  className 
+  className,
 }: PollShareProps) {
   const [shareSuccess, setShareSuccess] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
 
   const shareUrl = `${window.location.origin}/poll/${pollId}`;
-  const shareText = pollDescription 
+  const shareText = pollDescription
     ? `${pollTitle}: ${pollDescription}`
     : pollTitle;
 
@@ -32,7 +40,7 @@ export default function PollShare({
         await navigator.share({
           title: pollTitle,
           text: shareText,
-          url: shareUrl
+          url: shareUrl,
         });
         await trackShare(pollId, 'native');
       } else {
@@ -59,12 +67,12 @@ export default function PollShare({
   const handleSocialShare = (platform: string) => {
     const encodedUrl = encodeURIComponent(shareUrl);
     const encodedText = encodeURIComponent(shareText);
-    
+
     const shareUrls = {
       twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
       whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
-      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
     };
 
     if (shareUrls[platform]) {
@@ -84,10 +92,10 @@ export default function PollShare({
         body: JSON.stringify({
           pollId,
           method,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         }),
       });
-      
+
       if (!response.ok) {
         console.warn('Failed to track share analytics');
       }
@@ -174,9 +182,7 @@ export default function PollShare({
         </div>
       )}
       {shareError && (
-        <div className="text-center text-sm text-red-600">
-          {shareError}
-        </div>
+        <div className="text-center text-sm text-red-600">{shareError}</div>
       )}
     </div>
   );

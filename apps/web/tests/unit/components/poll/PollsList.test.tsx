@@ -72,17 +72,17 @@ describe('PollsList', () => {
 
   it('should render loading state initially', () => {
     (PollsService.getPollsByStatus as any).mockResolvedValue([]);
-    
+
     render(<PollsList />);
-    
+
     expect(screen.getByText('Loading polls...')).toBeInTheDocument();
   });
 
   it('should render polls when loaded', async () => {
     (PollsService.getPollsByStatus as any).mockResolvedValue(mockPolls);
-    
+
     render(<PollsList />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Pizza')).toBeInTheDocument();
       expect(screen.getByText('Burger')).toBeInTheDocument();
@@ -93,31 +93,39 @@ describe('PollsList', () => {
 
   it('should render empty state when no polls', async () => {
     (PollsService.getPollsByStatus as any).mockResolvedValue([]);
-    
+
     render(<PollsList />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('No polls found')).toBeInTheDocument();
-      expect(screen.getByText('There are no active polls at the moment. Check back later or create your own!')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'There are no active polls at the moment. Check back later or create your own!'
+        )
+      ).toBeInTheDocument();
     });
   });
 
   it('should render error state when fetch fails', async () => {
-    (PollsService.getPollsByStatus as any).mockRejectedValue(new Error('Failed to fetch'));
-    
+    (PollsService.getPollsByStatus as any).mockRejectedValue(
+      new Error('Failed to fetch')
+    );
+
     render(<PollsList />);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Failed to load polls. Please try again.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load polls. Please try again.')
+      ).toBeInTheDocument();
       expect(screen.getByText('Try Again')).toBeInTheDocument();
     });
   });
 
   it('should show correct vote counts and percentages', async () => {
     (PollsService.getPollsByStatus as any).mockResolvedValue([mockPolls[0]]);
-    
+
     render(<PollsList />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('8 votes')).toBeInTheDocument();
       expect(screen.getByText('63%')).toBeInTheDocument();
@@ -127,9 +135,9 @@ describe('PollsList', () => {
 
   it('should show correct poll status badges', async () => {
     (PollsService.getPollsByStatus as any).mockResolvedValue(mockPolls);
-    
+
     render(<PollsList />);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Active')).toBeInTheDocument();
       expect(screen.getByText('Closed')).toBeInTheDocument();

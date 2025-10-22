@@ -16,14 +16,14 @@ const mockSupabase = {
   channel: vi.fn(() => ({
     on: vi.fn(() => ({
       subscribe: vi.fn(() => ({
-        unsubscribe: vi.fn()
-      }))
-    }))
-  }))
+        unsubscribe: vi.fn(),
+      })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('usePoll', () => {
@@ -43,14 +43,17 @@ describe('usePoll', () => {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     vote_counts: { option_a: 5, option_b: 3 },
-    user_vote: null
+    user_vote: null,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     (useAuth as any).mockReturnValue({ user: mockUser });
     (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (VotesService.submitVote as any).mockResolvedValue({ success: true, voteId: 'vote-123' });
+    (VotesService.submitVote as any).mockResolvedValue({
+      success: true,
+      voteId: 'vote-123',
+    });
   });
 
   it('should fetch poll data on mount', async () => {
@@ -65,7 +68,10 @@ describe('usePoll', () => {
     expect(result.current.poll).toEqual(mockPoll);
     expect(result.current.hasVoted).toBe(false);
     expect(result.current.userVote).toBeNull();
-    expect(PollsService.getPollById).toHaveBeenCalledWith(mockPollId, mockUser.id);
+    expect(PollsService.getPollById).toHaveBeenCalledWith(
+      mockPollId,
+      mockUser.id
+    );
   });
 
   it('should handle poll not found', async () => {
@@ -113,7 +119,7 @@ describe('usePoll', () => {
       pollId: mockPollId,
       choice: 'option_a',
       userId: mockUser.id,
-      anonymousId: undefined
+      anonymousId: undefined,
     });
   });
 
@@ -137,14 +143,14 @@ describe('usePoll', () => {
       pollId: mockPollId,
       choice: 'option_b',
       userId: undefined,
-      anonymousId: expect.stringMatching(/^anon_\d+_[a-z0-9]+$/)
+      anonymousId: expect.stringMatching(/^anon_\d+_[a-z0-9]+$/),
     });
   });
 
   it('should handle voting errors', async () => {
-    (VotesService.submitVote as any).mockResolvedValue({ 
-      success: false, 
-      error: 'Vote failed' 
+    (VotesService.submitVote as any).mockResolvedValue({
+      success: false,
+      error: 'Vote failed',
     });
 
     const { result } = renderHook(() => usePoll(mockPollId));
@@ -238,7 +244,7 @@ describe('usePoll', () => {
         event: '*',
         schema: 'public',
         table: 'polls',
-        filter: `id=eq.${mockPollId}`
+        filter: `id=eq.${mockPollId}`,
       }),
       expect.any(Function)
     );
@@ -262,7 +268,7 @@ describe('usePoll', () => {
     const payload = {
       eventType: 'UPDATE',
       new: updatedPoll,
-      old: mockPoll
+      old: mockPoll,
     };
 
     act(() => {
@@ -286,7 +292,7 @@ describe('usePoll', () => {
     // Simulate new vote
     const payload = {
       eventType: 'INSERT',
-      new: { choice: 'option_a' }
+      new: { choice: 'option_a' },
     };
 
     act(() => {
@@ -311,7 +317,7 @@ describe('usePoll', () => {
     // Simulate poll deletion
     const payload = {
       eventType: 'DELETE',
-      old: mockPoll
+      old: mockPoll,
     };
 
     act(() => {

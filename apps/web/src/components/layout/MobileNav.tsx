@@ -2,7 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, Home, BarChart3, User, LogOut, Plus, Info } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Home,
+  BarChart3,
+  User,
+  LogOut,
+  Plus,
+  Info,
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 
@@ -44,12 +53,12 @@ export default function MobileNav() {
       {isOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/50" 
+          <div
+            className="fixed inset-0 bg-black/50"
             onClick={closeMenu}
             aria-hidden="true"
           />
-          
+
           {/* Menu panel */}
           <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-background border-l shadow-lg">
             <div className="flex flex-col h-full">
@@ -76,7 +85,7 @@ export default function MobileNav() {
                   <Home className="h-5 w-5" />
                   <span>Home</span>
                 </Link>
-                
+
                 <Link
                   href="/polls"
                   className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
@@ -105,7 +114,7 @@ export default function MobileNav() {
                       <Plus className="h-5 w-5" />
                       <span>Create Poll</span>
                     </Link>
-                    
+
                     <Link
                       href="/profile"
                       className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
@@ -135,7 +144,7 @@ export default function MobileNav() {
                         </p>
                       </div>
                     </div>
-                    
+
                     <Button
                       variant="outline"
                       onClick={handleSignOut}
@@ -147,9 +156,7 @@ export default function MobileNav() {
                   </div>
                 ) : (
                   <Link href="/login" onClick={closeMenu}>
-                    <Button className="w-full">
-                      Sign In
-                    </Button>
+                    <Button className="w-full">Sign In</Button>
                   </Link>
                 )}
               </div>

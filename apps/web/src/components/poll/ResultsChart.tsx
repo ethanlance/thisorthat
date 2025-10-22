@@ -8,15 +8,17 @@ interface ResultsChartProps {
   className?: string;
 }
 
-export default function ResultsChart({ 
-  voteCounts, 
-  optionLabels, 
+export default function ResultsChart({
+  voteCounts,
+  optionLabels,
   pollStatus,
-  className 
+  className,
 }: ResultsChartProps) {
   const totalVotes = voteCounts.option_a + voteCounts.option_b;
-  const optionAPercentage = totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
-  const optionBPercentage = totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
+  const optionAPercentage =
+    totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
+  const optionBPercentage =
+    totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -37,13 +39,15 @@ export default function ResultsChart({
             <span className="font-medium">{optionLabels.option_a}</span>
             <div className="text-right">
               <div className="text-lg font-bold">{voteCounts.option_a}</div>
-              <div className="text-sm text-muted-foreground">{optionAPercentage}%</div>
+              <div className="text-sm text-muted-foreground">
+                {optionAPercentage}%
+              </div>
             </div>
           </div>
-          <AnimatedProgressBar 
-            value={voteCounts.option_a} 
-            max={totalVotes} 
-            color="bg-blue-500" 
+          <AnimatedProgressBar
+            value={voteCounts.option_a}
+            max={totalVotes}
+            color="bg-blue-500"
           />
         </div>
 
@@ -53,13 +57,15 @@ export default function ResultsChart({
             <span className="font-medium">{optionLabels.option_b}</span>
             <div className="text-right">
               <div className="text-lg font-bold">{voteCounts.option_b}</div>
-              <div className="text-sm text-muted-foreground">{optionBPercentage}%</div>
+              <div className="text-sm text-muted-foreground">
+                {optionBPercentage}%
+              </div>
             </div>
           </div>
-          <AnimatedProgressBar 
-            value={voteCounts.option_b} 
-            max={totalVotes} 
-            color="bg-red-500" 
+          <AnimatedProgressBar
+            value={voteCounts.option_b}
+            max={totalVotes}
+            color="bg-red-500"
           />
         </div>
       </div>
@@ -68,12 +74,20 @@ export default function ResultsChart({
       <div className="bg-muted rounded-lg p-4">
         <div className="grid grid-cols-2 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">{voteCounts.option_a}</div>
-            <div className="text-sm text-muted-foreground">{optionLabels.option_a}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {voteCounts.option_a}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {optionLabels.option_a}
+            </div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-red-600">{voteCounts.option_b}</div>
-            <div className="text-sm text-muted-foreground">{optionLabels.option_b}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {voteCounts.option_b}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {optionLabels.option_b}
+            </div>
           </div>
         </div>
       </div>

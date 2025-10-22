@@ -27,8 +27,8 @@ describe('PollShare', () => {
     pollDescription: 'Test Description',
     pollImages: {
       option_a: 'https://example.com/image-a.jpg',
-      option_b: 'https://example.com/image-b.jpg'
-    }
+      option_b: 'https://example.com/image-b.jpg',
+    },
   };
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('PollShare', () => {
 
   it('should render share button and social media options', () => {
     render(<PollShare {...defaultProps} />);
-    
+
     expect(screen.getByText('Share Poll')).toBeInTheDocument();
     expect(screen.getByText('Twitter')).toBeInTheDocument();
     expect(screen.getByText('Facebook')).toBeInTheDocument();
@@ -52,17 +52,17 @@ describe('PollShare', () => {
   it('should use native share when available', async () => {
     mockShare.mockResolvedValue(undefined);
     (global.fetch as vi.Mock).mockResolvedValue({ ok: true });
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     await waitFor(() => {
       expect(mockShare).toHaveBeenCalledWith({
         title: 'Test Poll',
         text: 'Test Poll: Test Description',
-        url: expect.stringContaining('/poll/test-poll-123')
+        url: expect.stringContaining('/poll/test-poll-123'),
       });
     });
   });
@@ -72,33 +72,33 @@ describe('PollShare', () => {
       value: undefined,
       writable: true,
     });
-    
+
     mockWriteText.mockResolvedValue(undefined);
     (global.fetch as vi.Mock).mockResolvedValue({ ok: true });
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalledWith(
         expect.stringContaining('/poll/test-poll-123')
       );
     });
-    
+
     expect(screen.getByText('Link Copied!')).toBeInTheDocument();
   });
 
   it('should handle social media sharing', async () => {
     const mockOpen = vi.fn();
     window.open = mockOpen;
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const twitterButton = screen.getByText('Twitter');
     fireEvent.click(twitterButton);
-    
+
     expect(mockOpen).toHaveBeenCalledWith(
       expect.stringContaining('twitter.com/intent/tweet'),
       '_blank',
@@ -109,30 +109,30 @@ describe('PollShare', () => {
   it('should handle copy link functionality', async () => {
     mockWriteText.mockResolvedValue(undefined);
     (global.fetch as vi.Mock).mockResolvedValue({ ok: true });
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const copyButton = screen.getByText('Copy Link');
     fireEvent.click(copyButton);
-    
+
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalledWith(
         expect.stringContaining('/poll/test-poll-123')
       );
     });
-    
+
     expect(screen.getByText('Link Copied!')).toBeInTheDocument();
   });
 
   it('should track share analytics', async () => {
     mockShare.mockResolvedValue(undefined);
     (global.fetch as vi.Mock).mockResolvedValue({ ok: true });
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/api/analytics/share', {
         method: 'POST',
@@ -142,7 +142,7 @@ describe('PollShare', () => {
         body: JSON.stringify({
           pollId: 'test-poll-123',
           method: 'native',
-          timestamp: expect.any(String)
+          timestamp: expect.any(String),
         }),
       });
     });
@@ -150,12 +150,12 @@ describe('PollShare', () => {
 
   it('should handle share errors gracefully', async () => {
     mockShare.mockRejectedValue(new Error('Share failed'));
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     // Should not throw error
     await waitFor(() => {
       expect(mockShare).toHaveBeenCalled();
@@ -167,14 +167,14 @@ describe('PollShare', () => {
       value: undefined,
       writable: true,
     });
-    
+
     mockWriteText.mockRejectedValue(new Error('Clipboard failed'));
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     // Should not throw error
     await waitFor(() => {
       expect(mockWriteText).toHaveBeenCalled();
@@ -183,26 +183,28 @@ describe('PollShare', () => {
 
   it('should apply custom className', () => {
     render(<PollShare {...defaultProps} className="custom-class" />);
-    
-    const container = screen.getByText('Share Poll').closest('div')?.parentElement;
+
+    const container = screen
+      .getByText('Share Poll')
+      .closest('div')?.parentElement;
     expect(container).toHaveClass('custom-class');
   });
 
   it('should generate correct share text without description', () => {
     const propsWithoutDescription = {
       ...defaultProps,
-      pollDescription: undefined
+      pollDescription: undefined,
     };
-    
+
     render(<PollShare {...propsWithoutDescription} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     expect(mockShare).toHaveBeenCalledWith({
       title: 'Test Poll',
       text: 'Test Poll',
-      url: expect.stringContaining('/poll/test-poll-123')
+      url: expect.stringContaining('/poll/test-poll-123'),
     });
   });
 
@@ -211,18 +213,20 @@ describe('PollShare', () => {
       value: undefined,
       writable: true,
     });
-    
+
     mockWriteText.mockResolvedValue(undefined);
-    
+
     render(<PollShare {...defaultProps} />);
-    
+
     const shareButton = screen.getByText('Share Poll');
     fireEvent.click(shareButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText('Link Copied!')).toBeInTheDocument();
     });
-    
-    expect(screen.getByText('Poll link copied to clipboard!')).toBeInTheDocument();
+
+    expect(
+      screen.getByText('Poll link copied to clipboard!')
+    ).toBeInTheDocument();
   });
 });

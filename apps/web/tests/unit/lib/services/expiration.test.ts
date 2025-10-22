@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { 
+import {
   checkAndUpdateExpiredPolls,
   getPollStatus,
   isPollExpired,
@@ -9,7 +9,7 @@ import {
   getExpirationWarningLevel,
   closePoll,
   getPollsExpiringSoon,
-  TimeLeft
+  TimeLeft,
 } from '@/lib/services/expiration';
 import { Poll } from '@/lib/supabase/types';
 
@@ -19,24 +19,24 @@ const mockSupabase = {
     update: vi.fn(() => ({
       lt: vi.fn(() => ({
         eq: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({ data: [], error: null }))
-        }))
-      }))
+          select: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        })),
+      })),
     })),
     select: vi.fn(() => ({
       eq: vi.fn(() => ({
         gte: vi.fn(() => ({
           lte: vi.fn(() => ({
-            order: vi.fn(() => Promise.resolve({ data: [], error: null }))
-          }))
-        }))
-      }))
-    }))
-  }))
+            order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('expiration service', () => {
@@ -53,7 +53,7 @@ describe('expiration service', () => {
     status: 'active',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    ...overrides
+    ...overrides,
   });
 
   beforeEach(() => {
@@ -65,11 +65,11 @@ describe('expiration service', () => {
       const mockData = [{ id: 'poll-1' }, { id: 'poll-2' }];
       mockSupabase.from().update().lt().eq().select.mockResolvedValue({
         data: mockData,
-        error: null
+        error: null,
       });
 
       const result = await checkAndUpdateExpiredPolls();
-      
+
       expect(result).toBe(2);
       expect(mockSupabase.from).toHaveBeenCalledWith('polls');
     });
@@ -78,10 +78,12 @@ describe('expiration service', () => {
       const mockError = new Error('Database error');
       mockSupabase.from().update().lt().eq().select.mockResolvedValue({
         data: null,
-        error: mockError
+        error: mockError,
       });
 
-      await expect(checkAndUpdateExpiredPolls()).rejects.toThrow('Database error');
+      await expect(checkAndUpdateExpiredPolls()).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -98,18 +100,20 @@ describe('expiration service', () => {
 
     it('should return closed for expired active polls', () => {
       const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // 24 hours ago
-      const poll = createMockPoll({ 
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: pastDate
+        expires_at: pastDate,
       });
       expect(getPollStatus(poll)).toBe('closed');
     });
 
     it('should return active for non-expired active polls', () => {
-      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours from now
-      const poll = createMockPoll({ 
+      const futureDate = new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toISOString(); // 24 hours from now
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: futureDate
+        expires_at: futureDate,
       });
       expect(getPollStatus(poll)).toBe('active');
     });
@@ -118,18 +122,20 @@ describe('expiration service', () => {
   describe('isPollExpired', () => {
     it('should return true for expired polls', () => {
       const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const poll = createMockPoll({ 
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: pastDate
+        expires_at: pastDate,
       });
       expect(isPollExpired(poll)).toBe(true);
     });
 
     it('should return false for active polls', () => {
-      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      const poll = createMockPoll({ 
+      const futureDate = new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toISOString();
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: futureDate
+        expires_at: futureDate,
       });
       expect(isPollExpired(poll)).toBe(false);
     });
@@ -137,19 +143,21 @@ describe('expiration service', () => {
 
   describe('isPollActive', () => {
     it('should return true for active non-expired polls', () => {
-      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      const poll = createMockPoll({ 
+      const futureDate = new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toISOString();
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: futureDate
+        expires_at: futureDate,
       });
       expect(isPollActive(poll)).toBe(true);
     });
 
     it('should return false for expired polls', () => {
       const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const poll = createMockPoll({ 
+      const poll = createMockPoll({
         status: 'active',
-        expires_at: pastDate
+        expires_at: pastDate,
       });
       expect(isPollActive(poll)).toBe(false);
     });
@@ -162,15 +170,21 @@ describe('expiration service', () => {
     });
 
     it('should calculate time left correctly', () => {
-      const futureDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000 + 30 * 60 * 1000 + 45 * 1000).toISOString();
+      const futureDate = new Date(
+        Date.now() +
+          2 * 24 * 60 * 60 * 1000 +
+          3 * 60 * 60 * 1000 +
+          30 * 60 * 1000 +
+          45 * 1000
+      ).toISOString();
       const result = calculateTimeLeft(futureDate);
-      
+
       expect(result).toEqual({
         days: 2,
         hours: 3,
         minutes: 30,
         seconds: 45,
-        total: expect.any(Number)
+        total: expect.any(Number),
       });
     });
   });
@@ -182,7 +196,7 @@ describe('expiration service', () => {
         hours: 3,
         minutes: 30,
         seconds: 45,
-        total: 0
+        total: 0,
       };
       expect(formatTimeLeft(timeLeft)).toBe('2d 3h 30m');
     });
@@ -193,7 +207,7 @@ describe('expiration service', () => {
         hours: 3,
         minutes: 30,
         seconds: 45,
-        total: 0
+        total: 0,
       };
       expect(formatTimeLeft(timeLeft)).toBe('3h 30m 45s');
     });
@@ -204,7 +218,7 @@ describe('expiration service', () => {
         hours: 0,
         minutes: 30,
         seconds: 45,
-        total: 0
+        total: 0,
       };
       expect(formatTimeLeft(timeLeft)).toBe('30m 45s');
     });
@@ -215,7 +229,7 @@ describe('expiration service', () => {
         hours: 0,
         minutes: 0,
         seconds: 45,
-        total: 0
+        total: 0,
       };
       expect(formatTimeLeft(timeLeft)).toBe('45s');
     });
@@ -228,7 +242,7 @@ describe('expiration service', () => {
         hours: 0,
         minutes: 3,
         seconds: 0,
-        total: 3 * 60 * 1000
+        total: 3 * 60 * 1000,
       };
       expect(getExpirationWarningLevel(timeLeft)).toBe('critical');
     });
@@ -239,7 +253,7 @@ describe('expiration service', () => {
         hours: 0,
         minutes: 15,
         seconds: 0,
-        total: 15 * 60 * 1000
+        total: 15 * 60 * 1000,
       };
       expect(getExpirationWarningLevel(timeLeft)).toBe('warning');
     });
@@ -250,7 +264,7 @@ describe('expiration service', () => {
         hours: 1,
         minutes: 0,
         seconds: 0,
-        total: 60 * 60 * 1000
+        total: 60 * 60 * 1000,
       };
       expect(getExpirationWarningLevel(timeLeft)).toBe('none');
     });
@@ -263,18 +277,18 @@ describe('expiration service', () => {
   describe('closePoll', () => {
     it('should close a specific poll', async () => {
       mockSupabase.from().update().eq.mockResolvedValue({
-        error: null
+        error: null,
       });
 
       await closePoll('poll-123');
-      
+
       expect(mockSupabase.from).toHaveBeenCalledWith('polls');
     });
 
     it('should handle errors when closing poll', async () => {
       const mockError = new Error('Database error');
       mockSupabase.from().update().eq.mockResolvedValue({
-        error: mockError
+        error: mockError,
       });
 
       await expect(closePoll('poll-123')).rejects.toThrow('Database error');
@@ -286,11 +300,11 @@ describe('expiration service', () => {
       const mockPolls = [createMockPoll(), createMockPoll({ id: 'poll-456' })];
       mockSupabase.from().select().eq().gte().lte().order.mockResolvedValue({
         data: mockPolls,
-        error: null
+        error: null,
       });
 
       const result = await getPollsExpiringSoon();
-      
+
       expect(result).toEqual(mockPolls);
       expect(mockSupabase.from).toHaveBeenCalledWith('polls');
     });
@@ -299,7 +313,7 @@ describe('expiration service', () => {
       const mockError = new Error('Database error');
       mockSupabase.from().select().eq().gte().lte().order.mockResolvedValue({
         data: null,
-        error: mockError
+        error: mockError,
       });
 
       await expect(getPollsExpiringSoon()).rejects.toThrow('Database error');

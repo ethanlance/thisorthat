@@ -8,31 +8,35 @@ const mockSupabase = {
       eq: vi.fn(() => ({
         eq: vi.fn(() => ({
           order: vi.fn(() => ({
-            ascending: vi.fn(() => Promise.resolve({ data: [], error: null }))
-          }))
-        }))
-      }))
+            ascending: vi.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      })),
     })),
     insert: vi.fn(() => ({
       select: vi.fn(() => ({
-        single: vi.fn(() => Promise.resolve({ data: { id: 'poll-123' }, error: null }))
-      }))
+        single: vi.fn(() =>
+          Promise.resolve({ data: { id: 'poll-123' }, error: null })
+        ),
+      })),
     })),
     update: vi.fn(() => ({
       eq: vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({ data: { id: 'poll-123' }, error: null }))
-        }))
-      }))
+          single: vi.fn(() =>
+            Promise.resolve({ data: { id: 'poll-123' }, error: null })
+          ),
+        })),
+      })),
     })),
     delete: vi.fn(() => ({
-      eq: vi.fn(() => Promise.resolve({ error: null }))
-    }))
-  }))
+      eq: vi.fn(() => Promise.resolve({ error: null })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('PollsService', () => {
@@ -44,28 +48,42 @@ describe('PollsService', () => {
     it('should fetch public polls successfully', async () => {
       const mockPolls = [
         { id: 'poll-1', is_public: true, status: 'active' },
-        { id: 'poll-2', is_public: true, status: 'active' }
+        { id: 'poll-2', is_public: true, status: 'active' },
       ];
-      
-      mockSupabase.from().select().eq().eq().order().ascending.mockResolvedValue({
-        data: mockPolls,
-        error: null
-      });
+
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .order()
+        .ascending.mockResolvedValue({
+          data: mockPolls,
+          error: null,
+        });
 
       const result = await PollsService.getPublicPolls();
-      
+
       expect(result).toEqual(mockPolls);
       expect(mockSupabase.from).toHaveBeenCalledWith('polls');
     });
 
     it('should throw error when fetch fails', async () => {
       const mockError = new Error('Database error');
-      mockSupabase.from().select().eq().eq().order().ascending.mockResolvedValue({
-        data: null,
-        error: mockError
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .order()
+        .ascending.mockResolvedValue({
+          data: null,
+          error: mockError,
+        });
 
-      await expect(PollsService.getPublicPolls()).rejects.toThrow('Database error');
+      await expect(PollsService.getPublicPolls()).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -75,48 +93,52 @@ describe('PollsService', () => {
       const mockVotes = [
         { choice: 'option_a' },
         { choice: 'option_a' },
-        { choice: 'option_b' }
+        { choice: 'option_b' },
       ];
       const mockUserVote = { choice: 'option_a' };
 
       // Mock poll fetch
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockPoll,
-        error: null
+        error: null,
       });
 
       // Mock votes fetch
       mockSupabase.from().select().eq.mockResolvedValue({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       // Mock user vote fetch
       mockSupabase.from().select().eq().eq().single.mockResolvedValue({
         data: mockUserVote,
-        error: null
+        error: null,
       });
 
       const result = await PollsService.getPollById('poll-123', 'user-123');
-      
+
       expect(result).toEqual({
         ...mockPoll,
         vote_counts: {
           option_a: 2,
-          option_b: 1
+          option_b: 1,
         },
-        user_vote: 'option_a'
+        user_vote: 'option_a',
       });
     });
 
     it('should return null when poll not found', async () => {
-      mockSupabase.from().select().eq().single.mockResolvedValue({
-        data: null,
-        error: new Error('Not found')
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: new Error('Not found'),
+        });
 
       const result = await PollsService.getPollById('nonexistent');
-      
+
       expect(result).toBeNull();
     });
 
@@ -126,22 +148,27 @@ describe('PollsService', () => {
 
       mockSupabase.from().select().eq().single.mockResolvedValue({
         data: mockPoll,
-        error: null
+        error: null,
       });
 
       mockSupabase.from().select().eq.mockResolvedValue({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       // Mock user vote not found
-      mockSupabase.from().select().eq().eq().single.mockResolvedValue({
-        data: null,
-        error: new Error('Not found')
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: new Error('Not found'),
+        });
 
       const result = await PollsService.getPollById('poll-123', 'user-123');
-      
+
       expect(result?.user_vote).toBeNull();
     });
   });
@@ -153,17 +180,17 @@ describe('PollsService', () => {
         optionALabel: 'Pizza',
         optionBLabel: 'Burger',
         description: 'What to eat?',
-        isPublic: true
+        isPublic: true,
       };
 
       const mockCreatedPoll = { id: 'poll-123', ...pollData };
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: mockCreatedPoll,
-        error: null
+        error: null,
       });
 
       const result = await PollsService.createPoll(pollData);
-      
+
       expect(result).toEqual(mockCreatedPoll);
       expect(mockSupabase.from().insert).toHaveBeenCalledWith({
         creator_id: 'user-123',
@@ -172,23 +199,27 @@ describe('PollsService', () => {
         description: 'What to eat?',
         is_public: true,
         status: 'active',
-        expires_at: expect.any(String)
+        expires_at: expect.any(String),
       });
     });
 
     it('should handle optional fields correctly', async () => {
       const pollData = {
         creatorId: 'user-123',
-        isPublic: false
+        isPublic: false,
       };
 
-      mockSupabase.from().insert().select().single.mockResolvedValue({
-        data: { id: 'poll-123' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .insert()
+        .select()
+        .single.mockResolvedValue({
+          data: { id: 'poll-123' },
+          error: null,
+        });
 
       await PollsService.createPoll(pollData);
-      
+
       expect(mockSupabase.from().insert).toHaveBeenCalledWith({
         creator_id: 'user-123',
         option_a_label: null,
@@ -196,7 +227,7 @@ describe('PollsService', () => {
         description: null,
         is_public: false,
         status: 'active',
-        expires_at: expect.any(String)
+        expires_at: expect.any(String),
       });
     });
 
@@ -206,28 +237,38 @@ describe('PollsService', () => {
 
       mockSupabase.from().insert().select().single.mockResolvedValue({
         data: null,
-        error: mockError
+        error: mockError,
       });
 
-      await expect(PollsService.createPoll(pollData)).rejects.toThrow('Creation failed');
+      await expect(PollsService.createPoll(pollData)).rejects.toThrow(
+        'Creation failed'
+      );
     });
   });
 
   describe('updatePollWithImages', () => {
     it('should update poll with image URLs', async () => {
-      const mockUpdatedPoll = { id: 'poll-123', option_a_image_url: 'url-a', option_b_image_url: 'url-b' };
-      
+      const mockUpdatedPoll = {
+        id: 'poll-123',
+        option_a_image_url: 'url-a',
+        option_b_image_url: 'url-b',
+      };
+
       mockSupabase.from().update().eq().select().single.mockResolvedValue({
         data: mockUpdatedPoll,
-        error: null
+        error: null,
       });
 
-      const result = await PollsService.updatePollWithImages('poll-123', 'url-a', 'url-b');
-      
+      const result = await PollsService.updatePollWithImages(
+        'poll-123',
+        'url-a',
+        'url-b'
+      );
+
       expect(result).toEqual(mockUpdatedPoll);
       expect(mockSupabase.from().update).toHaveBeenCalledWith({
         option_a_image_url: 'url-a',
-        option_b_image_url: 'url-b'
+        option_b_image_url: 'url-b',
       });
     });
   });
@@ -236,16 +277,16 @@ describe('PollsService', () => {
     it('should fetch polls by creator', async () => {
       const mockPolls = [
         { id: 'poll-1', creator_id: 'user-123' },
-        { id: 'poll-2', creator_id: 'user-123' }
+        { id: 'poll-2', creator_id: 'user-123' },
       ];
 
       mockSupabase.from().select().eq().order().ascending.mockResolvedValue({
         data: mockPolls,
-        error: null
+        error: null,
       });
 
       const result = await PollsService.getPollsByCreator('user-123');
-      
+
       expect(result).toEqual(mockPolls);
       expect(mockSupabase.from).toHaveBeenCalledWith('polls');
     });
@@ -254,12 +295,14 @@ describe('PollsService', () => {
   describe('closeExpiredPolls', () => {
     it('should close expired polls', async () => {
       mockSupabase.from().update().eq().lte.mockResolvedValue({
-        error: null
+        error: null,
       });
 
       await PollsService.closeExpiredPolls();
-      
-      expect(mockSupabase.from().update).toHaveBeenCalledWith({ status: 'closed' });
+
+      expect(mockSupabase.from().update).toHaveBeenCalledWith({
+        status: 'closed',
+      });
     });
   });
 });

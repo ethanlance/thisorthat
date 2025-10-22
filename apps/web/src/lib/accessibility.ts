@@ -30,7 +30,7 @@ export function trapFocus(container: HTMLElement) {
   }
 
   container.addEventListener('keydown', handleTabKey);
-  
+
   // Return cleanup function
   return () => {
     container.removeEventListener('keydown', handleTabKey);
@@ -40,15 +40,18 @@ export function trapFocus(container: HTMLElement) {
 /**
  * Announce changes to screen readers
  */
-export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite') {
+export function announceToScreenReader(
+  message: string,
+  priority: 'polite' | 'assertive' = 'polite'
+) {
   const announcement = document.createElement('div');
   announcement.setAttribute('aria-live', priority);
   announcement.setAttribute('aria-atomic', 'true');
   announcement.className = 'sr-only';
   announcement.textContent = message;
-  
+
   document.body.appendChild(announcement);
-  
+
   // Remove after announcement
   setTimeout(() => {
     document.body.removeChild(announcement);
@@ -59,9 +62,11 @@ export function announceToScreenReader(message: string, priority: 'polite' | 'as
  * Get focusable elements within a container
  */
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
-  return Array.from(container.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  )) as HTMLElement[];
+  return Array.from(
+    container.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+  ) as HTMLElement[];
 }
 
 /**
@@ -104,7 +109,8 @@ export const keyboardNavigation = {
         break;
       case 'ArrowUp':
         event.preventDefault();
-        const prevIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1;
+        const prevIndex =
+          currentIndex === 0 ? items.length - 1 : currentIndex - 1;
         onSelect(prevIndex);
         break;
       case 'Home':
@@ -136,5 +142,5 @@ export const keyboardNavigation = {
       event.preventDefault();
       onActivate();
     }
-  }
+  },
 };

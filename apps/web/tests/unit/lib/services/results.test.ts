@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/client';
 
 // Mock Supabase client
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: vi.fn()
+  createClient: vi.fn(),
 }));
 
 const mockSupabase = {
@@ -12,7 +12,7 @@ const mockSupabase = {
   eq: vi.fn(),
   single: vi.fn(),
   order: vi.fn(),
-  limit: vi.fn()
+  limit: vi.fn(),
 };
 
 const mockQuery = {
@@ -20,7 +20,7 @@ const mockQuery = {
   eq: vi.fn().mockReturnThis(),
   single: vi.fn().mockReturnThis(),
   order: vi.fn().mockReturnThis(),
-  limit: vi.fn().mockReturnThis()
+  limit: vi.fn().mockReturnThis(),
 };
 
 describe('ResultsService', () => {
@@ -39,13 +39,13 @@ describe('ResultsService', () => {
         option_b_label: 'Option B',
         status: 'active',
         created_at: '2023-01-01T00:00:00Z',
-        expires_at: '2023-01-02T00:00:00Z'
+        expires_at: '2023-01-02T00:00:00Z',
       };
 
       const mockVotes = [
         { choice: 'option_a', created_at: '2023-01-01T01:00:00Z' },
         { choice: 'option_b', created_at: '2023-01-01T02:00:00Z' },
-        { choice: 'option_a', created_at: '2023-01-01T03:00:00Z' }
+        { choice: 'option_a', created_at: '2023-01-01T03:00:00Z' },
       ];
 
       mockQuery.single.mockResolvedValue({ data: mockPoll, error: null });
@@ -61,16 +61,19 @@ describe('ResultsService', () => {
           option_b_label: 'Option B',
           status: 'active',
           created_at: '2023-01-01T00:00:00Z',
-          expires_at: '2023-01-02T00:00:00Z'
+          expires_at: '2023-01-02T00:00:00Z',
         },
         voteCounts: { option_a: 2, option_b: 1 },
         totalVotes: 3,
-        voteHistory: mockVotes
+        voteHistory: mockVotes,
       });
     });
 
     it('should return null if poll not found', async () => {
-      mockQuery.single.mockResolvedValue({ data: null, error: new Error('Not found') });
+      mockQuery.single.mockResolvedValue({
+        data: null,
+        error: new Error('Not found'),
+      });
 
       const result = await ResultsService.getPollResults('nonexistent');
 
@@ -95,7 +98,7 @@ describe('ResultsService', () => {
           option_a_label: 'Option A',
           option_b_label: 'Option B',
           status: 'closed',
-          created_at: '2023-01-01T00:00:00Z'
+          created_at: '2023-01-01T00:00:00Z',
         },
         {
           id: 'poll-2',
@@ -103,17 +106,17 @@ describe('ResultsService', () => {
           option_a_label: 'Option A',
           option_b_label: 'Option B',
           status: 'closed',
-          created_at: '2023-01-02T00:00:00Z'
-        }
+          created_at: '2023-01-02T00:00:00Z',
+        },
       ];
 
       const mockVotes1 = [
         { choice: 'option_a', created_at: '2023-01-01T01:00:00Z' },
-        { choice: 'option_b', created_at: '2023-01-01T02:00:00Z' }
+        { choice: 'option_b', created_at: '2023-01-01T02:00:00Z' },
       ];
 
       const mockVotes2 = [
-        { choice: 'option_a', created_at: '2023-01-02T01:00:00Z' }
+        { choice: 'option_a', created_at: '2023-01-02T01:00:00Z' },
       ];
 
       mockQuery.eq.mockResolvedValueOnce({ data: mockPolls, error: null });
@@ -153,7 +156,7 @@ describe('ResultsService', () => {
         { choice: 'option_b', created_at: '2023-01-01T11:00:00Z' },
         { choice: 'option_a', created_at: '2023-01-01T12:00:00Z' },
         { choice: 'option_b', created_at: '2023-01-01T13:00:00Z' },
-        { choice: 'option_a', created_at: '2023-01-01T14:00:00Z' }
+        { choice: 'option_a', created_at: '2023-01-01T14:00:00Z' },
       ];
 
       mockQuery.eq.mockResolvedValue({ data: mockVotes, error: null });
@@ -164,7 +167,7 @@ describe('ResultsService', () => {
         totalVotes: 5,
         voteDistribution: { option_a: 3, option_b: 2 },
         voteTimeline: [{ date: '2023-01-01', votes: 5 }],
-        peakVotingHour: 10 // First hour with votes
+        peakVotingHour: 10, // First hour with votes
       });
     });
 

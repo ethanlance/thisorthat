@@ -28,9 +28,9 @@ export interface PollMetaTags {
 
 export interface Poll {
   id: string;
-  description: string;
-  option_a_label?: string;
-  option_b_label?: string;
+  description: string | null;
+  option_a_label?: string | null;
+  option_b_label?: string | null;
   option_a_image_url: string;
   option_b_image_url?: string;
   status: 'active' | 'closed';
@@ -43,7 +43,7 @@ export const generatePollMetaTags = (poll: Poll): PollMetaTags => {
   const pollTitle = poll.description || 'ThisOrThat Poll';
   const pollDescription = `Vote on this poll: ${poll.option_a_label || 'Option A'} vs ${poll.option_b_label || 'Option B'}`;
   const pollImage = poll.option_a_image_url; // Use first image as preview
-  
+
   return {
     title: pollTitle,
     description: pollDescription,
@@ -55,7 +55,7 @@ export const generatePollMetaTags = (poll: Poll): PollMetaTags => {
       card: 'summary_large_image',
       title: pollTitle,
       description: pollDescription,
-      image: pollImage
+      image: pollImage,
     },
     openGraph: {
       title: pollTitle,
@@ -68,10 +68,10 @@ export const generatePollMetaTags = (poll: Poll): PollMetaTags => {
           url: pollImage,
           width: 1200,
           height: 630,
-          alt: pollTitle
-        }
-      ]
-    }
+          alt: pollTitle,
+        },
+      ],
+    },
   };
 };
 
@@ -79,7 +79,7 @@ export const generateShareText = (poll: Poll): string => {
   const pollTitle = poll.description || 'ThisOrThat Poll';
   const optionA = poll.option_a_label || 'Option A';
   const optionB = poll.option_b_label || 'Option B';
-  
+
   return `Check out this poll: "${pollTitle}" - ${optionA} vs ${optionB}. Vote now!`;
 };
 
@@ -88,7 +88,9 @@ export const generateShareUrl = (pollId: string): string => {
   return `${baseUrl}/poll/${pollId}`;
 };
 
-export const generateSocialShareUrls = (poll: Poll): {
+export const generateSocialShareUrls = (
+  poll: Poll
+): {
   twitter: string;
   facebook: string;
   whatsapp: string;
@@ -97,16 +99,16 @@ export const generateSocialShareUrls = (poll: Poll): {
 } => {
   const shareUrl = generateShareUrl(poll.id);
   const shareText = generateShareText(poll);
-  
+
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedText = encodeURIComponent(shareText);
-  
+
   return {
     twitter: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
     whatsapp: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
     telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
   };
 };
 
@@ -132,7 +134,9 @@ export const truncateText = (text: string, maxLength: number): string => {
   return text.substring(0, maxLength - 3) + '...';
 };
 
-export const generatePollPreview = (poll: Poll): {
+export const generatePollPreview = (
+  poll: Poll
+): {
   title: string;
   description: string;
   image: string;
@@ -142,6 +146,6 @@ export const generatePollPreview = (poll: Poll): {
     title: poll.description || 'ThisOrThat Poll',
     description: `Vote: ${poll.option_a_label || 'Option A'} vs ${poll.option_b_label || 'Option B'}`,
     image: poll.option_a_image_url,
-    url: generateShareUrl(poll.id)
+    url: generateShareUrl(poll.id),
   };
 };

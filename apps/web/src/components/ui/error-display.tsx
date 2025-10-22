@@ -13,18 +13,20 @@ interface ErrorDisplayProps {
 }
 
 export default function ErrorDisplay({
-  title = "Something went wrong",
-  message = "We encountered an unexpected error. Please try again.",
+  title = 'Something went wrong',
+  message = 'We encountered an unexpected error. Please try again.',
   onRetry,
   onGoHome,
   showDetails = false,
   error,
-  className = ""
+  className = '',
 }: ErrorDisplayProps) {
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[400px] p-8 text-center ${className}`}>
+    <div
+      className={`flex flex-col items-center justify-center min-h-[400px] p-8 text-center ${className}`}
+    >
       <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-      
+
       <Alert className="max-w-md mb-6">
         <AlertTitle>{title}</AlertTitle>
         <AlertDescription>{message}</AlertDescription>
@@ -37,7 +39,7 @@ export default function ErrorDisplay({
             Try Again
           </Button>
         )}
-        
+
         {onGoHome && (
           <Button onClick={onGoHome} variant="outline">
             <Home className="h-4 w-4 mr-2" />

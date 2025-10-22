@@ -30,9 +30,9 @@ describe('MobileNav Component', () => {
   it('opens mobile menu when button is clicked', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
-    
+
     fireEvent.click(menuButton);
-    
+
     expect(screen.getByText('Menu')).toBeInTheDocument();
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.getByText('Browse Polls')).toBeInTheDocument();
@@ -41,15 +41,15 @@ describe('MobileNav Component', () => {
   it('closes mobile menu when close button is clicked', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
-    
+
     // Open menu
     fireEvent.click(menuButton);
     expect(screen.getByText('Menu')).toBeInTheDocument();
-    
+
     // Close menu
     const closeButton = screen.getByLabelText('Close menu');
     fireEvent.click(closeButton);
-    
+
     expect(screen.queryByText('Menu')).not.toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe('MobileNav Component', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
     fireEvent.click(menuButton);
-    
+
     expect(screen.getByText('Sign In')).toBeInTheDocument();
   });
 
@@ -65,7 +65,7 @@ describe('MobileNav Component', () => {
     const authenticatedUser = {
       id: '1',
       email: 'test@example.com',
-      user_metadata: { full_name: 'Test User' }
+      user_metadata: { full_name: 'Test User' },
     };
 
     vi.mocked(mockAuthContext).user = authenticatedUser as any;
@@ -73,7 +73,7 @@ describe('MobileNav Component', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
     fireEvent.click(menuButton);
-    
+
     expect(screen.getByText('Test User')).toBeInTheDocument();
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
     expect(screen.getByText('Sign Out')).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe('MobileNav Component', () => {
     const authenticatedUser = {
       id: '1',
       email: 'test@example.com',
-      user_metadata: { full_name: 'Test User' }
+      user_metadata: { full_name: 'Test User' },
     };
 
     vi.mocked(mockAuthContext).user = authenticatedUser as any;
@@ -91,7 +91,7 @@ describe('MobileNav Component', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
     fireEvent.click(menuButton);
-    
+
     expect(screen.getByText('Create Poll')).toBeInTheDocument();
     expect(screen.getByText('Profile')).toBeInTheDocument();
   });
@@ -100,7 +100,7 @@ describe('MobileNav Component', () => {
     const authenticatedUser = {
       id: '1',
       email: 'test@example.com',
-      user_metadata: { full_name: 'Test User' }
+      user_metadata: { full_name: 'Test User' },
     };
 
     vi.mocked(mockAuthContext).user = authenticatedUser as any;
@@ -108,27 +108,27 @@ describe('MobileNav Component', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
     fireEvent.click(menuButton);
-    
+
     const signOutButton = screen.getByText('Sign Out');
     fireEvent.click(signOutButton);
-    
+
     expect(mockAuthContext.signOut).toHaveBeenCalled();
   });
 
   it('closes menu when backdrop is clicked', () => {
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
-    
+
     // Open menu
     fireEvent.click(menuButton);
     expect(screen.getByText('Menu')).toBeInTheDocument();
-    
+
     // Click backdrop
     const backdrop = document.querySelector('.fixed.inset-0.bg-black\\/50');
     if (backdrop) {
       fireEvent.click(backdrop);
     }
-    
+
     expect(screen.queryByText('Menu')).not.toBeInTheDocument();
   });
 });

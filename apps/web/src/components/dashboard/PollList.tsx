@@ -22,13 +22,13 @@ interface PollListProps {
 type FilterStatus = 'all' | 'active' | 'closed' | 'deleted';
 type ViewMode = 'grid' | 'list';
 
-export default function PollList({ 
-  polls, 
+export default function PollList({
+  polls,
   loading = false,
-  onDelete, 
-  onShare, 
+  onDelete,
+  onShare,
   onView,
-  className 
+  className,
 }: PollListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
@@ -49,10 +49,11 @@ export default function PollList({
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(poll => 
-        poll.description?.toLowerCase().includes(query) ||
-        poll.option_a_label?.toLowerCase().includes(query) ||
-        poll.option_b_label?.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        poll =>
+          poll.description?.toLowerCase().includes(query) ||
+          poll.option_a_label?.toLowerCase().includes(query) ||
+          poll.option_b_label?.toLowerCase().includes(query)
       );
     }
 
@@ -62,13 +63,13 @@ export default function PollList({
   // Get status counts for filter badges
   const statusCounts = useMemo(() => {
     const counts = { all: 0, active: 0, closed: 0, deleted: 0 };
-    
+
     polls.forEach(poll => {
       counts.all++;
       const status = getPollStatus(poll);
       counts[status]++;
     });
-    
+
     return counts;
   }, [polls]);
 
@@ -94,7 +95,7 @@ export default function PollList({
           <Input
             placeholder="Search polls by description or options..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -103,22 +104,24 @@ export default function PollList({
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           {/* Status Filters */}
           <div className="flex flex-wrap gap-2">
-            {(['all', 'active', 'closed', 'deleted'] as FilterStatus[]).map((status) => (
-              <Button
-                key={status}
-                variant={statusFilter === status ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setStatusFilter(status)}
-                className="capitalize"
-              >
-                {status}
-                {statusCounts[status] > 0 && (
-                  <Badge variant="secondary" className="ml-2 text-xs">
-                    {statusCounts[status]}
-                  </Badge>
-                )}
-              </Button>
-            ))}
+            {(['all', 'active', 'closed', 'deleted'] as FilterStatus[]).map(
+              status => (
+                <Button
+                  key={status}
+                  variant={statusFilter === status ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter(status)}
+                  className="capitalize"
+                >
+                  {status}
+                  {statusCounts[status] > 0 && (
+                    <Badge variant="secondary" className="ml-2 text-xs">
+                      {statusCounts[status]}
+                    </Badge>
+                  )}
+                </Button>
+              )
+            )}
           </div>
 
           {/* View Mode Toggle */}
@@ -152,9 +155,7 @@ export default function PollList({
           {filteredPolls.length} of {polls.length} polls
           {searchQuery && ` matching "${searchQuery}"`}
         </span>
-        {statusFilter !== 'all' && (
-          <span>Filtered by: {statusFilter}</span>
-        )}
+        {statusFilter !== 'all' && <span>Filtered by: {statusFilter}</span>}
       </div>
 
       {/* Polls Grid/List */}
@@ -174,19 +175,21 @@ export default function PollList({
             )}
           </div>
           {polls.length === 0 && (
-            <Button onClick={() => window.location.href = '/poll/create'}>
+            <Button onClick={() => (window.location.href = '/poll/create')}>
               Create Your First Poll
             </Button>
           )}
         </div>
       ) : (
-        <div className={cn(
-          'gap-4',
-          viewMode === 'grid' 
-            ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
-            : 'space-y-4'
-        )}>
-          {filteredPolls.map((poll) => (
+        <div
+          className={cn(
+            'gap-4',
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              : 'space-y-4'
+          )}
+        >
+          {filteredPolls.map(poll => (
             <PollCard
               key={poll.id}
               poll={poll}

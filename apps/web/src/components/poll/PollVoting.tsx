@@ -17,25 +17,27 @@ interface PollVotingProps {
   className?: string;
 }
 
-export default function PollVoting({ 
-  poll, 
-  onVote, 
-  isVoting, 
+export default function PollVoting({
+  poll,
+  onVote,
+  isVoting,
   hasVoted,
   userVote,
   onShare,
-  className 
+  className,
 }: PollVotingProps) {
   const [voteError, setVoteError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [lastVote, setLastVote] = useState<'option_a' | 'option_b' | null>(null);
+  const [lastVote, setLastVote] = useState<'option_a' | 'option_b' | null>(
+    null
+  );
 
   const handleVote = async (choice: 'option_a' | 'option_b') => {
     if (hasVoted || isVoting) return;
-    
+
     setVoteError(null);
     const success = await onVote(choice);
-    
+
     if (success) {
       setLastVote(choice);
       setShowConfirmation(true);
@@ -57,10 +59,15 @@ export default function PollVoting({
             Vote Submitted!
           </h3>
           <p className="text-green-700 dark:text-green-300">
-            You voted for <strong>{userVote === 'option_a' ? (poll.option_a_label || 'Option A') : (poll.option_b_label || 'Option B')}</strong>
+            You voted for{' '}
+            <strong>
+              {userVote === 'option_a'
+                ? poll.option_a_label || 'Option A'
+                : poll.option_b_label || 'Option B'}
+            </strong>
           </p>
         </div>
-        
+
         <p className="text-sm text-muted-foreground">
           Thank you for voting! Results will update in real-time.
         </p>
@@ -74,17 +81,15 @@ export default function PollVoting({
         <h2 className="text-xl sm:text-2xl font-semibold mb-2">
           Which do you prefer?
         </h2>
-        <p className="text-muted-foreground">
-          Tap your choice below
-        </p>
+        <p className="text-muted-foreground">Tap your choice below</p>
       </div>
-      
+
       {voteError && (
         <Alert variant="destructive">
           <AlertDescription>{voteError}</AlertDescription>
         </Alert>
       )}
-      
+
       <div className="grid grid-cols-2 gap-4">
         <Button
           size="lg"
@@ -94,7 +99,7 @@ export default function PollVoting({
         >
           {poll.option_a_label || 'Option A'}
         </Button>
-        
+
         <Button
           size="lg"
           variant="outline"
@@ -105,7 +110,7 @@ export default function PollVoting({
           {poll.option_b_label || 'Option B'}
         </Button>
       </div>
-      
+
       {isVoting && (
         <div className="text-center">
           <div className="inline-flex items-center gap-2 text-muted-foreground">
@@ -114,7 +119,7 @@ export default function PollVoting({
           </div>
         </div>
       )}
-      
+
       <div className="text-center text-sm text-muted-foreground">
         <p>Your vote is anonymous and cannot be changed once submitted.</p>
       </div>
@@ -123,7 +128,11 @@ export default function PollVoting({
       {showConfirmation && lastVote && (
         <VoteConfirmation
           choice={lastVote}
-          optionLabel={lastVote === 'option_a' ? (poll.option_a_label || 'Option A') : (poll.option_b_label || 'Option B')}
+          optionLabel={
+            lastVote === 'option_a'
+              ? poll.option_a_label || 'Option A'
+              : poll.option_b_label || 'Option B'
+          }
           onClose={handleCloseConfirmation}
           onShare={onShare}
         />

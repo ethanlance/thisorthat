@@ -5,13 +5,18 @@ import ExpirationWarning from '@/components/poll/ExpirationWarning';
 // Mock the expiration service
 vi.mock('@/lib/services/expiration', () => ({
   calculateTimeLeft: vi.fn(),
-  getExpirationWarningLevel: vi.fn()
+  getExpirationWarningLevel: vi.fn(),
 }));
 
-import { calculateTimeLeft, getExpirationWarningLevel } from '@/lib/services/expiration';
+import {
+  calculateTimeLeft,
+  getExpirationWarningLevel,
+} from '@/lib/services/expiration';
 
 describe('ExpirationWarning', () => {
-  const mockExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const mockExpiresAt = new Date(
+    Date.now() + 24 * 60 * 60 * 1000
+  ).toISOString();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -23,12 +28,14 @@ describe('ExpirationWarning', () => {
       hours: 2,
       minutes: 30,
       seconds: 45,
-      total: 100000
+      total: 100000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('none');
 
-    const { container } = render(<ExpirationWarning expiresAt={mockExpiresAt} />);
-    
+    const { container } = render(
+      <ExpirationWarning expiresAt={mockExpiresAt} />
+    );
+
     expect(container.firstChild).toBeNull();
   });
 
@@ -38,14 +45,18 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 3,
       seconds: 0,
-      total: 180000
+      total: 180000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
-    
-    expect(screen.getByText('This poll expires in less than 5 minutes!')).toBeInTheDocument();
-    expect(screen.getByText('This poll expires in less than 5 minutes!')).toHaveClass('border-red-200', 'bg-red-50');
+
+    expect(
+      screen.getByText('This poll expires in less than 5 minutes!')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('This poll expires in less than 5 minutes!')
+    ).toHaveClass('border-red-200', 'bg-red-50');
   });
 
   it('renders warning level', () => {
@@ -54,14 +65,18 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 15,
       seconds: 0,
-      total: 900000
+      total: 900000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('warning');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
-    
-    expect(screen.getByText('This poll expires in less than 30 minutes.')).toBeInTheDocument();
-    expect(screen.getByText('This poll expires in less than 30 minutes.')).toHaveClass('border-orange-200', 'bg-orange-50');
+
+    expect(
+      screen.getByText('This poll expires in less than 30 minutes.')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('This poll expires in less than 30 minutes.')
+    ).toHaveClass('border-orange-200', 'bg-orange-50');
   });
 
   it('renders in compact mode', () => {
@@ -70,14 +85,18 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 3,
       seconds: 0,
-      total: 180000
+      total: 180000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} compact />);
-    
-    expect(screen.getByText('This poll expires in less than 5 minutes!')).toBeInTheDocument();
-    expect(screen.getByText('This poll expires in less than 5 minutes!')).toHaveClass('text-sm');
+
+    expect(
+      screen.getByText('This poll expires in less than 5 minutes!')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('This poll expires in less than 5 minutes!')
+    ).toHaveClass('text-sm');
   });
 
   it('hides icon when showIcon is false', () => {
@@ -86,13 +105,15 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 3,
       seconds: 0,
-      total: 180000
+      total: 180000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} showIcon={false} />);
-    
-    expect(screen.getByText('This poll expires in less than 5 minutes!')).toBeInTheDocument();
+
+    expect(
+      screen.getByText('This poll expires in less than 5 minutes!')
+    ).toBeInTheDocument();
     // Icon should not be present
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
@@ -103,12 +124,12 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 3,
       seconds: 0,
-      total: 180000
+      total: 180000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
-    
+
     // Should have an icon (AlertCircle)
     const icon = screen.getByRole('img', { hidden: true });
     expect(icon).toBeInTheDocument();
@@ -120,21 +141,27 @@ describe('ExpirationWarning', () => {
       hours: 0,
       minutes: 15,
       seconds: 0,
-      total: 900000
+      total: 900000,
     });
     (getExpirationWarningLevel as any).mockReturnValue('warning');
 
-    render(<ExpirationWarning expiresAt={mockExpiresAt} className="custom-class" />);
-    
-    const alert = screen.getByText('This poll expires in less than 30 minutes.').closest('[role="alert"]');
+    render(
+      <ExpirationWarning expiresAt={mockExpiresAt} className="custom-class" />
+    );
+
+    const alert = screen
+      .getByText('This poll expires in less than 30 minutes.')
+      .closest('[role="alert"]');
     expect(alert).toHaveClass('custom-class');
   });
 
   it('renders nothing when timeLeft is null', () => {
     (calculateTimeLeft as any).mockReturnValue(null);
 
-    const { container } = render(<ExpirationWarning expiresAt={mockExpiresAt} />);
-    
+    const { container } = render(
+      <ExpirationWarning expiresAt={mockExpiresAt} />
+    );
+
     expect(container.firstChild).toBeNull();
   });
 });

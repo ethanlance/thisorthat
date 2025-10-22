@@ -6,22 +6,17 @@ export async function POST(request: NextRequest) {
     const { pollId, referrer } = await request.json();
 
     if (!pollId) {
-      return NextResponse.json(
-        { error: 'Missing pollId' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Missing pollId' }, { status: 400 });
     }
 
     const supabase = createClient();
-    
-    const { error } = await supabase
-      .from('poll_access')
-      .insert({
-        poll_id: pollId,
-        referrer: referrer || request.headers.get('referer'),
-        user_agent: request.headers.get('user-agent'),
-        created_at: new Date().toISOString()
-      });
+
+    const { error } = await supabase.from('poll_access').insert({
+      poll_id: pollId,
+      referrer: referrer || request.headers.get('referer'),
+      user_agent: request.headers.get('user-agent'),
+      created_at: new Date().toISOString(),
+    });
 
     if (error) {
       console.error('Failed to track access:', error);

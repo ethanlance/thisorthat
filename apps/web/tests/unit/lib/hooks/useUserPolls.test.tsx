@@ -9,8 +9,8 @@ vi.mock('@/lib/services/dashboard', () => ({
   DashboardService: {
     getUserPolls: vi.fn(),
     deletePoll: vi.fn(),
-    sharePoll: vi.fn()
-  }
+    sharePoll: vi.fn(),
+  },
 }));
 
 // Mock Supabase client
@@ -18,14 +18,14 @@ const mockSupabase = {
   channel: vi.fn(() => ({
     on: vi.fn(() => ({
       subscribe: vi.fn(() => ({
-        unsubscribe: vi.fn()
-      }))
-    }))
-  }))
+        unsubscribe: vi.fn(),
+      })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('useUserPolls', () => {
@@ -45,7 +45,7 @@ describe('useUserPolls', () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       vote_counts: { option_a: 5, option_b: 3 },
-      share_count: 2
+      share_count: 2,
     },
     {
       id: 'poll-2',
@@ -61,8 +61,8 @@ describe('useUserPolls', () => {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       vote_counts: { option_a: 2, option_b: 8 },
-      share_count: 1
-    }
+      share_count: 1,
+    },
   ];
 
   beforeEach(() => {
@@ -167,7 +167,10 @@ describe('useUserPolls', () => {
     });
 
     expect(result.current.polls[0].share_count).toBe(3); // Increased from 2
-    expect(DashboardService.sharePoll).toHaveBeenCalledWith('poll-1', mockUserId);
+    expect(DashboardService.sharePoll).toHaveBeenCalledWith(
+      'poll-1',
+      mockUserId
+    );
   });
 
   it('should handle share poll errors', async () => {
@@ -229,7 +232,7 @@ describe('useUserPolls', () => {
         event: '*',
         schema: 'public',
         table: 'polls',
-        filter: `creator_id=eq.${mockUserId}`
+        filter: `creator_id=eq.${mockUserId}`,
       }),
       expect.any(Function)
     );
@@ -255,7 +258,7 @@ describe('useUserPolls', () => {
     const payload = {
       eventType: 'UPDATE',
       new: updatedPoll,
-      old: mockPolls[0]
+      old: mockPolls[0],
     };
 
     act(() => {
@@ -280,7 +283,7 @@ describe('useUserPolls', () => {
     // Simulate poll deletion
     const payload = {
       eventType: 'DELETE',
-      old: mockPolls[0]
+      old: mockPolls[0],
     };
 
     act(() => {

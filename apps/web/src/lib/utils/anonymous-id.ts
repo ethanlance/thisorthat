@@ -20,7 +20,7 @@ export const generateAnonymousId = (): string => {
  */
 export const getStoredAnonymousId = (pollId: string): string | null => {
   if (typeof window === 'undefined') return null;
-  
+
   try {
     const key = `anonymous_id_${pollId}`;
     return localStorage.getItem(key);
@@ -37,7 +37,7 @@ export const getStoredAnonymousId = (pollId: string): string | null => {
  */
 export const storeAnonymousId = (pollId: string, anonymousId: string): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     const key = `anonymous_id_${pollId}`;
     localStorage.setItem(key, anonymousId);
@@ -62,7 +62,7 @@ export const hasVotedAnonymously = (pollId: string): boolean => {
  */
 export const clearAnonymousId = (pollId: string): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     const key = `anonymous_id_${pollId}`;
     localStorage.removeItem(key);
@@ -77,9 +77,9 @@ export const clearAnonymousId = (pollId: string): void => {
  */
 export const getAllStoredAnonymousIds = (): Record<string, string> => {
   if (typeof window === 'undefined') return {};
-  
+
   const result: Record<string, string> = {};
-  
+
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -94,7 +94,7 @@ export const getAllStoredAnonymousIds = (): Record<string, string> => {
   } catch (error) {
     console.warn('Failed to get all stored anonymous IDs:', error);
   }
-  
+
   return result;
 };
 
@@ -103,17 +103,17 @@ export const getAllStoredAnonymousIds = (): Record<string, string> => {
  */
 export const clearAllAnonymousIds = (): void => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     const keysToRemove: string[] = [];
-    
+
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (key && key.startsWith('anonymous_id_')) {
         keysToRemove.push(key);
       }
     }
-    
+
     keysToRemove.forEach(key => localStorage.removeItem(key));
   } catch (error) {
     console.warn('Failed to clear all anonymous IDs:', error);
@@ -137,10 +137,10 @@ export const isValidAnonymousId = (anonymousId: string): boolean => {
  */
 export const getAnonymousIdTimestamp = (anonymousId: string): number | null => {
   if (!isValidAnonymousId(anonymousId)) return null;
-  
+
   const parts = anonymousId.split('_');
   if (parts.length !== 3) return null;
-  
+
   const timestamp = parseInt(parts[1], 10);
   return isNaN(timestamp) ? null : timestamp;
 };
@@ -153,7 +153,7 @@ export const getAnonymousIdTimestamp = (anonymousId: string): number | null => {
 export const isAnonymousIdExpired = (anonymousId: string): boolean => {
   const timestamp = getAnonymousIdTimestamp(anonymousId);
   if (!timestamp) return true;
-  
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
   return timestamp < thirtyDaysAgo;
 };

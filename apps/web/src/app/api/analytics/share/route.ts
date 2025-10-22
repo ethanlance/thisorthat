@@ -13,16 +13,14 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = createClient();
-    
-    const { error } = await supabase
-      .from('poll_shares')
-      .insert({
-        poll_id: pollId,
-        method: method,
-        created_at: timestamp || new Date().toISOString(),
-        user_agent: request.headers.get('user-agent'),
-        referrer: request.headers.get('referer')
-      });
+
+    const { error } = await supabase.from('poll_shares').insert({
+      poll_id: pollId,
+      method: method,
+      created_at: timestamp || new Date().toISOString(),
+      user_agent: request.headers.get('user-agent'),
+      referrer: request.headers.get('referer'),
+    });
 
     if (error) {
       console.error('Failed to track share:', error);

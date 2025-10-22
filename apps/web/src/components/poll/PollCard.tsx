@@ -4,7 +4,14 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Share2, Trash2, Eye, Users, Clock } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Share2,
+  Trash2,
+  Eye,
+  Users,
+  Clock,
+} from 'lucide-react';
 import { UserPollSummary } from '@/lib/services/dashboard';
 import { getPollStatus, isPollActive } from '@/lib/services/expiration';
 import { formatRelativeTime } from '@/lib/utils/time-helpers';
@@ -21,20 +28,26 @@ interface PollCardProps {
   className?: string;
 }
 
-export default function PollCard({ 
-  poll, 
-  onDelete, 
-  onShare, 
+export default function PollCard({
+  poll,
+  onDelete,
+  onShare,
   onView,
-  className 
+  className,
 }: PollCardProps) {
   const [showActions, setShowActions] = useState(false);
-  
+
   const pollStatus = getPollStatus(poll);
   const isActive = isPollActive(poll);
   const totalVotes = poll.vote_counts.option_a + poll.vote_counts.option_b;
-  const optionAPercentage = totalVotes > 0 ? Math.round((poll.vote_counts.option_a / totalVotes) * 100) : 0;
-  const optionBPercentage = totalVotes > 0 ? Math.round((poll.vote_counts.option_b / totalVotes) * 100) : 0;
+  const optionAPercentage =
+    totalVotes > 0
+      ? Math.round((poll.vote_counts.option_a / totalVotes) * 100)
+      : 0;
+  const optionBPercentage =
+    totalVotes > 0
+      ? Math.round((poll.vote_counts.option_b / totalVotes) * 100)
+      : 0;
 
   const handleView = () => {
     if (onView) {
@@ -74,14 +87,14 @@ export default function PollCard({
                 </Badge>
               )}
             </div>
-            
+
             {poll.description && (
               <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                 {poll.description}
               </p>
             )}
           </div>
-          
+
           <PollActions
             poll={poll}
             onDelete={handleDelete}
@@ -113,7 +126,7 @@ export default function PollCard({
               {poll.option_a_label || 'Option A'}
             </p>
           </div>
-          
+
           <div className="text-center">
             <div className="relative">
               <img
@@ -169,9 +182,9 @@ export default function PollCard({
           {/* Countdown Timer */}
           {isActive && (
             <div className="flex items-center justify-between">
-              <CountdownTimer 
-                expiresAt={poll.expires_at} 
-                compact 
+              <CountdownTimer
+                expiresAt={poll.expires_at}
+                compact
                 className="text-xs"
               />
             </div>
@@ -196,7 +209,7 @@ export default function PollCard({
             <Eye className="h-3 w-3 mr-1" />
             View
           </Button>
-          
+
           <Button
             variant="outline"
             size="sm"

@@ -28,8 +28,12 @@ describe('useAnonymousVoting', () => {
 
   it('should initialize with voted state if user has already voted', async () => {
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue('anon_123_abc');
-    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue('option_a');
+    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+      'anon_123_abc'
+    );
+    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue(
+      'option_a'
+    );
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
 
@@ -46,7 +50,7 @@ describe('useAnonymousVoting', () => {
     (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
     (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
       success: true,
-      anonymousId: 'anon_123_abc'
+      anonymousId: 'anon_123_abc',
     });
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
@@ -65,7 +69,10 @@ describe('useAnonymousVoting', () => {
     expect(result.current.userVote).toBe('option_a');
     expect(result.current.anonymousId).toBe('anon_123_abc');
     expect(result.current.error).toBeNull();
-    expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(mockPollId, 'option_a');
+    expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(
+      mockPollId,
+      'option_a'
+    );
   });
 
   it('should handle vote submission failure', async () => {
@@ -73,7 +80,7 @@ describe('useAnonymousVoting', () => {
     (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
     (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
       success: false,
-      error: 'You have already voted on this poll'
+      error: 'You have already voted on this poll',
     });
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
@@ -94,8 +101,12 @@ describe('useAnonymousVoting', () => {
 
   it('should prevent voting when already voted', async () => {
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue('anon_123_abc');
-    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue('option_a');
+    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+      'anon_123_abc'
+    );
+    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue(
+      'option_a'
+    );
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
 
@@ -116,7 +127,10 @@ describe('useAnonymousVoting', () => {
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(false);
     (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
     (AnonymousVotingService.submitAnonymousVote as any).mockImplementation(
-      () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 100))
+      () =>
+        new Promise(resolve =>
+          setTimeout(() => resolve({ success: true }), 100)
+        )
     );
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
@@ -170,7 +184,7 @@ describe('useAnonymousVoting', () => {
     (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
     (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
       success: false,
-      error: 'Vote failed'
+      error: 'Vote failed',
     });
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
@@ -196,9 +210,15 @@ describe('useAnonymousVoting', () => {
 
   it('should reset voting state when resetVotingState is called', async () => {
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue('anon_123_abc');
-    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue('option_a');
-    (AnonymousVotingService.clearAnonymousData as any).mockImplementation(() => {});
+    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+      'anon_123_abc'
+    );
+    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue(
+      'option_a'
+    );
+    (AnonymousVotingService.clearAnonymousData as any).mockImplementation(
+      () => {}
+    );
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
 
@@ -219,13 +239,17 @@ describe('useAnonymousVoting', () => {
     expect(result.current.error).toBeNull();
     expect(result.current.userVote).toBeNull();
     expect(result.current.anonymousId).toBeNull();
-    expect(AnonymousVotingService.clearAnonymousData).toHaveBeenCalledWith(mockPollId);
+    expect(AnonymousVotingService.clearAnonymousData).toHaveBeenCalledWith(
+      mockPollId
+    );
   });
 
   it('should handle initialization errors gracefully', async () => {
-    (AnonymousVotingService.hasVotedAnonymously as any).mockImplementation(() => {
-      throw new Error('Initialization error');
-    });
+    (AnonymousVotingService.hasVotedAnonymously as any).mockImplementation(
+      () => {
+        throw new Error('Initialization error');
+      }
+    );
 
     const { result } = renderHook(() => useAnonymousVoting(mockPollId));
 
@@ -238,7 +262,9 @@ describe('useAnonymousVoting', () => {
 
   it('should handle getAnonymousVote errors during initialization', async () => {
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue('anon_123_abc');
+    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+      'anon_123_abc'
+    );
     (AnonymousVotingService.getAnonymousVote as any).mockRejectedValue(
       new Error('Failed to get vote')
     );

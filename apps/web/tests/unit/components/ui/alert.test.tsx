@@ -70,7 +70,9 @@ describe('Alert Components', () => {
     it('applies custom className', () => {
       render(
         <Alert>
-          <AlertDescription className="custom-description">Alert description</AlertDescription>
+          <AlertDescription className="custom-description">
+            Alert description
+          </AlertDescription>
         </Alert>
       );
       const description = screen.getByText('Alert description');
@@ -86,7 +88,7 @@ describe('Alert Components', () => {
           <AlertDescription>Something went wrong</AlertDescription>
         </Alert>
       );
-      
+
       expect(screen.getByText('Error')).toBeInTheDocument();
       expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     });

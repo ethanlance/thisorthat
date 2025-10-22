@@ -17,18 +17,22 @@ interface PollResultsProps {
   className?: string;
 }
 
-export default function PollResults({ 
-  poll, 
+export default function PollResults({
+  poll,
   userVote,
   onShare,
-  className 
+  className,
 }: PollResultsProps) {
   // Use real-time vote counts
-  const { voteCounts, isConnected, lastUpdate, error } = useRealtimeVotes(poll.id);
-  
+  const { voteCounts, isConnected, lastUpdate, error } = useRealtimeVotes(
+    poll.id
+  );
+
   const totalVotes = voteCounts.option_a + voteCounts.option_b;
-  const optionAPercentage = totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
-  const optionBPercentage = totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
+  const optionAPercentage =
+    totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
+  const optionBPercentage =
+    totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
 
   const handleShare = async () => {
     if (onShare) {
@@ -65,7 +69,7 @@ export default function PollResults({
         voteCounts={voteCounts}
         optionLabels={{
           option_a: poll.option_a_label || 'Option A',
-          option_b: poll.option_b_label || 'Option B'
+          option_b: poll.option_b_label || 'Option B',
         }}
         pollStatus={poll.status}
       />
@@ -76,7 +80,9 @@ export default function PollResults({
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
             <span>You voted for</span>
             <span className="font-semibold">
-              {userVote === 'option_a' ? (poll.option_a_label || 'Option A') : (poll.option_b_label || 'Option B')}
+              {userVote === 'option_a'
+                ? poll.option_a_label || 'Option A'
+                : poll.option_b_label || 'Option B'}
             </span>
           </div>
         </div>
@@ -89,7 +95,7 @@ export default function PollResults({
         voteCounts={voteCounts}
         optionLabels={{
           option_a: poll.option_a_label || 'Option A',
-          option_b: poll.option_b_label || 'Option B'
+          option_b: poll.option_b_label || 'Option B',
         }}
       />
 

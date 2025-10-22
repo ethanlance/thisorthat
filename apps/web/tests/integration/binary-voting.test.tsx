@@ -10,7 +10,7 @@ vi.mock('@/lib/services/polls');
 vi.mock('@/lib/services/anonymous-voting');
 vi.mock('@/contexts/AuthContext');
 vi.mock('next/navigation', () => ({
-  notFound: vi.fn()
+  notFound: vi.fn(),
 }));
 
 describe('Binary Voting System Integration', () => {
@@ -29,16 +29,16 @@ describe('Binary Voting System Integration', () => {
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     vote_counts: { option_a: 5, option_b: 3 },
-    user_vote: null
+    user_vote: null,
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     (useAuth as any).mockReturnValue({ user: null }); // Anonymous user
     (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({ 
-      success: true, 
-      anonymousId: 'anon_123_abc' 
+    (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
+      success: true,
+      anonymousId: 'anon_123_abc',
     });
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(false);
     (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
@@ -59,7 +59,10 @@ describe('Binary Voting System Integration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Pizza' }));
 
     await waitFor(() => {
-      expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(mockPollId, 'option_a');
+      expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(
+        mockPollId,
+        'option_a'
+      );
     });
   });
 
@@ -81,11 +84,15 @@ describe('Binary Voting System Integration', () => {
   it('prevents duplicate voting from same anonymous user', async () => {
     // Mock that user has already voted
     (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue('anon_123_abc');
-    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue('option_a');
+    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+      'anon_123_abc'
+    );
+    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue(
+      'option_a'
+    );
     (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
       success: false,
-      error: 'You have already voted on this poll'
+      error: 'You have already voted on this poll',
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -101,7 +108,7 @@ describe('Binary Voting System Integration', () => {
   it('handles voting errors gracefully', async () => {
     (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
       success: false,
-      error: 'Poll is closed'
+      error: 'Poll is closed',
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -131,14 +138,20 @@ describe('Binary Voting System Integration', () => {
 
     // Should still use anonymous voting service for privacy
     await waitFor(() => {
-      expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(mockPollId, 'option_a');
+      expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(
+        mockPollId,
+        'option_a'
+      );
     });
   });
 
   it('shows loading state during vote submission', async () => {
     // Mock slow vote submission
     (AnonymousVotingService.submitAnonymousVote as any).mockImplementation(
-      () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 100))
+      () =>
+        new Promise(resolve =>
+          setTimeout(() => resolve({ success: true }), 100)
+        )
     );
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -156,7 +169,10 @@ describe('Binary Voting System Integration', () => {
   it('disables voting buttons during submission', async () => {
     // Mock slow vote submission
     (AnonymousVotingService.submitAnonymousVote as any).mockImplementation(
-      () => new Promise(resolve => setTimeout(() => resolve({ success: true }), 100))
+      () =>
+        new Promise(resolve =>
+          setTimeout(() => resolve({ success: true }), 100)
+        )
     );
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -186,7 +202,9 @@ describe('Binary Voting System Integration', () => {
     });
 
     // Should show share button
-    expect(screen.getByRole('button', { name: 'Share Poll' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Share Poll' })
+    ).toBeInTheDocument();
   });
 
   it('auto-closes confirmation modal after timeout', async () => {
@@ -237,7 +255,7 @@ describe('Binary Voting System Integration', () => {
   it('maintains vote privacy - votes are anonymous to other users', async () => {
     // This test ensures that the voting system maintains anonymity
     // by using anonymous IDs instead of user IDs for vote tracking
-    
+
     render(<PollPage params={{ id: mockPollId }} />);
 
     await waitFor(() => {
@@ -248,7 +266,7 @@ describe('Binary Voting System Integration', () => {
 
     await waitFor(() => {
       expect(AnonymousVotingService.submitAnonymousVote).toHaveBeenCalledWith(
-        mockPollId, 
+        mockPollId,
         'option_a'
       );
     });
@@ -263,11 +281,17 @@ describe('Binary Voting System Integration', () => {
     const originalLocalStorage = window.localStorage;
     Object.defineProperty(window, 'localStorage', {
       value: {
-        getItem: vi.fn(() => { throw new Error('localStorage error'); }),
-        setItem: vi.fn(() => { throw new Error('localStorage error'); }),
-        removeItem: vi.fn(() => { throw new Error('localStorage error'); })
+        getItem: vi.fn(() => {
+          throw new Error('localStorage error');
+        }),
+        setItem: vi.fn(() => {
+          throw new Error('localStorage error');
+        }),
+        removeItem: vi.fn(() => {
+          throw new Error('localStorage error');
+        }),
       },
-      writable: true
+      writable: true,
     });
 
     render(<PollPage params={{ id: mockPollId }} />);
@@ -286,7 +310,7 @@ describe('Binary Voting System Integration', () => {
     // Restore localStorage
     Object.defineProperty(window, 'localStorage', {
       value: originalLocalStorage,
-      writable: true
+      writable: true,
     });
   });
 });

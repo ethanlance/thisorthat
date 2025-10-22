@@ -7,22 +7,24 @@ const mockSupabase = {
   from: vi.fn(() => ({
     select: vi.fn(() => ({
       eq: vi.fn(() => ({
-        single: vi.fn(() => Promise.resolve({ data: null, error: null }))
-      }))
+        single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+      })),
     })),
     insert: vi.fn(() => ({
       select: vi.fn(() => ({
-        single: vi.fn(() => Promise.resolve({ data: { id: 'vote-123' }, error: null }))
-      }))
+        single: vi.fn(() =>
+          Promise.resolve({ data: { id: 'vote-123' }, error: null })
+        ),
+      })),
     })),
     delete: vi.fn(() => ({
-      eq: vi.fn(() => Promise.resolve({ error: null }))
-    }))
-  }))
+      eq: vi.fn(() => Promise.resolve({ error: null })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('VotesService', () => {
@@ -37,31 +39,41 @@ describe('VotesService', () => {
   describe('submitVote', () => {
     it('should submit a vote successfully for authenticated user', async () => {
       // Mock poll exists and is active
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: {
-          id: mockPollId,
-          status: 'active',
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: {
+            id: mockPollId,
+            status: 'active',
+            expires_at: new Date(
+              Date.now() + 24 * 60 * 60 * 1000
+            ).toISOString(),
+          },
+          error: null,
+        });
 
       // Mock no existing vote
       mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
         data: null,
-        error: null
+        error: null,
       });
 
       // Mock vote insertion
-      mockSupabase.from().insert().select().single.mockResolvedValueOnce({
-        data: { id: 'vote-123' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .insert()
+        .select()
+        .single.mockResolvedValueOnce({
+          data: { id: 'vote-123' },
+          error: null,
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_a',
-        userId: mockUserId
+        userId: mockUserId,
       });
 
       expect(result.success).toBe(true);
@@ -70,31 +82,41 @@ describe('VotesService', () => {
 
     it('should submit a vote successfully for anonymous user', async () => {
       // Mock poll exists and is active
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: {
-          id: mockPollId,
-          status: 'active',
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: {
+            id: mockPollId,
+            status: 'active',
+            expires_at: new Date(
+              Date.now() + 24 * 60 * 60 * 1000
+            ).toISOString(),
+          },
+          error: null,
+        });
 
       // Mock no existing vote
       mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
         data: null,
-        error: null
+        error: null,
       });
 
       // Mock vote insertion
-      mockSupabase.from().insert().select().single.mockResolvedValueOnce({
-        data: { id: 'vote-123' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .insert()
+        .select()
+        .single.mockResolvedValueOnce({
+          data: { id: 'vote-123' },
+          error: null,
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_b',
-        anonymousId: mockAnonymousId
+        anonymousId: mockAnonymousId,
       });
 
       expect(result.success).toBe(true);
@@ -102,15 +124,19 @@ describe('VotesService', () => {
     });
 
     it('should return error for non-existent poll', async () => {
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: null,
-        error: new Error('Poll not found')
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: null,
+          error: new Error('Poll not found'),
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_a',
-        userId: mockUserId
+        userId: mockUserId,
       });
 
       expect(result.success).toBe(false);
@@ -118,19 +144,25 @@ describe('VotesService', () => {
     });
 
     it('should return error for closed poll', async () => {
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: {
-          id: mockPollId,
-          status: 'closed',
-          expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-        },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: {
+            id: mockPollId,
+            status: 'closed',
+            expires_at: new Date(
+              Date.now() - 24 * 60 * 60 * 1000
+            ).toISOString(),
+          },
+          error: null,
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_a',
-        userId: mockUserId
+        userId: mockUserId,
       });
 
       expect(result.success).toBe(false);
@@ -138,19 +170,23 @@ describe('VotesService', () => {
     });
 
     it('should return error for expired poll', async () => {
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: {
-          id: mockPollId,
-          status: 'active',
-          expires_at: new Date(Date.now() - 1000).toISOString() // Expired
-        },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: {
+            id: mockPollId,
+            status: 'active',
+            expires_at: new Date(Date.now() - 1000).toISOString(), // Expired
+          },
+          error: null,
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_a',
-        userId: mockUserId
+        userId: mockUserId,
       });
 
       expect(result.success).toBe(false);
@@ -159,25 +195,36 @@ describe('VotesService', () => {
 
     it('should return error for duplicate vote', async () => {
       // Mock poll exists and is active
-      mockSupabase.from().select().eq().single.mockResolvedValueOnce({
-        data: {
-          id: mockPollId,
-          status: 'active',
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-        },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: {
+            id: mockPollId,
+            status: 'active',
+            expires_at: new Date(
+              Date.now() + 24 * 60 * 60 * 1000
+            ).toISOString(),
+          },
+          error: null,
+        });
 
       // Mock existing vote
-      mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
-        data: { id: 'existing-vote' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: { id: 'existing-vote' },
+          error: null,
+        });
 
       const result = await VotesService.submitVote({
         pollId: mockPollId,
         choice: 'option_a',
-        userId: mockUserId
+        userId: mockUserId,
       });
 
       expect(result.success).toBe(false);
@@ -187,7 +234,7 @@ describe('VotesService', () => {
     it('should return error when no user identification provided', async () => {
       const result = await VotesService.submitVote({
         pollId: mockPollId,
-        choice: 'option_a'
+        choice: 'option_a',
       });
 
       expect(result.success).toBe(false);
@@ -202,43 +249,52 @@ describe('VotesService', () => {
         { choice: 'option_a' },
         { choice: 'option_b' },
         { choice: 'option_b' },
-        { choice: 'option_b' }
+        { choice: 'option_b' },
       ];
 
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       const result = await VotesService.getVoteCounts(mockPollId);
 
       expect(result).toEqual({
         option_a: 2,
-        option_b: 3
+        option_b: 3,
       });
     });
 
     it('should handle errors gracefully', async () => {
-      mockSupabase.from().select().eq().mockResolvedValueOnce({
-        data: null,
-        error: new Error('Database error')
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .mockResolvedValueOnce({
+          data: null,
+          error: new Error('Database error'),
+        });
 
       const result = await VotesService.getVoteCounts(mockPollId);
 
       expect(result).toEqual({
         option_a: 0,
-        option_b: 0
+        option_b: 0,
       });
     });
   });
 
   describe('getUserVote', () => {
     it('should return user vote when exists', async () => {
-      mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
-        data: { choice: 'option_a' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: { choice: 'option_a' },
+          error: null,
+        });
 
       const result = await VotesService.getUserVote(mockPollId, mockUserId);
 
@@ -248,7 +304,7 @@ describe('VotesService', () => {
     it('should return null when no vote exists', async () => {
       mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
         data: null,
-        error: null
+        error: null,
       });
 
       const result = await VotesService.getUserVote(mockPollId, mockUserId);
@@ -259,12 +315,20 @@ describe('VotesService', () => {
 
   describe('getAnonymousVote', () => {
     it('should return anonymous vote when exists', async () => {
-      mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
-        data: { choice: 'option_b' },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .eq()
+        .single.mockResolvedValueOnce({
+          data: { choice: 'option_b' },
+          error: null,
+        });
 
-      const result = await VotesService.getAnonymousVote(mockPollId, mockAnonymousId);
+      const result = await VotesService.getAnonymousVote(
+        mockPollId,
+        mockAnonymousId
+      );
 
       expect(result).toBe('option_b');
     });
@@ -272,10 +336,13 @@ describe('VotesService', () => {
     it('should return null when no vote exists', async () => {
       mockSupabase.from().select().eq().eq().single.mockResolvedValueOnce({
         data: null,
-        error: null
+        error: null,
       });
 
-      const result = await VotesService.getAnonymousVote(mockPollId, mockAnonymousId);
+      const result = await VotesService.getAnonymousVote(
+        mockPollId,
+        mockAnonymousId
+      );
 
       expect(result).toBeNull();
     });
@@ -286,20 +353,25 @@ describe('VotesService', () => {
       const mockVotes = [
         { choice: 'option_a' },
         { choice: 'option_a' },
-        { choice: 'option_b' }
+        { choice: 'option_b' },
       ];
 
       // Mock getVoteCounts
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       // Mock recent votes
-      mockSupabase.from().select().eq().gte().mockResolvedValueOnce({
-        data: [{ id: 'recent-vote' }],
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .gte()
+        .mockResolvedValueOnce({
+          data: [{ id: 'recent-vote' }],
+          error: null,
+        });
 
       const result = await VotesService.getVotingStats(mockPollId);
 
@@ -307,7 +379,7 @@ describe('VotesService', () => {
         totalVotes: 3,
         optionAPercentage: 67,
         optionBPercentage: 33,
-        recentVotes: 1
+        recentVotes: 1,
       });
     });
   });
@@ -315,7 +387,7 @@ describe('VotesService', () => {
   describe('deleteVote', () => {
     it('should delete vote successfully', async () => {
       mockSupabase.from().delete().eq().mockResolvedValueOnce({
-        error: null
+        error: null,
       });
 
       const result = await VotesService.deleteVote('vote-123');
@@ -324,9 +396,13 @@ describe('VotesService', () => {
     });
 
     it('should handle delete errors', async () => {
-      mockSupabase.from().delete().eq().mockResolvedValueOnce({
-        error: new Error('Delete failed')
-      });
+      mockSupabase
+        .from()
+        .delete()
+        .eq()
+        .mockResolvedValueOnce({
+          error: new Error('Delete failed'),
+        });
 
       const result = await VotesService.deleteVote('vote-123');
 

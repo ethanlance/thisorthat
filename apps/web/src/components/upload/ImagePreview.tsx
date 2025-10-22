@@ -18,7 +18,7 @@ export default function ImagePreview({
   alt,
   onRemove,
   className = '',
-  showRemoveButton = true
+  showRemoveButton = true,
 }: ImagePreviewProps) {
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -42,7 +42,7 @@ export default function ImagePreview({
             className="w-full h-48 object-cover rounded-lg"
             loading="lazy"
           />
-          
+
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
             <div className="flex space-x-2">
               <Button
@@ -54,7 +54,7 @@ export default function ImagePreview({
               >
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              
+
               {showRemoveButton && onRemove && (
                 <Button
                   variant="destructive"
@@ -73,7 +73,7 @@ export default function ImagePreview({
 
       {/* Zoom Modal */}
       {isZoomed && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
           onClick={() => setIsZoomed(false)}
         >

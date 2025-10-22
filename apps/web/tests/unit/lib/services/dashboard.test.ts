@@ -7,18 +7,18 @@ const mockSupabase = {
   from: vi.fn(() => ({
     select: vi.fn(() => ({
       eq: vi.fn(() => ({
-        order: vi.fn(() => Promise.resolve({ data: [], error: null }))
-      }))
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+      })),
     })),
     insert: vi.fn(() => Promise.resolve({ error: null })),
     delete: vi.fn(() => ({
-      eq: vi.fn(() => Promise.resolve({ error: null }))
-    }))
-  }))
+      eq: vi.fn(() => Promise.resolve({ error: null })),
+    })),
+  })),
 };
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 describe('DashboardService', () => {
@@ -35,7 +35,7 @@ describe('DashboardService', () => {
     is_public: true,
     status: 'active',
     created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   };
 
   beforeEach(() => {
@@ -48,39 +48,51 @@ describe('DashboardService', () => {
       const mockVotes = [
         { choice: 'option_a' },
         { choice: 'option_a' },
-        { choice: 'option_b' }
+        { choice: 'option_b' },
       ];
       const mockShares = [{ id: 'share-1' }, { id: 'share-2' }];
 
       // Mock polls query
       mockSupabase.from().select().eq().order.mockResolvedValueOnce({
         data: mockPolls,
-        error: null
+        error: null,
       });
 
       // Mock votes query
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       // Mock shares query
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: mockShares,
-        error: null
+        error: null,
       });
 
       // Mock last vote query
-      mockSupabase.from().select().eq().order().limit().single.mockResolvedValueOnce({
-        data: { created_at: new Date().toISOString() },
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order()
+        .limit()
+        .single.mockResolvedValueOnce({
+          data: { created_at: new Date().toISOString() },
+          error: null,
+        });
 
       // Mock last share query
-      mockSupabase.from().select().eq().order().limit().single.mockResolvedValueOnce({
-        data: null,
-        error: null
-      });
+      mockSupabase
+        .from()
+        .select()
+        .eq()
+        .order()
+        .limit()
+        .single.mockResolvedValueOnce({
+          data: null,
+          error: null,
+        });
 
       const result = await DashboardService.getUserPolls(mockUserId);
 
@@ -89,9 +101,9 @@ describe('DashboardService', () => {
         ...mockPoll,
         vote_counts: {
           option_a: 2,
-          option_b: 1
+          option_b: 1,
         },
-        share_count: 2
+        share_count: 2,
       });
     });
 
@@ -99,10 +111,12 @@ describe('DashboardService', () => {
       const mockError = new Error('Database error');
       mockSupabase.from().select().eq().order.mockResolvedValue({
         data: null,
-        error: mockError
+        error: mockError,
       });
 
-      await expect(DashboardService.getUserPolls(mockUserId)).rejects.toThrow('Database error');
+      await expect(DashboardService.getUserPolls(mockUserId)).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -112,26 +126,26 @@ describe('DashboardService', () => {
         { id: 'poll-1', status: 'active' },
         { id: 'poll-2', status: 'active' },
         { id: 'poll-3', status: 'closed' },
-        { id: 'poll-4', status: 'deleted' }
+        { id: 'poll-4', status: 'deleted' },
       ];
       const mockVotes = [
         { id: 'vote-1' },
         { id: 'vote-2' },
         { id: 'vote-3' },
         { id: 'vote-4' },
-        { id: 'vote-5' }
+        { id: 'vote-5' },
       ];
 
       // Mock polls query
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: mockPolls,
-        error: null
+        error: null,
       });
 
       // Mock votes query
       mockSupabase.from().select().in().mockResolvedValueOnce({
         data: mockVotes,
-        error: null
+        error: null,
       });
 
       const result = await DashboardService.getDashboardStats(mockUserId);
@@ -141,19 +155,19 @@ describe('DashboardService', () => {
         activePolls: 2,
         closedPolls: 1,
         totalVotes: 5,
-        averageVotesPerPoll: 1
+        averageVotesPerPoll: 1,
       });
     });
 
     it('should handle zero polls correctly', async () => {
       mockSupabase.from().select().eq().mockResolvedValueOnce({
         data: [],
-        error: null
+        error: null,
       });
 
       mockSupabase.from().select().in().mockResolvedValueOnce({
         data: [],
-        error: null
+        error: null,
       });
 
       const result = await DashboardService.getDashboardStats(mockUserId);
@@ -163,7 +177,7 @@ describe('DashboardService', () => {
         activePolls: 0,
         closedPolls: 0,
         totalVotes: 0,
-        averageVotesPerPoll: 0
+        averageVotesPerPoll: 0,
       });
     });
   });
@@ -173,13 +187,18 @@ describe('DashboardService', () => {
       const mockPolls = [
         { ...mockPoll, id: 'poll-1', status: 'active' },
         { ...mockPoll, id: 'poll-2', status: 'closed' },
-        { ...mockPoll, id: 'poll-3', status: 'active' }
+        { ...mockPoll, id: 'poll-3', status: 'active' },
       ];
 
       // Mock getUserPolls
-      vi.spyOn(DashboardService, 'getUserPolls').mockResolvedValue(mockPolls as any);
+      vi.spyOn(DashboardService, 'getUserPolls').mockResolvedValue(
+        mockPolls as any
+      );
 
-      const result = await DashboardService.getUserPollsByStatus(mockUserId, 'active');
+      const result = await DashboardService.getUserPollsByStatus(
+        mockUserId,
+        'active'
+      );
 
       expect(result).toHaveLength(2);
       expect(result.every(poll => poll.status === 'active')).toBe(true);
@@ -202,10 +221,12 @@ describe('DashboardService', () => {
     it('should handle errors during deletion', async () => {
       const mockError = new Error('Delete error');
       mockSupabase.from().delete().eq.mockResolvedValue({
-        error: mockError
+        error: mockError,
       });
 
-      await expect(DashboardService.deletePoll('poll-123')).rejects.toThrow('Delete error');
+      await expect(DashboardService.deletePoll('poll-123')).rejects.toThrow(
+        'Delete error'
+      );
     });
   });
 
@@ -221,30 +242,32 @@ describe('DashboardService', () => {
       expect(mockSupabase.from().insert).toHaveBeenCalledWith({
         poll_id: pollId,
         user_id: sharedWith,
-        shared_by: sharedBy
+        shared_by: sharedBy,
       });
     });
 
     it('should handle errors during sharing', async () => {
       const mockError = new Error('Share error');
       mockSupabase.from().insert.mockResolvedValue({
-        error: mockError
+        error: mockError,
       });
 
-      await expect(DashboardService.sharePoll('poll-123', 'user-123')).rejects.toThrow('Share error');
+      await expect(
+        DashboardService.sharePoll('poll-123', 'user-123')
+      ).rejects.toThrow('Share error');
     });
   });
 
   describe('getPollShareUrl', () => {
     it('should return correct share URL', () => {
       const pollId = 'poll-123';
-      
+
       // Mock window.location
       Object.defineProperty(window, 'location', {
         value: {
-          origin: 'https://thisorthat.app'
+          origin: 'https://thisorthat.app',
         },
-        writable: true
+        writable: true,
       });
 
       const url = DashboardService.getPollShareUrl(pollId);

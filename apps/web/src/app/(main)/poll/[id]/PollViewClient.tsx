@@ -12,17 +12,11 @@ interface PollViewClientProps {
   poll: PollWithResults;
 }
 
-export default function PollViewClient({ poll: initialPoll }: PollViewClientProps) {
-  const { 
-    poll, 
-    loading, 
-    error, 
-    hasVoted, 
-    userVote, 
-    isVoting, 
-    vote, 
-    refetch 
-  } = usePoll(initialPoll.id);
+export default function PollViewClient({
+  poll: initialPoll,
+}: PollViewClientProps) {
+  const { poll, loading, error, hasVoted, userVote, isVoting, vote, refetch } =
+    usePoll(initialPoll.id);
 
   // Track poll access on component mount
   useEffect(() => {

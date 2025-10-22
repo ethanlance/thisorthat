@@ -3,7 +3,8 @@ import HistoricalResults from '@/components/poll/HistoricalResults';
 
 export const metadata: Metadata = {
   title: 'Historical Results | ThisOrThat',
-  description: 'View historical poll results and see how past decisions turned out.',
+  description:
+    'View historical poll results and see how past decisions turned out.',
 };
 
 export default function ResultsPage() {
@@ -16,7 +17,7 @@ export default function ResultsPage() {
             Explore past poll results and see how the community voted
           </p>
         </div>
-        
+
         <HistoricalResults limit={20} />
       </div>
     </div>

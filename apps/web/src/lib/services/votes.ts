@@ -34,7 +34,7 @@ export class VotesService {
       // Check if poll is still active
       const now = new Date();
       const expiresAt = new Date(poll.expires_at);
-      
+
       if (poll.status !== 'active' || now >= expiresAt) {
         return { success: false, error: 'Poll is no longer active' };
       }
@@ -64,7 +64,7 @@ export class VotesService {
         poll_id: voteData.pollId,
         choice: voteData.choice,
         user_id: voteData.userId || null,
-        anonymous_id: voteData.anonymousId || null
+        anonymous_id: voteData.anonymousId || null,
       };
 
       const { data: newVote, error: voteError } = await supabase
@@ -85,7 +85,9 @@ export class VotesService {
   }
 
   // Get vote counts for a poll
-  static async getVoteCounts(pollId: string): Promise<{ option_a: number; option_b: number }> {
+  static async getVoteCounts(
+    pollId: string
+  ): Promise<{ option_a: number; option_b: number }> {
     const { data: votes, error } = await supabase
       .from('votes')
       .select('choice')
@@ -98,14 +100,17 @@ export class VotesService {
 
     const counts = {
       option_a: votes?.filter(v => v.choice === 'option_a').length || 0,
-      option_b: votes?.filter(v => v.choice === 'option_b').length || 0
+      option_b: votes?.filter(v => v.choice === 'option_b').length || 0,
     };
 
     return counts;
   }
 
   // Get user's vote for a poll (if authenticated)
-  static async getUserVote(pollId: string, userId: string): Promise<'option_a' | 'option_b' | null> {
+  static async getUserVote(
+    pollId: string,
+    userId: string
+  ): Promise<'option_a' | 'option_b' | null> {
     const { data: vote, error } = await supabase
       .from('votes')
       .select('choice')
@@ -121,7 +126,10 @@ export class VotesService {
   }
 
   // Get anonymous user's vote for a poll
-  static async getAnonymousVote(pollId: string, anonymousId: string): Promise<'option_a' | 'option_b' | null> {
+  static async getAnonymousVote(
+    pollId: string,
+    anonymousId: string
+  ): Promise<'option_a' | 'option_b' | null> {
     const { data: vote, error } = await supabase
       .from('votes')
       .select('choice')
@@ -154,10 +162,7 @@ export class VotesService {
 
   // Delete a vote (for testing or admin purposes)
   static async deleteVote(voteId: string): Promise<boolean> {
-    const { error } = await supabase
-      .from('votes')
-      .delete()
-      .eq('id', voteId);
+    const { error } = await supabase.from('votes').delete().eq('id', voteId);
 
     if (error) {
       console.error('Error deleting vote:', error);
@@ -176,9 +181,11 @@ export class VotesService {
   }> {
     const voteCounts = await this.getVoteCounts(pollId);
     const totalVotes = voteCounts.option_a + voteCounts.option_b;
-    
-    const optionAPercentage = totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
-    const optionBPercentage = totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
+
+    const optionAPercentage =
+      totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
+    const optionBPercentage =
+      totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
 
     // Get recent votes (last hour)
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
@@ -192,7 +199,7 @@ export class VotesService {
       totalVotes,
       optionAPercentage,
       optionBPercentage,
-      recentVotes: recentVotes?.length || 0
+      recentVotes: recentVotes?.length || 0,
     };
   }
 }

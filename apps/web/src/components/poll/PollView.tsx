@@ -23,17 +23,19 @@ interface PollViewProps {
   className?: string;
 }
 
-export default function PollView({ 
-  poll, 
-  onVote, 
-  isVoting, 
-  hasVoted, 
+export default function PollView({
+  poll,
+  onVote,
+  isVoting,
+  hasVoted,
   userVote,
   onRefetch,
-  className 
+  className,
 }: PollViewProps) {
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
-  
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
+    null
+  );
+
   const pollStatus = getPollStatus(poll);
   const isActive = isPollActive(poll);
 
@@ -67,7 +69,7 @@ export default function PollView({
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
@@ -78,7 +80,7 @@ export default function PollView({
                 <RefreshCw className="h-4 w-4" />
                 Refresh
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -90,24 +92,19 @@ export default function PollView({
               </Button>
             </div>
           </div>
-          
+
           {/* Status and Timer */}
           <div className="flex items-center justify-between mb-4">
             <PollStatusBadge status={pollStatus} size="md" />
             {isActive && (
-              <CountdownTimer 
-                expiresAt={poll.expires_at} 
-                className="text-sm"
-              />
+              <CountdownTimer expiresAt={poll.expires_at} className="text-sm" />
             )}
           </div>
-          
+
           {/* Description */}
           {poll.description && (
             <div className="bg-muted rounded-lg p-4 mb-6">
-              <p className="text-lg leading-relaxed">
-                {poll.description}
-              </p>
+              <p className="text-lg leading-relaxed">{poll.description}</p>
             </div>
           )}
         </div>
@@ -120,10 +117,7 @@ export default function PollView({
         )}
 
         {/* Poll Images */}
-        <PollImages 
-          poll={poll} 
-          showResults={!isActive || hasVoted}
-        />
+        <PollImages poll={poll} showResults={!isActive || hasVoted} />
 
         {/* Voting Interface or Results */}
         {isActive && !hasVoted ? (
@@ -136,28 +130,20 @@ export default function PollView({
             onShare={handleShare}
           />
         ) : (
-          <PollResults
-            poll={poll}
-            userVote={userVote}
-            onShare={handleShare}
-          />
+          <PollResults poll={poll} userVote={userVote} onShare={handleShare} />
         )}
 
         {/* Poll Info Footer */}
         <div className="mt-8 pt-6 border-t border-border">
           <div className="text-center text-sm text-muted-foreground space-y-2">
-            <p>
-              Poll created {new Date(poll.created_at).toLocaleDateString()}
-            </p>
+            <p>Poll created {new Date(poll.created_at).toLocaleDateString()}</p>
             {isActive && (
               <p>
                 Expires {new Date(poll.expires_at).toLocaleDateString()} at{' '}
                 {new Date(poll.expires_at).toLocaleTimeString()}
               </p>
             )}
-            <p>
-              {poll.is_public ? 'Public poll' : 'Private poll'}
-            </p>
+            <p>{poll.is_public ? 'Public poll' : 'Private poll'}</p>
           </div>
         </div>
       </div>
