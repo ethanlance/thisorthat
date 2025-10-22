@@ -64,7 +64,9 @@ export default function PollShare({
     }
   };
 
-  const handleSocialShare = (platform: 'twitter' | 'facebook' | 'whatsapp' | 'telegram') => {
+  const handleSocialShare = (
+    platform: 'twitter' | 'facebook' | 'whatsapp' | 'telegram'
+  ) => {
     const encodedUrl = encodeURIComponent(shareUrl);
     const encodedText = encodeURIComponent(shareText);
 
