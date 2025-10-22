@@ -133,6 +133,7 @@ export default function PollView({
             isVoting={isVoting}
             hasVoted={hasVoted}
             userVote={userVote}
+            onShare={handleShare}
           />
         ) : (
           <PollResults

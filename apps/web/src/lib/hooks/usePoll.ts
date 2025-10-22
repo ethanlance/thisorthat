@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { PollsService, PollWithResults } from '@/lib/services/polls';
 import { VotesService, VoteSubmission } from '@/lib/services/votes';
+import { AnonymousVotingService } from '@/lib/services/anonymous-voting';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface UsePollReturn {
@@ -56,17 +57,21 @@ export const usePoll = (pollId: string): UsePollReturn => {
 
     setIsVoting(true);
     try {
-      // Generate anonymous ID if user is not authenticated
-      const anonymousId = !user ? `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` : undefined;
+      let result;
 
-      const voteData: VoteSubmission = {
-        pollId: poll.id,
-        choice,
-        userId: user?.id,
-        anonymousId
-      };
+      if (user) {
+        // Authenticated user voting
+        const voteData: VoteSubmission = {
+          pollId: poll.id,
+          choice,
+          userId: user.id
+        };
 
-      const result = await VotesService.submitVote(voteData);
+        result = await VotesService.submitVote(voteData);
+      } else {
+        // Anonymous user voting
+        result = await AnonymousVotingService.submitAnonymousVote(poll.id, choice);
+      }
 
       if (result.success) {
         setHasVoted(true);

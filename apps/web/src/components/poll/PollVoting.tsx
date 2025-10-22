@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
+import VoteConfirmation from './VoteConfirmation';
 
 interface PollVotingProps {
   poll: PollWithResults;
@@ -12,6 +13,7 @@ interface PollVotingProps {
   isVoting: boolean;
   hasVoted: boolean;
   userVote: 'option_a' | 'option_b' | null;
+  onShare?: () => void;
   className?: string;
 }
 
@@ -21,9 +23,12 @@ export default function PollVoting({
   isVoting, 
   hasVoted,
   userVote,
+  onShare,
   className 
 }: PollVotingProps) {
   const [voteError, setVoteError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [lastVote, setLastVote] = useState<'option_a' | 'option_b' | null>(null);
 
   const handleVote = async (choice: 'option_a' | 'option_b') => {
     if (hasVoted || isVoting) return;
@@ -31,9 +36,17 @@ export default function PollVoting({
     setVoteError(null);
     const success = await onVote(choice);
     
-    if (!success) {
+    if (success) {
+      setLastVote(choice);
+      setShowConfirmation(true);
+    } else {
       setVoteError('Failed to submit vote. Please try again.');
     }
+  };
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+    setLastVote(null);
   };
 
   if (hasVoted) {
@@ -105,6 +118,16 @@ export default function PollVoting({
       <div className="text-center text-sm text-muted-foreground">
         <p>Your vote is anonymous and cannot be changed once submitted.</p>
       </div>
+
+      {/* Vote Confirmation Modal */}
+      {showConfirmation && lastVote && (
+        <VoteConfirmation
+          choice={lastVote}
+          optionLabel={lastVote === 'option_a' ? (poll.option_a_label || 'Option A') : (poll.option_b_label || 'Option B')}
+          onClose={handleCloseConfirmation}
+          onShare={onShare}
+        />
+      )}
     </div>
   );
 }
