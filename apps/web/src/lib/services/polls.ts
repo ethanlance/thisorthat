@@ -189,15 +189,37 @@ export class PollsService {
     if (error) throw error;
   }
 
-  // Get polls by status
-  static async getPollsByStatus(status: 'active' | 'closed' | 'deleted') {
-    const { data, error } = await supabase
+  // Get polls by status with vote counts
+  static async getPollsByStatus(status: 'active' | 'closed' | 'deleted'): Promise<PollWithResults[]> {
+    const { data: polls, error } = await supabase
       .from('polls')
       .select('*')
       .eq('status', status)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data;
+    if (!polls) return [];
+
+    // Fetch vote counts for each poll
+    const pollsWithVotes = await Promise.all(
+      polls.map(async (poll) => {
+        const { data: votes } = await supabase
+          .from('votes')
+          .select('choice')
+          .eq('poll_id', poll.id);
+
+        const vote_counts = {
+          option_a: votes?.filter(v => v.choice === 'option_a').length || 0,
+          option_b: votes?.filter(v => v.choice === 'option_b').length || 0,
+        };
+
+        return {
+          ...poll,
+          vote_counts,
+        };
+      })
+    );
+
+    return pollsWithVotes;
   }
 }

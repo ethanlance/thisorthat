@@ -33,10 +33,11 @@ export function PollsList({ className }: PollsListProps) {
       setError(null);
 
       const pollsData = await PollsService.getPollsByStatus(activeTab);
-      setPolls(pollsData);
+      setPolls(pollsData || []);
     } catch (err) {
       console.error('Error loading polls:', err);
-      setError('Failed to load polls. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(`Failed to load polls: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
