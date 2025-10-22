@@ -53,15 +53,15 @@ export const validateField = (
     case 'optionBImage':
       return value ? null : 'Option B image is required';
     case 'optionALabel':
-      return value && value.length > 50
+      return value && typeof value === 'string' && value.length > 50
         ? 'Option A label must be 50 characters or less'
         : null;
     case 'optionBLabel':
-      return value && value.length > 50
+      return value && typeof value === 'string' && value.length > 50
         ? 'Option B label must be 50 characters or less'
         : null;
     case 'description':
-      return value && value.length > 500
+      return value && typeof value === 'string' && value.length > 500
         ? 'Description must be 500 characters or less'
         : null;
     default:

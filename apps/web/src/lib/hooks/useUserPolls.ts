@@ -129,7 +129,10 @@ export const useUserPolls = (
           table: 'votes',
           filter: `poll_id=in.(${polls.map(p => p.id).join(',')})`,
         },
-        payload => {
+        (payload: {
+          new: { poll_id?: string };
+          old?: { poll_id?: string } | null;
+        }) => {
           console.log('Vote change received:', payload);
 
           // Update vote counts for the affected poll

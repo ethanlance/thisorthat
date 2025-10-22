@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
-import { Poll, PollWithResults } from '@/lib/services/polls';
+import { Poll } from '@/lib/supabase/types';
+import { PollWithResults } from '@/lib/services/polls';
 
 const supabase = createClient();
 
