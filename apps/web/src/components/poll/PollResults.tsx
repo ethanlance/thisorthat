@@ -5,6 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Share2, Users, TrendingUp } from 'lucide-react';
 import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
+import { useRealtimeVotes } from '@/lib/hooks/useRealtimeVotes';
+import VoteCountDisplay from './VoteCountDisplay';
 
 interface PollResultsProps {
   poll: PollWithResults;
@@ -19,9 +21,12 @@ export default function PollResults({
   onShare,
   className 
 }: PollResultsProps) {
-  const totalVotes = poll.vote_counts.option_a + poll.vote_counts.option_b;
-  const optionAPercentage = totalVotes > 0 ? Math.round((poll.vote_counts.option_a / totalVotes) * 100) : 0;
-  const optionBPercentage = totalVotes > 0 ? Math.round((poll.vote_counts.option_b / totalVotes) * 100) : 0;
+  // Use real-time vote counts
+  const { voteCounts, isConnected, lastUpdate, error } = useRealtimeVotes(poll.id);
+  
+  const totalVotes = voteCounts.option_a + voteCounts.option_b;
+  const optionAPercentage = totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
+  const optionBPercentage = totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
 
   const handleShare = async () => {
     if (onShare) {
@@ -79,7 +84,7 @@ export default function PollResults({
               <div className="text-right">
                 <div className="text-2xl font-bold">{optionAPercentage}%</div>
                 <div className="text-sm text-muted-foreground">
-                  {poll.vote_counts.option_a} vote{poll.vote_counts.option_a !== 1 ? 's' : ''}
+                  {voteCounts.option_a} vote{voteCounts.option_a !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>
@@ -115,7 +120,7 @@ export default function PollResults({
               <div className="text-right">
                 <div className="text-2xl font-bold">{optionBPercentage}%</div>
                 <div className="text-sm text-muted-foreground">
-                  {poll.vote_counts.option_b} vote{poll.vote_counts.option_b !== 1 ? 's' : ''}
+                  {voteCounts.option_b} vote{voteCounts.option_b !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>
@@ -156,7 +161,7 @@ export default function PollResults({
         <div className="grid grid-cols-2 gap-4 text-center">
           <div className="bg-muted rounded-lg p-3">
             <div className="text-2xl font-bold text-blue-600">
-              {poll.vote_counts.option_a}
+              {voteCounts.option_a}
             </div>
             <div className="text-sm text-muted-foreground">
               {poll.option_a_label || 'Option A'}
@@ -164,7 +169,7 @@ export default function PollResults({
           </div>
           <div className="bg-muted rounded-lg p-3">
             <div className="text-2xl font-bold text-red-600">
-              {poll.vote_counts.option_b}
+              {voteCounts.option_b}
             </div>
             <div className="text-sm text-muted-foreground">
               {poll.option_b_label || 'Option B'}
