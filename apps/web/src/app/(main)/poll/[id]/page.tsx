@@ -32,11 +32,11 @@ export async function generateMetadata({
         description: metaTags.openGraph.description,
         url: metaTags.openGraph.url,
         siteName: metaTags.openGraph.siteName,
-        type: metaTags.openGraph.type,
+        type: 'website',
         images: metaTags.openGraph.images,
       },
       twitter: {
-        card: metaTags.twitter.card,
+        card: 'summary_large_image',
         title: metaTags.twitter.title,
         description: metaTags.twitter.description,
         images: [metaTags.twitter.image],
