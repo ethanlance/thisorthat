@@ -7,6 +7,8 @@ import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
 import { useRealtimeVotes } from '@/lib/hooks/useRealtimeVotes';
 import VoteCountDisplay from './VoteCountDisplay';
+import ResultsChart from './ResultsChart';
+import ResultsShare from './ResultsShare';
 
 interface PollResultsProps {
   poll: PollWithResults;
@@ -58,103 +60,38 @@ export default function PollResults({
 
   return (
     <div className={cn('space-y-6', className)}>
-      {/* Results Header */}
-      <div className="text-center">
-        <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-          Poll Results
-        </h2>
-        <div className="flex items-center justify-center gap-2 text-muted-foreground">
-          <Users className="h-4 w-4" />
-          <span>{totalVotes} vote{totalVotes !== 1 ? 's' : ''} total</span>
+      {/* Enhanced Results Chart */}
+      <ResultsChart
+        voteCounts={voteCounts}
+        optionLabels={{
+          option_a: poll.option_a_label || 'Option A',
+          option_b: poll.option_b_label || 'Option B'
+        }}
+        pollStatus={poll.status}
+      />
+
+      {/* User Vote Indicator */}
+      {userVote && (
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+            <span>You voted for</span>
+            <span className="font-semibold">
+              {userVote === 'option_a' ? (poll.option_a_label || 'Option A') : (poll.option_b_label || 'Option B')}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Results Cards */}
-      <div className="space-y-4">
-        {/* Option A Results */}
-        <Card className={cn(
-          'relative overflow-hidden',
-          userVote === 'option_a' && 'ring-2 ring-primary'
-        )}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-lg">
-                {poll.option_a_label || 'Option A'}
-              </h3>
-              <div className="text-right">
-                <div className="text-2xl font-bold">{optionAPercentage}%</div>
-                <div className="text-sm text-muted-foreground">
-                  {voteCounts.option_a} vote{voteCounts.option_a !== 1 ? 's' : ''}
-                </div>
-              </div>
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="w-full bg-muted rounded-full h-3">
-              <div
-                className="bg-blue-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${optionAPercentage}%` }}
-              />
-            </div>
-            
-            {userVote === 'option_a' && (
-              <div className="absolute top-2 right-2">
-                <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                  Your vote
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Option B Results */}
-        <Card className={cn(
-          'relative overflow-hidden',
-          userVote === 'option_b' && 'ring-2 ring-primary'
-        )}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-lg">
-                {poll.option_b_label || 'Option B'}
-              </h3>
-              <div className="text-right">
-                <div className="text-2xl font-bold">{optionBPercentage}%</div>
-                <div className="text-sm text-muted-foreground">
-                  {voteCounts.option_b} vote{voteCounts.option_b !== 1 ? 's' : ''}
-                </div>
-              </div>
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="w-full bg-muted rounded-full h-3">
-              <div
-                className="bg-red-500 h-3 rounded-full transition-all duration-500"
-                style={{ width: `${optionBPercentage}%` }}
-              />
-            </div>
-            
-            {userVote === 'option_b' && (
-              <div className="absolute top-2 right-2">
-                <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                  Your vote
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Share Button */}
-      <div className="text-center">
-        <Button
-          onClick={handleShare}
-          variant="outline"
-          className="flex items-center gap-2"
-        >
-          <Share2 className="h-4 w-4" />
-          Share Results
-        </Button>
-      </div>
+      {/* Enhanced Share Component */}
+      <ResultsShare
+        pollId={poll.id}
+        pollTitle={poll.description}
+        voteCounts={voteCounts}
+        optionLabels={{
+          option_a: poll.option_a_label || 'Option A',
+          option_b: poll.option_b_label || 'Option B'
+        }}
+      />
 
       {/* Additional Stats */}
       {totalVotes > 0 && (
