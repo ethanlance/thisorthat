@@ -249,7 +249,7 @@ export default function UserDashboard({ className }: UserDashboardProps) {
         </div>
 
         {pollsError ? (
-          <ErrorDisplay error={pollsError} />
+          <ErrorDisplay message={pollsError} onRetry={refetchPolls} />
         ) : (
           <PollList
             polls={polls}
