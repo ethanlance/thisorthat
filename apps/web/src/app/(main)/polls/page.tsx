@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
+'use client';
+
 import { PollsList } from '@/components/poll/PollsList';
-import LoadingSpinner from '@/components/layout/LoadingSpinner';
 
 export default function PollsPage() {
   return (
@@ -13,9 +13,7 @@ export default function PollsPage() {
         </p>
       </div>
 
-      <Suspense fallback={<LoadingSpinner />}>
-        <PollsList />
-      </Suspense>
+      <PollsList />
     </div>
   );
 }
