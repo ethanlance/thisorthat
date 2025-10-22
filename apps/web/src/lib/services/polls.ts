@@ -190,7 +190,9 @@ export class PollsService {
   }
 
   // Get polls by status with vote counts
-  static async getPollsByStatus(status: 'active' | 'closed' | 'deleted'): Promise<PollWithResults[]> {
+  static async getPollsByStatus(
+    status: 'active' | 'closed' | 'deleted'
+  ): Promise<PollWithResults[]> {
     const { data: polls, error } = await supabase
       .from('polls')
       .select('*')
@@ -202,7 +204,7 @@ export class PollsService {
 
     // Fetch vote counts for each poll
     const pollsWithVotes = await Promise.all(
-      polls.map(async (poll) => {
+      polls.map(async poll => {
         const { data: votes } = await supabase
           .from('votes')
           .select('choice')

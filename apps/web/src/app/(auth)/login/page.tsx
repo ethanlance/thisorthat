@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import OAuthButton from '@/components/auth/OAuthButton';
 import GoogleButton from '@/components/auth/GoogleButton';
@@ -61,12 +62,12 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center">
-          <a
+          <Link
             href="/"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             ← Back to home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

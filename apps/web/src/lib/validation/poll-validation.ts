@@ -45,7 +45,7 @@ export const validatePollForm = (data: PollFormData): ValidationResult => {
 
 export const validateField = (
   field: keyof PollFormData,
-  value: any
+  value: File | string | null
 ): string | null => {
   switch (field) {
     case 'optionAImage':

@@ -36,7 +36,8 @@ export function PollsList({ className }: PollsListProps) {
       setPolls(pollsData || []);
     } catch (err) {
       console.error('Error loading polls:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unknown error occurred';
       setError(`Failed to load polls: ${errorMessage}`);
     } finally {
       setLoading(false);

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, Mail, Calendar, LogOut } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
@@ -99,10 +100,10 @@ export default function ProfilePage() {
       <div className="bg-card rounded-lg border p-6">
         <h3 className="text-lg font-semibold mb-4">Your Polls</h3>
         <p className="text-muted-foreground">
-          Polls you've created will appear here. Start by{' '}
-          <a href="/poll/create" className="text-primary hover:underline">
+          Polls you&apos;ve created will appear here. Start by{' '}
+          <Link href="/poll/create" className="text-primary hover:underline">
             creating your first poll
-          </a>
+          </Link>
           .
         </p>
       </div>

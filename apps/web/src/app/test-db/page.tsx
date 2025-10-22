@@ -5,10 +5,20 @@ import { createClient } from '@/lib/supabase/client';
 import { PollsService } from '@/lib/services/polls';
 import { VotesService } from '@/lib/services/votes';
 
+interface Poll {
+  id: string;
+  option_a_label: string;
+  option_b_label: string;
+  description: string;
+  status: string;
+  is_public: boolean;
+  expires_at: string;
+}
+
 export default function TestDatabasePage() {
   const [connectionStatus, setConnectionStatus] =
     useState<string>('Testing...');
-  const [polls, setPolls] = useState<any[]>([]);
+  const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

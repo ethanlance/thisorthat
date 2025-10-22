@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
     <footer className="border-t bg-background">
@@ -15,24 +17,24 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-sm font-semibold">Quick Links</h4>
             <div className="space-y-2">
-              <a
+              <Link
                 href="/polls"
                 className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Browse Polls
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/poll/create"
                 className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Create Poll
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/about"
                 className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 About Us
-              </a>
+              </Link>
             </div>
           </div>
 
