@@ -33,7 +33,7 @@ export interface Poll {
   option_b_label?: string | null;
   option_a_image_url: string;
   option_b_image_url?: string;
-  status: 'active' | 'closed';
+  status: 'active' | 'closed' | 'deleted';
   created_at: string;
   expires_at?: string;
 }

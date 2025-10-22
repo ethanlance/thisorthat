@@ -22,7 +22,7 @@ export default function Footer() {
                 Browse Polls
               </a>
               <a
-                href="/create"
+                href="/poll/create"
                 className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Create Poll
