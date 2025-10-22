@@ -59,16 +59,16 @@ export default function TestDatabasePage() {
 
       // Create a test poll
       const testPoll = {
-        creator_id: '00000000-0000-0000-0000-000000000000', // Test UUID
-        option_a_image_url:
+        creatorId: '00000000-0000-0000-0000-000000000000', // Test UUID
+        optionAImage:
           'https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=Option+A',
-        option_a_label: 'Option A',
-        option_b_image_url:
+        optionALabel: 'Option A',
+        optionBImage:
           'https://via.placeholder.com/300x200/4ECDC4/FFFFFF?text=Option+B',
-        option_b_label: 'Option B',
+        optionBLabel: 'Option B',
         description: 'Test poll created via database test',
-        is_public: true,
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
+        isPublic: true,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
       };
 
       const newPoll = await PollsService.createPoll(testPoll);
