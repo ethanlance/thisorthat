@@ -7,12 +7,17 @@ import { VotesService } from '@/lib/services/votes';
 
 interface Poll {
   id: string;
-  option_a_label: string;
-  option_b_label: string;
-  description: string;
+  creator_id: string;
+  option_a_image_url: string;
+  option_a_label: string | null;
+  option_b_image_url: string;
+  option_b_label: string | null;
+  description: string | null;
   status: string;
   is_public: boolean;
   expires_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export default function TestDatabasePage() {
