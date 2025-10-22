@@ -45,7 +45,7 @@ export default function PollViewClient({
   if (error && !poll) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <ErrorDisplay error={error} />
+        <ErrorDisplay message={error} onRetry={refetch} />
       </div>
     );
   }
