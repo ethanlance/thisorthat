@@ -152,7 +152,12 @@ export default function PollCreationForm({
         uploadPollImage(formData.optionBImage!, pollData.id, 'b'),
       ]);
 
-      if (!optionAResult.success || !optionBResult.success) {
+      if (
+        !optionAResult.success ||
+        !optionBResult.success ||
+        !optionAResult.url ||
+        !optionBResult.url
+      ) {
         throw new Error('Failed to upload images');
       }
 
