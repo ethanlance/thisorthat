@@ -192,7 +192,11 @@ describe('DashboardService', () => {
 
       // Mock getUserPolls
       vi.spyOn(DashboardService, 'getUserPolls').mockResolvedValue(
-        mockPolls as any
+        mockPolls as ReturnType<
+          typeof DashboardService.getUserPolls
+        > extends Promise<infer T>
+          ? T
+          : never
       );
 
       const result = await DashboardService.getUserPollsByStatus(
@@ -277,7 +281,7 @@ describe('DashboardService', () => {
     it('should handle server-side rendering', () => {
       // Mock undefined window
       const originalWindow = global.window;
-      delete (global as any).window;
+      delete vi.mocked(global).window;
 
       const pollId = 'poll-123';
       const url = DashboardService.getPollShareUrl(pollId);

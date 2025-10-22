@@ -5,21 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import {
-  Plus,
-  TrendingUp,
-  Clock,
-  Users,
-  Share2,
-  AlertTriangle,
-} from 'lucide-react';
+import { Plus, TrendingUp, Clock, Users, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserPolls } from '@/lib/hooks/useUserPolls';
 import { DashboardService, DashboardStats } from '@/lib/services/dashboard';
 import { getPollStatus } from '@/lib/services/expiration';
 import PollList from './PollList';
-import LoadingSpinner from '@/components/layout/LoadingSpinner';
 import ErrorDisplay from '@/components/ui/error-display';
 import { cn } from '@/lib/utils';
 

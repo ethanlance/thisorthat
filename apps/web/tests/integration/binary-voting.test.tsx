@@ -34,14 +34,16 @@ describe('Binary Voting System Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({ user: null }); // Anonymous user
-    (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
+    vi.mocked(useAuth).mockReturnValue({ user: null }); // Anonymous user
+    vi.mocked(PollsService.getPollById).mockResolvedValue(mockPoll);
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockResolvedValue({
       success: true,
       anonymousId: 'anon_123_abc',
     });
-    (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(false);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(null);
+    vi.mocked(AnonymousVotingService.hasVotedAnonymously).mockReturnValue(
+      false
+    );
+    vi.mocked(AnonymousVotingService.getAnonymousId).mockReturnValue(null);
   });
 
   it('allows anonymous user to vote without creating account', async () => {
@@ -83,14 +85,14 @@ describe('Binary Voting System Integration', () => {
 
   it('prevents duplicate voting from same anonymous user', async () => {
     // Mock that user has already voted
-    (AnonymousVotingService.hasVotedAnonymously as any).mockReturnValue(true);
-    (AnonymousVotingService.getAnonymousId as any).mockReturnValue(
+    vi.mocked(AnonymousVotingService.hasVotedAnonymously).mockReturnValue(true);
+    vi.mocked(AnonymousVotingService.getAnonymousId).mockReturnValue(
       'anon_123_abc'
     );
-    (AnonymousVotingService.getAnonymousVote as any).mockResolvedValue(
+    vi.mocked(AnonymousVotingService.getAnonymousVote).mockResolvedValue(
       'option_a'
     );
-    (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockResolvedValue({
       success: false,
       error: 'You have already voted on this poll',
     });
@@ -106,7 +108,7 @@ describe('Binary Voting System Integration', () => {
   });
 
   it('handles voting errors gracefully', async () => {
-    (AnonymousVotingService.submitAnonymousVote as any).mockResolvedValue({
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockResolvedValue({
       success: false,
       error: 'Poll is closed',
     });
@@ -126,7 +128,7 @@ describe('Binary Voting System Integration', () => {
 
   it('works for authenticated users with anonymous vote privacy', async () => {
     const mockUser = { id: 'user-123', email: 'test@example.com' };
-    (useAuth as any).mockReturnValue({ user: mockUser });
+    vi.mocked(useAuth).mockReturnValue({ user: mockUser });
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -147,7 +149,7 @@ describe('Binary Voting System Integration', () => {
 
   it('shows loading state during vote submission', async () => {
     // Mock slow vote submission
-    (AnonymousVotingService.submitAnonymousVote as any).mockImplementation(
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockImplementation(
       () =>
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
@@ -168,7 +170,7 @@ describe('Binary Voting System Integration', () => {
 
   it('disables voting buttons during submission', async () => {
     // Mock slow vote submission
-    (AnonymousVotingService.submitAnonymousVote as any).mockImplementation(
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockImplementation(
       () =>
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
@@ -235,7 +237,7 @@ describe('Binary Voting System Integration', () => {
   });
 
   it('handles network errors during vote submission', async () => {
-    (AnonymousVotingService.submitAnonymousVote as any).mockRejectedValue(
+    vi.mocked(AnonymousVotingService.submitAnonymousVote).mockRejectedValue(
       new Error('Network error')
     );
 

@@ -68,7 +68,9 @@ describe('MobileNav Component', () => {
       user_metadata: { full_name: 'Test User' },
     };
 
-    vi.mocked(mockAuthContext).user = authenticatedUser as any;
+    vi.mocked(mockAuthContext).user = authenticatedUser as ReturnType<
+      typeof useAuth
+    >['user'];
 
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
@@ -86,7 +88,9 @@ describe('MobileNav Component', () => {
       user_metadata: { full_name: 'Test User' },
     };
 
-    vi.mocked(mockAuthContext).user = authenticatedUser as any;
+    vi.mocked(mockAuthContext).user = authenticatedUser as ReturnType<
+      typeof useAuth
+    >['user'];
 
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');
@@ -103,7 +107,9 @@ describe('MobileNav Component', () => {
       user_metadata: { full_name: 'Test User' },
     };
 
-    vi.mocked(mockAuthContext).user = authenticatedUser as any;
+    vi.mocked(mockAuthContext).user = authenticatedUser as ReturnType<
+      typeof useAuth
+    >['user'];
 
     render(<MobileNav />);
     const menuButton = screen.getByLabelText('Toggle mobile menu');

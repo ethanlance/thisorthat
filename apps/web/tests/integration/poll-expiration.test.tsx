@@ -266,7 +266,7 @@ describe('Poll Expiration Integration', () => {
     it('should handle polls with null expiration time gracefully', () => {
       const poll = createMockPoll({
         status: 'active',
-        expires_at: null as any,
+        expires_at: null as unknown as string,
       });
 
       // Should default to closed if no expiration time

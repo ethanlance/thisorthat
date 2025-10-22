@@ -165,7 +165,12 @@ describe('poll-validation', () => {
     });
 
     it('should return null for unknown fields', () => {
-      expect(validateField('unknownField' as any, 'any value')).toBe(null);
+      expect(
+        validateField(
+          'unknownField' as unknown as Parameters<typeof validateField>[0],
+          'any value'
+        )
+      ).toBe(null);
     });
   });
 });

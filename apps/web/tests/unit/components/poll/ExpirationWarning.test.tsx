@@ -23,14 +23,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('renders nothing when no warning level', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 1,
       hours: 2,
       minutes: 30,
       seconds: 45,
       total: 100000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('none');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('none');
 
     const { container } = render(
       <ExpirationWarning expiresAt={mockExpiresAt} />
@@ -40,14 +40,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('renders critical warning', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 3,
       seconds: 0,
       total: 180000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('critical');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
 
@@ -60,14 +60,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('renders warning level', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 15,
       seconds: 0,
       total: 900000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('warning');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('warning');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
 
@@ -80,14 +80,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('renders in compact mode', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 3,
       seconds: 0,
       total: 180000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('critical');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} compact />);
 
@@ -100,14 +100,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('hides icon when showIcon is false', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 3,
       seconds: 0,
       total: 180000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('critical');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} showIcon={false} />);
 
@@ -119,14 +119,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('shows icon by default', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 3,
       seconds: 0,
       total: 180000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('critical');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('critical');
 
     render(<ExpirationWarning expiresAt={mockExpiresAt} />);
 
@@ -136,14 +136,14 @@ describe('ExpirationWarning', () => {
   });
 
   it('applies custom className', () => {
-    (calculateTimeLeft as any).mockReturnValue({
+    vi.mocked(calculateTimeLeft).mockReturnValue({
       days: 0,
       hours: 0,
       minutes: 15,
       seconds: 0,
       total: 900000,
     });
-    (getExpirationWarningLevel as any).mockReturnValue('warning');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('warning');
 
     render(
       <ExpirationWarning expiresAt={mockExpiresAt} className="custom-class" />
@@ -156,7 +156,7 @@ describe('ExpirationWarning', () => {
   });
 
   it('renders nothing when timeLeft is null', () => {
-    (calculateTimeLeft as any).mockReturnValue(null);
+    vi.mocked(calculateTimeLeft).mockReturnValue(null);
 
     const { container } = render(
       <ExpirationWarning expiresAt={mockExpiresAt} />

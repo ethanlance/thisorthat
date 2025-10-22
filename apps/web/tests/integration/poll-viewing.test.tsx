@@ -4,6 +4,7 @@ import PollPage from '@/app/(main)/poll/[id]/page';
 import { PollsService } from '@/lib/services/polls';
 import { VotesService } from '@/lib/services/votes';
 import { useAuth } from '@/contexts/AuthContext';
+import { notFound } from 'next/navigation';
 
 // Mock necessary modules
 vi.mock('@/lib/services/polls');
@@ -35,9 +36,11 @@ describe('Poll Viewing Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({ user: mockUser });
-    (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (VotesService.submitVote as any).mockResolvedValue({
+    vi.mocked(useAuth).mockReturnValue({ user: mockUser } as ReturnType<
+      typeof useAuth
+    >);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(mockPoll);
+    vi.mocked(VotesService.submitVote).mockResolvedValue({
       success: true,
       voteId: 'vote-123',
     });
@@ -89,7 +92,7 @@ describe('Poll Viewing Integration', () => {
       status: 'closed',
       expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     };
-    (PollsService.getPollById as any).mockResolvedValue(closedPoll);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(closedPoll);
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -107,7 +110,7 @@ describe('Poll Viewing Integration', () => {
       ...mockPoll,
       user_vote: 'option_a',
     };
-    (PollsService.getPollById as any).mockResolvedValue(pollWithVotes);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(pollWithVotes);
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -121,16 +124,16 @@ describe('Poll Viewing Integration', () => {
   });
 
   it('handles poll not found', async () => {
-    (PollsService.getPollById as any).mockResolvedValue(null);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(null);
 
     render(<PollPage params={{ id: 'non-existent' }} />);
 
     // Should call notFound()
-    expect(require('next/navigation').notFound).toHaveBeenCalled();
+    expect(notFound).toHaveBeenCalled();
   });
 
   it('handles voting errors gracefully', async () => {
-    (VotesService.submitVote as any).mockResolvedValue({
+    vi.mocked(VotesService.submitVote).mockResolvedValue({
       success: false,
       error: 'Vote failed',
     });
@@ -149,7 +152,7 @@ describe('Poll Viewing Integration', () => {
   });
 
   it('shows loading state initially', () => {
-    (PollsService.getPollById as any).mockReturnValue(new Promise(() => {})); // Never resolve
+    vi.mocked(PollsService.getPollById).mockReturnValue(new Promise(() => {})); // Never resolve
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -158,7 +161,7 @@ describe('Poll Viewing Integration', () => {
   });
 
   it('handles anonymous voting', async () => {
-    (useAuth as any).mockReturnValue({ user: null });
+    vi.mocked(useAuth).mockReturnValue({ user: null });
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -270,7 +273,7 @@ describe('Poll Viewing Integration', () => {
       option_a_label: null,
       option_b_label: null,
     };
-    (PollsService.getPollById as any).mockResolvedValue(pollWithoutLabels);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(pollWithoutLabels);
 
     render(<PollPage params={{ id: mockPollId }} />);
 
@@ -285,7 +288,9 @@ describe('Poll Viewing Integration', () => {
       ...mockPoll,
       description: null,
     };
-    (PollsService.getPollById as any).mockResolvedValue(pollWithoutDescription);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(
+      pollWithoutDescription
+    );
 
     render(<PollPage params={{ id: mockPollId }} />);
 

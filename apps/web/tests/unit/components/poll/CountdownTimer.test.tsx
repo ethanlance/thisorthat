@@ -39,9 +39,9 @@ describe('CountdownTimer', () => {
       total: 100000,
     };
 
-    (calculateTimeLeft as any).mockReturnValue(mockTimeLeft);
-    (formatTimeLeft as any).mockReturnValue('1d 2h 30m');
-    (getExpirationWarningLevel as any).mockReturnValue('none');
+    vi.mocked(calculateTimeLeft).mockReturnValue(mockTimeLeft);
+    vi.mocked(formatTimeLeft).mockReturnValue('1d 2h 30m');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('none');
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -49,7 +49,7 @@ describe('CountdownTimer', () => {
   });
 
   it('renders expired state when time is up', () => {
-    (calculateTimeLeft as any).mockReturnValue(null);
+    vi.mocked(calculateTimeLeft).mockReturnValue(null);
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -58,7 +58,7 @@ describe('CountdownTimer', () => {
   });
 
   it('renders calculating state initially', () => {
-    (calculateTimeLeft as any).mockReturnValue(null);
+    vi.mocked(calculateTimeLeft).mockReturnValue(null);
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -66,7 +66,7 @@ describe('CountdownTimer', () => {
   });
 
   it('calls onExpire callback when timer expires', () => {
-    (calculateTimeLeft as any).mockReturnValue(null);
+    vi.mocked(calculateTimeLeft).mockReturnValue(null);
 
     render(
       <CountdownTimer expiresAt={mockExpiresAt} onExpire={mockOnExpire} />
@@ -84,9 +84,9 @@ describe('CountdownTimer', () => {
       total: 180000,
     };
 
-    (calculateTimeLeft as any).mockReturnValue(mockTimeLeft);
-    (formatTimeLeft as any).mockReturnValue('3m');
-    (getExpirationWarningLevel as any).mockReturnValue('critical');
+    vi.mocked(calculateTimeLeft).mockReturnValue(mockTimeLeft);
+    vi.mocked(formatTimeLeft).mockReturnValue('3m');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('critical');
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -104,9 +104,9 @@ describe('CountdownTimer', () => {
       total: 900000,
     };
 
-    (calculateTimeLeft as any).mockReturnValue(mockTimeLeft);
-    (formatTimeLeft as any).mockReturnValue('15m');
-    (getExpirationWarningLevel as any).mockReturnValue('warning');
+    vi.mocked(calculateTimeLeft).mockReturnValue(mockTimeLeft);
+    vi.mocked(formatTimeLeft).mockReturnValue('15m');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('warning');
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -124,9 +124,9 @@ describe('CountdownTimer', () => {
       total: 100000,
     };
 
-    (calculateTimeLeft as any).mockReturnValue(mockTimeLeft);
-    (formatTimeLeft as any).mockReturnValue('1d 2h 30m');
-    (getExpirationWarningLevel as any).mockReturnValue('none');
+    vi.mocked(calculateTimeLeft).mockReturnValue(mockTimeLeft);
+    vi.mocked(formatTimeLeft).mockReturnValue('1d 2h 30m');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('none');
 
     render(<CountdownTimer expiresAt={mockExpiresAt} compact />);
 
@@ -151,15 +151,15 @@ describe('CountdownTimer', () => {
       total: 89000,
     };
 
-    (calculateTimeLeft as any)
+    vi.mocked(calculateTimeLeft)
       .mockReturnValueOnce(mockTimeLeft1)
       .mockReturnValueOnce(mockTimeLeft2);
 
-    (formatTimeLeft as any)
+    vi.mocked(formatTimeLeft)
       .mockReturnValueOnce('1m 30s')
       .mockReturnValueOnce('1m 29s');
 
-    (getExpirationWarningLevel as any).mockReturnValue('none');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('none');
 
     render(<CountdownTimer expiresAt={mockExpiresAt} />);
 
@@ -181,9 +181,9 @@ describe('CountdownTimer', () => {
       total: 100000,
     };
 
-    (calculateTimeLeft as any).mockReturnValue(mockTimeLeft);
-    (formatTimeLeft as any).mockReturnValue('1d 2h 30m');
-    (getExpirationWarningLevel as any).mockReturnValue('none');
+    vi.mocked(calculateTimeLeft).mockReturnValue(mockTimeLeft);
+    vi.mocked(formatTimeLeft).mockReturnValue('1d 2h 30m');
+    vi.mocked(getExpirationWarningLevel).mockReturnValue('none');
 
     render(
       <CountdownTimer expiresAt={mockExpiresAt} className="custom-class" />

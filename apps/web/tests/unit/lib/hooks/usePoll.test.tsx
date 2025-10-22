@@ -48,9 +48,9 @@ describe('usePoll', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({ user: mockUser });
-    (PollsService.getPollById as any).mockResolvedValue(mockPoll);
-    (VotesService.submitVote as any).mockResolvedValue({
+    vi.mocked(useAuth).mockReturnValue({ user: mockUser });
+    vi.mocked(PollsService.getPollById).mockResolvedValue(mockPoll);
+    vi.mocked(VotesService.submitVote).mockResolvedValue({
       success: true,
       voteId: 'vote-123',
     });
@@ -75,7 +75,7 @@ describe('usePoll', () => {
   });
 
   it('should handle poll not found', async () => {
-    (PollsService.getPollById as any).mockResolvedValue(null);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(null);
 
     const { result } = renderHook(() => usePoll(mockPollId));
 
@@ -89,7 +89,7 @@ describe('usePoll', () => {
 
   it('should handle fetch errors', async () => {
     const mockError = new Error('Failed to fetch poll');
-    (PollsService.getPollById as any).mockRejectedValue(mockError);
+    vi.mocked(PollsService.getPollById).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => usePoll(mockPollId));
 
@@ -124,7 +124,7 @@ describe('usePoll', () => {
   });
 
   it('should handle voting for anonymous user', async () => {
-    (useAuth as any).mockReturnValue({ user: null });
+    vi.mocked(useAuth).mockReturnValue({ user: null });
 
     const { result } = renderHook(() => usePoll(mockPollId));
 
@@ -148,7 +148,7 @@ describe('usePoll', () => {
   });
 
   it('should handle voting errors', async () => {
-    (VotesService.submitVote as any).mockResolvedValue({
+    vi.mocked(VotesService.submitVote).mockResolvedValue({
       success: false,
       error: 'Vote failed',
     });
@@ -170,7 +170,7 @@ describe('usePoll', () => {
 
   it('should prevent voting when already voted', async () => {
     const pollWithVote = { ...mockPoll, user_vote: 'option_a' };
-    (PollsService.getPollById as any).mockResolvedValue(pollWithVote);
+    vi.mocked(PollsService.getPollById).mockResolvedValue(pollWithVote);
 
     const { result } = renderHook(() => usePoll(mockPollId));
 

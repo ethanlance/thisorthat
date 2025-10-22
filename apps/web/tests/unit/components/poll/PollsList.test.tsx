@@ -12,14 +12,28 @@ vi.mock('@/lib/services/polls', () => ({
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: any) => (
-    <img src={src} alt={alt} {...props} />
-  ),
+  default: ({
+    src,
+    alt,
+    ...props
+  }: {
+    src: string;
+    alt: string;
+    [key: string]: unknown;
+  }) => <img src={src} alt={alt} {...props} />,
 }));
 
 // Mock Next.js Link component
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
     <a href={href} {...props}>
       {children}
     </a>
@@ -71,7 +85,7 @@ describe('PollsList', () => {
   });
 
   it('should render loading state initially', () => {
-    (PollsService.getPollsByStatus as any).mockResolvedValue([]);
+    vi.mocked(PollsService.getPollsByStatus).mockResolvedValue([]);
 
     render(<PollsList />);
 
@@ -79,7 +93,7 @@ describe('PollsList', () => {
   });
 
   it('should render polls when loaded', async () => {
-    (PollsService.getPollsByStatus as any).mockResolvedValue(mockPolls);
+    vi.mocked(PollsService.getPollsByStatus).mockResolvedValue(mockPolls);
 
     render(<PollsList />);
 
@@ -92,7 +106,7 @@ describe('PollsList', () => {
   });
 
   it('should render empty state when no polls', async () => {
-    (PollsService.getPollsByStatus as any).mockResolvedValue([]);
+    vi.mocked(PollsService.getPollsByStatus).mockResolvedValue([]);
 
     render(<PollsList />);
 
@@ -107,7 +121,7 @@ describe('PollsList', () => {
   });
 
   it('should render error state when fetch fails', async () => {
-    (PollsService.getPollsByStatus as any).mockRejectedValue(
+    vi.mocked(PollsService.getPollsByStatus).mockRejectedValue(
       new Error('Failed to fetch')
     );
 
@@ -122,7 +136,7 @@ describe('PollsList', () => {
   });
 
   it('should show correct vote counts and percentages', async () => {
-    (PollsService.getPollsByStatus as any).mockResolvedValue([mockPolls[0]]);
+    vi.mocked(PollsService.getPollsByStatus).mockResolvedValue([mockPolls[0]]);
 
     render(<PollsList />);
 
@@ -134,7 +148,7 @@ describe('PollsList', () => {
   });
 
   it('should show correct poll status badges', async () => {
-    (PollsService.getPollsByStatus as any).mockResolvedValue(mockPolls);
+    vi.mocked(PollsService.getPollsByStatus).mockResolvedValue(mockPolls);
 
     render(<PollsList />);
 

@@ -42,9 +42,9 @@ describe('PollCard', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (getPollStatus as any).mockReturnValue('active');
-    (isPollActive as any).mockReturnValue(true);
-    (formatRelativeTime as any).mockReturnValue('2 hours ago');
+    vi.mocked(getPollStatus).mockReturnValue('active');
+    vi.mocked(isPollActive).mockReturnValue(true);
+    vi.mocked(formatRelativeTime).mockReturnValue('2 hours ago');
   });
 
   it('renders poll card with all information', () => {
@@ -68,7 +68,7 @@ describe('PollCard', () => {
   });
 
   it('renders active poll with countdown timer', () => {
-    (isPollActive as any).mockReturnValue(true);
+    vi.mocked(isPollActive).mockReturnValue(true);
 
     render(<PollCard poll={mockPoll} />);
 
@@ -78,8 +78,8 @@ describe('PollCard', () => {
   });
 
   it('renders closed poll with vote percentages', () => {
-    (getPollStatus as any).mockReturnValue('closed');
-    (isPollActive as any).mockReturnValue(false);
+    vi.mocked(getPollStatus).mockReturnValue('closed');
+    vi.mocked(isPollActive).mockReturnValue(false);
 
     render(<PollCard poll={mockPoll} />);
 
@@ -133,8 +133,8 @@ describe('PollCard', () => {
   });
 
   it('shows vote results bar for closed polls', () => {
-    (getPollStatus as any).mockReturnValue('closed');
-    (isPollActive as any).mockReturnValue(false);
+    vi.mocked(getPollStatus).mockReturnValue('closed');
+    vi.mocked(isPollActive).mockReturnValue(false);
 
     render(<PollCard poll={mockPoll} />);
 

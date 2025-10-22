@@ -67,8 +67,8 @@ describe('Dashboard Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useAuth as any).mockReturnValue({ user: mockUser });
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({ user: mockUser });
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: mockPolls,
       loading: false,
       error: null,
@@ -76,7 +76,7 @@ describe('Dashboard Integration', () => {
       deletePoll: vi.fn(),
       sharePoll: vi.fn(),
     });
-    (DashboardService.getDashboardStats as any).mockResolvedValue(mockStats);
+    vi.mocked(DashboardService.getDashboardStats).mockResolvedValue(mockStats);
   });
 
   it('renders dashboard for authenticated user', () => {
@@ -109,7 +109,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('shows loading state for stats', () => {
-    (DashboardService.getDashboardStats as any).mockReturnValue(
+    vi.mocked(DashboardService.getDashboardStats).mockReturnValue(
       new Promise(() => {})
     ); // Never resolve
 
@@ -120,7 +120,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('shows loading state for polls', () => {
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: [],
       loading: true,
       error: null,
@@ -136,7 +136,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('handles stats fetch error', async () => {
-    (DashboardService.getDashboardStats as any).mockRejectedValue(
+    vi.mocked(DashboardService.getDashboardStats).mockRejectedValue(
       new Error('Stats fetch failed')
     );
 
@@ -148,7 +148,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('handles polls fetch error', () => {
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: [],
       loading: false,
       error: 'Polls fetch failed',
@@ -170,7 +170,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('shows empty state when no polls exist', () => {
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: [],
       loading: false,
       error: null,
@@ -198,7 +198,7 @@ describe('Dashboard Integration', () => {
       },
     ];
 
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: expiringPolls,
       loading: false,
       error: null,
@@ -216,7 +216,7 @@ describe('Dashboard Integration', () => {
 
   it('handles poll deletion', async () => {
     const mockDeletePoll = vi.fn().mockResolvedValue(undefined);
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: mockPolls,
       loading: false,
       error: null,
@@ -244,7 +244,7 @@ describe('Dashboard Integration', () => {
 
   it('handles poll sharing', async () => {
     const mockSharePoll = vi.fn().mockResolvedValue(undefined);
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: mockPolls,
       loading: false,
       error: null,
@@ -283,7 +283,7 @@ describe('Dashboard Integration', () => {
 
   it('shows success message after actions', async () => {
     const mockDeletePoll = vi.fn().mockResolvedValue(undefined);
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: mockPolls,
       loading: false,
       error: null,
@@ -306,7 +306,7 @@ describe('Dashboard Integration', () => {
   });
 
   it('shows unauthenticated state', () => {
-    (useAuth as any).mockReturnValue({ user: null });
+    vi.mocked(useAuth).mockReturnValue({ user: null });
 
     render(<DashboardPage />);
 
@@ -317,7 +317,7 @@ describe('Dashboard Integration', () => {
 
   it('refreshes polls when refresh button clicked', () => {
     const mockRefetch = vi.fn();
-    (useUserPolls as any).mockReturnValue({
+    vi.mocked(useUserPolls).mockReturnValue({
       polls: mockPolls,
       loading: false,
       error: null,

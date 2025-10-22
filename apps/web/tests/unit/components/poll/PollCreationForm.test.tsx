@@ -27,7 +27,17 @@ vi.mock('@/lib/storage/image-upload', () => ({
 }));
 
 vi.mock('@/components/upload/ImageUpload', () => ({
-  default: ({ option, onImageSelect, onError, disabled }: any) => (
+  default: ({
+    option,
+    onImageSelect,
+    onError,
+    disabled,
+  }: {
+    option: string;
+    onImageSelect: (file: File | null) => void;
+    onError: (error: string) => void;
+    disabled: boolean;
+  }) => (
     <div data-testid={`image-upload-${option}`}>
       <button
         onClick={() =>
@@ -50,17 +60,17 @@ describe('PollCreationForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useRouter as any).mockReturnValue({
+    vi.mocked(useRouter).mockReturnValue({
       push: mockPush,
     });
 
-    (useAuth as any).mockReturnValue({
+    vi.mocked(useAuth).mockReturnValue({
       user: mockUser,
     });
 
-    (PollsService.createPoll as any).mockResolvedValue(mockPoll);
-    (PollsService.updatePollWithImages as any).mockResolvedValue(mockPoll);
-    (uploadPollImage as any).mockResolvedValue({
+    vi.mocked(PollsService.createPoll).mockResolvedValue(mockPoll);
+    vi.mocked(PollsService.updatePollWithImages).mockResolvedValue(mockPoll);
+    vi.mocked(uploadPollImage).mockResolvedValue({
       success: true,
       url: 'https://example.com/image.jpg',
     });
@@ -90,7 +100,7 @@ describe('PollCreationForm', () => {
   });
 
   it('shows login prompt when user is not authenticated', () => {
-    (useAuth as any).mockReturnValue({ user: null });
+    vi.mocked(useAuth).mockReturnValue({ user: null });
 
     render(<PollCreationForm />);
 
@@ -154,7 +164,7 @@ describe('PollCreationForm', () => {
   });
 
   it('handles form submission errors', async () => {
-    (PollsService.createPoll as any).mockRejectedValue(
+    vi.mocked(PollsService.createPoll).mockRejectedValue(
       new Error('Database error')
     );
 

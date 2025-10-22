@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, Grid, List } from 'lucide-react';
+import { Search, Grid, List } from 'lucide-react';
 import { UserPollSummary } from '@/lib/services/dashboard';
 import { getPollStatus } from '@/lib/services/expiration';
 import PollCard from '@/components/poll/PollCard';

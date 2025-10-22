@@ -70,7 +70,7 @@ describe('useUserPolls', () => {
   });
 
   it('should fetch user polls on mount', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -98,7 +98,7 @@ describe('useUserPolls', () => {
 
   it('should handle fetch errors', async () => {
     const mockError = new Error('Failed to fetch polls');
-    (DashboardService.getUserPolls as any).mockRejectedValue(mockError);
+    vi.mocked(DashboardService.getUserPolls).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -111,8 +111,8 @@ describe('useUserPolls', () => {
   });
 
   it('should delete poll successfully', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
-    (DashboardService.deletePoll as any).mockResolvedValue(undefined);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.deletePoll).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -130,9 +130,9 @@ describe('useUserPolls', () => {
   });
 
   it('should handle delete poll errors', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
     const mockError = new Error('Failed to delete poll');
-    (DashboardService.deletePoll as any).mockRejectedValue(mockError);
+    vi.mocked(DashboardService.deletePoll).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -153,8 +153,8 @@ describe('useUserPolls', () => {
   });
 
   it('should share poll successfully', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
-    (DashboardService.sharePoll as any).mockResolvedValue(undefined);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.sharePoll).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -174,9 +174,9 @@ describe('useUserPolls', () => {
   });
 
   it('should handle share poll errors', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
     const mockError = new Error('Failed to share poll');
-    (DashboardService.sharePoll as any).mockRejectedValue(mockError);
+    vi.mocked(DashboardService.sharePoll).mockRejectedValue(mockError);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -197,7 +197,7 @@ describe('useUserPolls', () => {
   });
 
   it('should refetch polls', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -206,7 +206,7 @@ describe('useUserPolls', () => {
     });
 
     const newPolls = [...mockPolls, { ...mockPolls[0], id: 'poll-3' }];
-    (DashboardService.getUserPolls as any).mockResolvedValue(newPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(newPolls);
 
     await act(async () => {
       await result.current.refetch();
@@ -217,7 +217,7 @@ describe('useUserPolls', () => {
   });
 
   it('should set up real-time subscription', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
 
     const { result, unmount } = renderHook(() => useUserPolls(mockUserId));
 
@@ -242,7 +242,7 @@ describe('useUserPolls', () => {
   });
 
   it('should handle real-time poll updates', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 
@@ -269,7 +269,7 @@ describe('useUserPolls', () => {
   });
 
   it('should handle real-time poll deletion', async () => {
-    (DashboardService.getUserPolls as any).mockResolvedValue(mockPolls);
+    vi.mocked(DashboardService.getUserPolls).mockResolvedValue(mockPolls);
 
     const { result } = renderHook(() => useUserPolls(mockUserId));
 

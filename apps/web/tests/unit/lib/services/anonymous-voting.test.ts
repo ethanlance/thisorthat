@@ -18,19 +18,19 @@ describe('AnonymousVotingService', () => {
   describe('submitAnonymousVote', () => {
     it('should submit vote successfully with new anonymous ID', async () => {
       // Mock no stored ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(null);
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(null);
+      vi.mocked(anonymousIdUtils.generateAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.storeAnonymousId).mockImplementation(() => {});
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       // Mock no existing vote
-      (VotesService.getAnonymousVote as any).mockResolvedValue(null);
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue(null);
 
       // Mock successful vote submission
-      (VotesService.submitVote as any).mockResolvedValue({
+      vi.mocked(VotesService.submitVote).mockResolvedValue({
         success: true,
         voteId: 'vote-123',
       });
@@ -56,17 +56,17 @@ describe('AnonymousVotingService', () => {
 
     it('should submit vote successfully with existing valid anonymous ID', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       // Mock no existing vote
-      (VotesService.getAnonymousVote as any).mockResolvedValue(null);
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue(null);
 
       // Mock successful vote submission
-      (VotesService.submitVote as any).mockResolvedValue({
+      vi.mocked(VotesService.submitVote).mockResolvedValue({
         success: true,
         voteId: 'vote-123',
       });
@@ -90,21 +90,21 @@ describe('AnonymousVotingService', () => {
       const newAnonymousId = 'anon_9876543210_xyz789';
 
       // Mock expired existing ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(true);
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.generateAnonymousId).mockReturnValue(
         newAnonymousId
       );
-      (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
+      vi.mocked(anonymousIdUtils.storeAnonymousId).mockImplementation(() => {});
 
       // Mock no existing vote
-      (VotesService.getAnonymousVote as any).mockResolvedValue(null);
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue(null);
 
       // Mock successful vote submission
-      (VotesService.submitVote as any).mockResolvedValue({
+      vi.mocked(VotesService.submitVote).mockResolvedValue({
         success: true,
         voteId: 'vote-123',
       });
@@ -125,14 +125,14 @@ describe('AnonymousVotingService', () => {
 
     it('should return error if user has already voted', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       // Mock existing vote
-      (VotesService.getAnonymousVote as any).mockResolvedValue('option_a');
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue('option_a');
 
       const result = await AnonymousVotingService.submitAnonymousVote(
         mockPollId,
@@ -147,17 +147,17 @@ describe('AnonymousVotingService', () => {
 
     it('should handle vote submission errors', async () => {
       // Mock existing valid ID
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       // Mock no existing vote
-      (VotesService.getAnonymousVote as any).mockResolvedValue(null);
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue(null);
 
       // Mock vote submission error
-      (VotesService.submitVote as any).mockResolvedValue({
+      vi.mocked(VotesService.submitVote).mockResolvedValue({
         success: false,
         error: 'Poll is closed',
       });
@@ -173,9 +173,11 @@ describe('AnonymousVotingService', () => {
 
     it('should handle unexpected errors', async () => {
       // Mock error in getStoredAnonymousId
-      (anonymousIdUtils.getStoredAnonymousId as any).mockImplementation(() => {
-        throw new Error('localStorage error');
-      });
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockImplementation(
+        () => {
+          throw new Error('localStorage error');
+        }
+      );
 
       const result = await AnonymousVotingService.submitAnonymousVote(
         mockPollId,
@@ -191,7 +193,7 @@ describe('AnonymousVotingService', () => {
 
   describe('hasVotedAnonymously', () => {
     it('should return true if user has voted', () => {
-      (anonymousIdUtils.hasVotedAnonymously as any).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.hasVotedAnonymously).mockReturnValue(true);
 
       const result = AnonymousVotingService.hasVotedAnonymously(mockPollId);
 
@@ -202,7 +204,7 @@ describe('AnonymousVotingService', () => {
     });
 
     it('should return false if user has not voted', () => {
-      (anonymousIdUtils.hasVotedAnonymously as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.hasVotedAnonymously).mockReturnValue(false);
 
       const result = AnonymousVotingService.hasVotedAnonymously(mockPollId);
 
@@ -212,7 +214,7 @@ describe('AnonymousVotingService', () => {
 
   describe('getAnonymousId', () => {
     it('should return stored anonymous ID', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
 
@@ -225,7 +227,7 @@ describe('AnonymousVotingService', () => {
     });
 
     it('should return null if no ID is stored', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(null);
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(null);
 
       const result = AnonymousVotingService.getAnonymousId(mockPollId);
 
@@ -235,10 +237,10 @@ describe('AnonymousVotingService', () => {
 
   describe('getAnonymousVote', () => {
     it('should return user vote if ID exists', async () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (VotesService.getAnonymousVote as any).mockResolvedValue('option_a');
+      vi.mocked(VotesService.getAnonymousVote).mockResolvedValue('option_a');
 
       const result = await AnonymousVotingService.getAnonymousVote(mockPollId);
 
@@ -250,7 +252,7 @@ describe('AnonymousVotingService', () => {
     });
 
     it('should return null if no ID is stored', async () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(null);
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(null);
 
       const result = await AnonymousVotingService.getAnonymousVote(mockPollId);
 
@@ -261,7 +263,7 @@ describe('AnonymousVotingService', () => {
 
   describe('clearAnonymousData', () => {
     it('should clear anonymous data for poll', () => {
-      (anonymousIdUtils.clearAnonymousId as any).mockImplementation(() => {});
+      vi.mocked(anonymousIdUtils.clearAnonymousId).mockImplementation(() => {});
 
       AnonymousVotingService.clearAnonymousData(mockPollId);
 
@@ -273,10 +275,10 @@ describe('AnonymousVotingService', () => {
 
   describe('generateNewAnonymousId', () => {
     it('should generate and store new anonymous ID', () => {
-      (anonymousIdUtils.generateAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.generateAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.storeAnonymousId as any).mockImplementation(() => {});
+      vi.mocked(anonymousIdUtils.storeAnonymousId).mockImplementation(() => {});
 
       const result = AnonymousVotingService.generateNewAnonymousId(mockPollId);
 
@@ -291,12 +293,12 @@ describe('AnonymousVotingService', () => {
 
   describe('validateAnonymousData', () => {
     it('should return validation results for stored data', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(
         mockAnonymousId
       );
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
-      (anonymousIdUtils.hasVotedAnonymously as any).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.hasVotedAnonymously).mockReturnValue(true);
 
       const result = AnonymousVotingService.validateAnonymousData(mockPollId);
 
@@ -309,8 +311,8 @@ describe('AnonymousVotingService', () => {
     });
 
     it('should return validation results for no stored data', () => {
-      (anonymousIdUtils.getStoredAnonymousId as any).mockReturnValue(null);
-      (anonymousIdUtils.hasVotedAnonymously as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.getStoredAnonymousId).mockReturnValue(null);
+      vi.mocked(anonymousIdUtils.hasVotedAnonymously).mockReturnValue(false);
 
       const result = AnonymousVotingService.validateAnonymousData(mockPollId);
 
@@ -344,8 +346,8 @@ describe('AnonymousVotingService', () => {
         writable: true,
       });
 
-      (anonymousIdUtils.isValidAnonymousId as any).mockReturnValue(true);
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.isValidAnonymousId).mockReturnValue(true);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       const result = AnonymousVotingService.getAnonymousVotingStats();
 
@@ -360,7 +362,7 @@ describe('AnonymousVotingService', () => {
     it('should return zero stats on server side', () => {
       // Mock server side (no window)
       const originalWindow = global.window;
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete global.window;
 
       const result = AnonymousVotingService.getAnonymousVotingStats();
@@ -397,7 +399,7 @@ describe('AnonymousVotingService', () => {
         writable: true,
       });
 
-      (anonymousIdUtils.isAnonymousIdExpired as any)
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired)
         .mockReturnValueOnce(true)
         .mockReturnValueOnce(false);
 
@@ -425,7 +427,7 @@ describe('AnonymousVotingService', () => {
         writable: true,
       });
 
-      (anonymousIdUtils.isAnonymousIdExpired as any).mockReturnValue(false);
+      vi.mocked(anonymousIdUtils.isAnonymousIdExpired).mockReturnValue(false);
 
       const result = AnonymousVotingService.cleanupExpiredIds();
 

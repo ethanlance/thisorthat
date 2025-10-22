@@ -98,7 +98,7 @@ describe('anonymous-id utilities', () => {
     it('should return null on server side', () => {
       // Mock server side (no window)
       const originalWindow = global.window;
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete global.window;
 
       const result = getStoredAnonymousId('poll-123');
@@ -136,7 +136,7 @@ describe('anonymous-id utilities', () => {
     it('should do nothing on server side', () => {
       // Mock server side (no window)
       const originalWindow = global.window;
-      // @ts-ignore
+      // @ts-expect-error - Testing invalid input
       delete global.window;
 
       storeAnonymousId('poll-123', 'anon_1234567890_abc123');

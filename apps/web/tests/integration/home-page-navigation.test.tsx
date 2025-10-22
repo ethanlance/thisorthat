@@ -6,7 +6,15 @@ import MobileNav from '@/components/layout/MobileNav';
 
 // Mock Next.js Link component
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
+  }) => (
     <a href={href} {...props}>
       {children}
     </a>

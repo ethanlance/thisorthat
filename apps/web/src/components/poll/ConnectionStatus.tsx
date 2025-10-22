@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Wifi, WifiOff } from 'lucide-react';
+import { WifiOff } from 'lucide-react';
 
 interface ConnectionStatusProps {
   isConnected: boolean;

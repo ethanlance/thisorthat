@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { PollsService } from '@/lib/services/polls';
-import { VotesService } from '@/lib/services/votes';
 
 interface Poll {
   id: string;
@@ -35,10 +34,7 @@ export default function TestDatabasePage() {
       const supabase = createClient();
 
       // Test basic connection
-      const { data, error } = await supabase
-        .from('polls')
-        .select('count')
-        .limit(1);
+      const { error } = await supabase.from('polls').select('count').limit(1);
 
       if (error) {
         setConnectionStatus(`❌ Connection failed: ${error.message}`);
