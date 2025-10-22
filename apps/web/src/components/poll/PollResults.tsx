@@ -71,7 +71,7 @@ export default function PollResults({
           option_a: poll.option_a_label || 'Option A',
           option_b: poll.option_b_label || 'Option B',
         }}
-        pollStatus={poll.status}
+        pollStatus={poll.status === 'deleted' ? 'closed' : poll.status}
       />
 
       {/* User Vote Indicator */}
