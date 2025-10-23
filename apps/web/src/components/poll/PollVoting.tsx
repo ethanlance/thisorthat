@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
 import VoteConfirmation from './VoteConfirmation';
+import { ConfettiCelebration } from './ConfettiCelebration';
 
 interface PollVotingProps {
   poll: PollWithResults;
@@ -31,6 +32,7 @@ export default function PollVoting({
   const [lastVote, setLastVote] = useState<'option_a' | 'option_b' | null>(
     null
   );
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const handleVote = async (choice: 'option_a' | 'option_b') => {
     if (hasVoted || isVoting) return;
@@ -49,6 +51,7 @@ export default function PollVoting({
 
     if (success) {
       setLastVote(choice);
+      setShowConfetti(true); // Trigger confetti
       setShowConfirmation(true);
     } else {
       setVoteError('Failed to submit vote. Please try again.');
@@ -146,6 +149,9 @@ export default function PollVoting({
           onShare={onShare}
         />
       )}
+
+      {/* Confetti Celebration */}
+      <ConfettiCelebration active={showConfetti} />
     </div>
   );
 }
