@@ -44,12 +44,12 @@ export default function AnimatedProgressBar({
       <div
         className={cn(
           'h-full rounded-full transition-all ease-out',
-          isLeading 
-            ? 'bg-primary' 
+          isLeading
+            ? 'bg-primary'
             : 'bg-primary-light/50 dark:bg-primary-light/30',
           animate ? 'duration-[800ms]' : 'duration-0' // 800ms for smooth animation
         )}
-        style={{ 
+        style={{
           width: animate ? `${percentage}%` : '0%',
         }}
       />

@@ -12,14 +12,19 @@ interface ConfettiCelebrationProps {
  * Uses canvas-confetti library with Discord-inspired colors.
  * Respects prefers-reduced-motion setting.
  */
-export function ConfettiCelebration({ active, onComplete }: ConfettiCelebrationProps) {
+export function ConfettiCelebration({
+  active,
+  onComplete,
+}: ConfettiCelebrationProps) {
   const hasTriggered = useRef(false);
 
   useEffect(() => {
     if (!active || hasTriggered.current) return;
 
     // Check reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
     if (prefersReducedMotion) {
       onComplete?.();
       return;
@@ -29,7 +34,7 @@ export function ConfettiCelebration({ active, onComplete }: ConfettiCelebrationP
     hasTriggered.current = true;
 
     // Lazy load confetti library to keep initial bundle small
-    import('canvas-confetti').then((confetti) => {
+    import('canvas-confetti').then(confetti => {
       const colors = [
         '#5865F2', // Discord purple
         '#7289DA', // Light purple
@@ -63,4 +68,3 @@ export function ConfettiCelebration({ active, onComplete }: ConfettiCelebrationP
 }
 
 export default ConfettiCelebration;
-

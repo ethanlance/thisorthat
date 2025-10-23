@@ -20,7 +20,7 @@ export type AnalyticsEvent =
  */
 export function trackEvent(
   eventName: AnalyticsEvent,
-  properties?: Record<string, any>
+  properties?: Record<string, string | number | boolean>
 ) {
   if (typeof window === 'undefined') return;
 
@@ -76,4 +76,3 @@ export function trackHomepageCTAClick(action: 'create' | 'browse') {
     trackEvent('homepage_cta_click', { action });
   }
 }
-

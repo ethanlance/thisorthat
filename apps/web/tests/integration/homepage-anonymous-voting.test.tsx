@@ -22,10 +22,9 @@ vi.mock('next/image', () => ({
     src,
     alt,
     ...props
-  }: {
+  }: React.ImgHTMLAttributes<HTMLImageElement> & {
     src: string;
     alt: string;
-    [key: string]: any;
   }) => {
     return <img src={src} alt={alt} {...props} />;
   },
@@ -53,7 +52,7 @@ describe('Homepage Anonymous Voting Integration', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock localStorage
     const localStorageMock = {
       getItem: vi.fn(),
@@ -70,8 +69,12 @@ describe('Homepage Anonymous Voting Integration', () => {
 
     // Default mock implementations
     vi.mocked(PollsService.getFeaturedPoll).mockResolvedValue(mockPoll);
-    vi.mocked(AnonymousVotingService.hasVotedAnonymously).mockReturnValue(false);
-    vi.mocked(AnonymousVotingService.getAnonymousId).mockReturnValue('anon_123');
+    vi.mocked(AnonymousVotingService.hasVotedAnonymously).mockReturnValue(
+      false
+    );
+    vi.mocked(AnonymousVotingService.getAnonymousId).mockReturnValue(
+      'anon_123'
+    );
     vi.mocked(AnonymousVotingService.submitAnonymousVote).mockResolvedValue({
       success: true,
       anonymousId: 'anon_123',
@@ -200,9 +203,7 @@ describe('Homepage Anonymous Voting Integration', () => {
     render(await Home());
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/No polls available/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/No polls available/i)).toBeInTheDocument();
       expect(
         screen.getByRole('link', { name: /Create Your First Poll/i })
       ).toBeInTheDocument();
@@ -217,9 +218,7 @@ describe('Homepage Anonymous Voting Integration', () => {
     render(await Home());
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Failed to load poll/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Failed to load poll/i)).toBeInTheDocument();
     });
   });
 
@@ -244,4 +243,3 @@ describe('Homepage Anonymous Voting Integration', () => {
     // AnonymousVotingService should handle localStorage storage internally
   });
 });
-

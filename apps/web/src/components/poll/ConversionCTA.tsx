@@ -42,7 +42,12 @@ export function ConversionCTA({
   };
 
   return (
-    <div className={cn('flex flex-col gap-4 w-full max-w-md mx-auto mt-8', className)}>
+    <div
+      className={cn(
+        'flex flex-col gap-4 w-full max-w-md mx-auto mt-8',
+        className
+      )}
+    >
       {/* Primary CTA: Create Your Own Poll */}
       <Button
         size="lg"
@@ -82,4 +87,3 @@ export function ConversionCTA({
 }
 
 export default ConversionCTA;
-

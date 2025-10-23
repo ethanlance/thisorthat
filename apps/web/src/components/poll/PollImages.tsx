@@ -29,10 +29,15 @@ export default function PollImages({
     <div className={cn('grid grid-cols-2 gap-4 mb-6', className)}>
       {/* Option A */}
       <div className="text-center">
-        <div className={cn(
-          "relative mb-3 h-48 sm:h-64 rounded-xl overflow-hidden",
-          showResults && totalVotes > 0 && optionAPercentage > optionBPercentage && "ring-2 ring-primary shadow-primary-lg"
-        )}>
+        <div
+          className={cn(
+            'relative mb-3 h-48 sm:h-64 rounded-xl overflow-hidden',
+            showResults &&
+              totalVotes > 0 &&
+              optionAPercentage > optionBPercentage &&
+              'ring-2 ring-primary shadow-primary-lg'
+          )}
+        >
           <Image
             src={poll.option_a_image_url}
             alt={poll.option_a_label || 'Option A'}
@@ -55,9 +60,12 @@ export default function PollImages({
           {showResults && totalVotes > 0 && (
             <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center">
               <div className="text-center text-white drop-shadow-2xl">
-                <div className="text-4xl font-bold mb-1">{optionAPercentage}%</div>
+                <div className="text-4xl font-bold mb-1">
+                  {optionAPercentage}%
+                </div>
                 <div className="text-sm font-medium">
-                  {poll.vote_counts.option_a} vote{poll.vote_counts.option_a !== 1 ? 's' : ''}
+                  {poll.vote_counts.option_a} vote
+                  {poll.vote_counts.option_a !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>
@@ -67,10 +75,15 @@ export default function PollImages({
 
       {/* Option B */}
       <div className="text-center">
-        <div className={cn(
-          "relative mb-3 h-48 sm:h-64 rounded-xl overflow-hidden",
-          showResults && totalVotes > 0 && optionBPercentage > optionAPercentage && "ring-2 ring-primary shadow-primary-lg"
-        )}>
+        <div
+          className={cn(
+            'relative mb-3 h-48 sm:h-64 rounded-xl overflow-hidden',
+            showResults &&
+              totalVotes > 0 &&
+              optionBPercentage > optionAPercentage &&
+              'ring-2 ring-primary shadow-primary-lg'
+          )}
+        >
           <Image
             src={poll.option_b_image_url}
             alt={poll.option_b_label || 'Option B'}
@@ -93,9 +106,12 @@ export default function PollImages({
           {showResults && totalVotes > 0 && (
             <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center">
               <div className="text-center text-white drop-shadow-2xl">
-                <div className="text-4xl font-bold mb-1">{optionBPercentage}%</div>
+                <div className="text-4xl font-bold mb-1">
+                  {optionBPercentage}%
+                </div>
                 <div className="text-sm font-medium">
-                  {poll.vote_counts.option_b} vote{poll.vote_counts.option_b !== 1 ? 's' : ''}
+                  {poll.vote_counts.option_b} vote
+                  {poll.vote_counts.option_b !== 1 ? 's' : ''}
                 </div>
               </div>
             </div>

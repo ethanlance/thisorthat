@@ -26,17 +26,8 @@ const nextConfig: NextConfig = {
   compress: true, // Enable gzip compression
   poweredByHeader: false, // Remove X-Powered-By header
   reactStrictMode: true, // Enable strict mode for better debugging
-  // Bundle analysis (set ANALYZE=true to analyze bundle)
-  ...(process.env.ANALYZE === 'true' && {
-    webpack: (config: any) => {
-      config.plugins.push(
-        new (require('@next/bundle-analyzer'))({
-          enabled: true,
-        })
-      );
-      return config;
-    },
-  }),
+  // Bundle analysis - use ANALYZE=true npm run build to analyze bundle
+  // Note: Bundle analyzer is configured via package.json build:analyze script
 };
 
 export default nextConfig;

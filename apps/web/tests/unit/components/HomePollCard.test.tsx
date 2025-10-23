@@ -30,10 +30,9 @@ vi.mock('next/image', () => ({
     src,
     alt,
     ...props
-  }: {
+  }: React.ImgHTMLAttributes<HTMLImageElement> & {
     src: string;
     alt: string;
-    [key: string]: any;
   }) => {
     return <img src={src} alt={alt} {...props} />;
   },
@@ -87,7 +86,7 @@ describe('HomePollCard', () => {
 
   it('updates vote counts when realtime data changes', async () => {
     const { useRealtimeVotes } = await import('@/lib/hooks/useRealtimeVotes');
-    
+
     // Initially render with default counts
     const { rerender } = render(<HomePollCard initialPoll={mockPoll} />);
 
@@ -182,15 +181,6 @@ describe('HomePollCard', () => {
     });
   });
 
-  it('handles null poll gracefully', () => {
-    // Test the fallback when no poll is available
-    const { useAnonymousVoting } = vi.mocked(
-      require('@/lib/hooks/useAnonymousVoting')
-    );
-
-    // This would normally be tested by passing null, but our component expects initialPoll
-    // For this test, we'll skip it as the null case is handled in the parent component
-    expect(true).toBe(true);
-  });
+  // Note: Null poll case is handled in the parent component (FeaturedPoll in page.tsx)
+  // and tested via E2E tests
 });
-

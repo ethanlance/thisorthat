@@ -132,9 +132,9 @@ export default function PollView({
             onShare={handleShare}
           />
         ) : (
-          <PollResults 
-            poll={poll} 
-            userVote={userVote} 
+          <PollResults
+            poll={poll}
+            userVote={userVote}
             onShare={handleShare}
             showConversionCTA={showConversionCTA}
           />

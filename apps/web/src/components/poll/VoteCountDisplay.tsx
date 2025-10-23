@@ -57,7 +57,8 @@ export default function VoteCountDisplay({
         <AnimatedProgressBar
           value={voteCounts.option_a}
           max={totalVotes}
-          color="bg-blue-500"
+          isLeading={voteCounts.option_a >= voteCounts.option_b}
+          delay={0}
         />
       </div>
 
@@ -72,7 +73,8 @@ export default function VoteCountDisplay({
         <AnimatedProgressBar
           value={voteCounts.option_b}
           max={totalVotes}
-          color="bg-red-500"
+          isLeading={voteCounts.option_b > voteCounts.option_a}
+          delay={100}
         />
       </div>
     </div>

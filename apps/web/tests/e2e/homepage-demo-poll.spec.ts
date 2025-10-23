@@ -51,9 +51,9 @@ test.describe('Homepage Demo Poll E2E', () => {
       await voteButtons.first().click();
 
       // Wait for vote confirmation or results
-      await expect(
-        page.locator('text=/Vote Submitted|voted/i')
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('text=/Vote Submitted|voted/i')).toBeVisible({
+        timeout: 5000,
+      });
     }
   });
 
@@ -62,7 +62,9 @@ test.describe('Homepage Demo Poll E2E', () => {
     await page.waitForLoadState('networkidle');
 
     // Check if user has already voted
-    const hasVoted = await page.locator('text=/voted|Vote Submitted/i').isVisible();
+    const hasVoted = await page
+      .locator('text=/voted|Vote Submitted/i')
+      .isVisible();
 
     if (!hasVoted) {
       // Vote on option
@@ -267,4 +269,3 @@ test.describe('Homepage Demo Poll E2E', () => {
     }
   });
 });
-
