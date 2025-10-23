@@ -35,6 +35,15 @@ export default function PollVoting({
   const handleVote = async (choice: 'option_a' | 'option_b') => {
     if (hasVoted || isVoting) return;
 
+    // Trigger haptic feedback on mobile devices
+    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(50); // 50ms vibration
+      } catch (error) {
+        // Vibration API not supported, silently fail
+      }
+    }
+
     setVoteError(null);
     const success = await onVote(choice);
 
@@ -95,7 +104,7 @@ export default function PollVoting({
           size="lg"
           onClick={() => handleVote('option_a')}
           disabled={isVoting}
-          className="h-16 sm:h-20 text-lg sm:text-xl font-semibold"
+          className="h-16 sm:h-20 text-lg sm:text-xl font-semibold active:scale-95 transition-transform duration-100 touch-manipulation"
         >
           {poll.option_a_label || 'Option A'}
         </Button>
@@ -105,7 +114,7 @@ export default function PollVoting({
           variant="outline"
           onClick={() => handleVote('option_b')}
           disabled={isVoting}
-          className="h-16 sm:h-20 text-lg sm:text-xl font-semibold"
+          className="h-16 sm:h-20 text-lg sm:text-xl font-semibold active:scale-95 transition-transform duration-100 touch-manipulation"
         >
           {poll.option_b_label || 'Option B'}
         </Button>

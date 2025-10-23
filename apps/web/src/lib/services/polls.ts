@@ -34,6 +34,38 @@ export class PollsService {
     return data;
   }
 
+  // Get featured/demo poll for homepage (most recent active public poll)
+  static async getFeaturedPoll(): Promise<PollWithResults | null> {
+    // Get most recent active public poll
+    const { data: poll, error: pollError } = await supabase
+      .from('polls')
+      .select('*')
+      .eq('is_public', true)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (pollError || !poll) return null;
+
+    // Get vote counts
+    const { data: votes } = await supabase
+      .from('votes')
+      .select('choice')
+      .eq('poll_id', poll.id);
+
+    const vote_counts = {
+      option_a: votes?.filter(v => v.choice === 'option_a').length || 0,
+      option_b: votes?.filter(v => v.choice === 'option_b').length || 0,
+    };
+
+    return {
+      ...poll,
+      vote_counts,
+      user_vote: null, // Anonymous voting doesn't populate user_vote at fetch time
+    };
+  }
+
   // Get poll by ID with vote counts
   static async getPollById(
     id: string,

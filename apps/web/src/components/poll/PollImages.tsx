@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
 
@@ -28,12 +29,16 @@ export default function PollImages({
     <div className={cn('grid grid-cols-2 gap-4 mb-6', className)}>
       {/* Option A */}
       <div className="text-center">
-        <div className="relative mb-3">
-          <img
+        <div className="relative mb-3 h-48 sm:h-64">
+          <Image
             src={poll.option_a_image_url}
             alt={poll.option_a_label || 'Option A'}
-            className="w-full h-48 sm:h-64 object-cover rounded-lg border shadow-sm"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 400px, 500px"
+            className="object-cover rounded-lg border shadow-sm"
             loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg=="
           />
 
           {/* Results overlay */}
@@ -57,12 +62,16 @@ export default function PollImages({
 
       {/* Option B */}
       <div className="text-center">
-        <div className="relative mb-3">
-          <img
+        <div className="relative mb-3 h-48 sm:h-64">
+          <Image
             src={poll.option_b_image_url}
             alt={poll.option_b_label || 'Option B'}
-            className="w-full h-48 sm:h-64 object-cover rounded-lg border shadow-sm"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 400px, 500px"
+            className="object-cover rounded-lg border shadow-sm"
             loading="lazy"
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2Y1ZjVmNSIvPjwvc3ZnPg=="
           />
 
           {/* Results overlay */}
