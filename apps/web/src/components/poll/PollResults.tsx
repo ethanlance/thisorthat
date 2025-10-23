@@ -9,11 +9,13 @@ import { useRealtimeVotes } from '@/lib/hooks/useRealtimeVotes';
 import VoteCountDisplay from './VoteCountDisplay';
 import ResultsChart from './ResultsChart';
 import ResultsShare from './ResultsShare';
+import { ConversionCTA } from './ConversionCTA';
 
 interface PollResultsProps {
   poll: PollWithResults;
   userVote?: 'option_a' | 'option_b' | null;
   onShare?: () => void;
+  showConversionCTA?: boolean; // Show CTA on homepage demo poll
   className?: string;
 }
 
@@ -21,6 +23,7 @@ export default function PollResults({
   poll,
   userVote,
   onShare,
+  showConversionCTA = false,
   className,
 }: PollResultsProps) {
   // Use real-time vote counts
@@ -120,6 +123,9 @@ export default function PollResults({
           </div>
         </div>
       )}
+
+      {/* Conversion CTA for homepage demo poll */}
+      {showConversionCTA && <ConversionCTA />}
     </div>
   );
 }

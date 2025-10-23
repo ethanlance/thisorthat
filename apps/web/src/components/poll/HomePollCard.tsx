@@ -8,6 +8,11 @@ import PollView from './PollView';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import {
+  trackHomepageView,
+  trackHomepageVote,
+  trackHomepageViewResults,
+} from '@/lib/analytics/events';
 
 interface HomePollCardProps {
   initialPoll: PollWithResults;
@@ -22,6 +27,11 @@ export default function HomePollCard({ initialPoll }: HomePollCardProps) {
   // Subscribe to real-time vote updates
   const { voteCounts, isConnected, lastUpdate, error: realtimeError } = useRealtimeVotes(poll.id);
 
+  // Track homepage view on mount
+  useEffect(() => {
+    trackHomepageView();
+  }, []);
+
   // Update vote counts when real-time data changes
   useEffect(() => {
     if (voteCounts) {
@@ -34,6 +44,23 @@ export default function HomePollCard({ initialPoll }: HomePollCardProps) {
 
   const handleVote = async (choice: 'option_a' | 'option_b') => {
     const success = await vote(choice);
+    
+    if (success) {
+      // Track vote submission
+      trackHomepageVote(choice, poll.id);
+      
+      // Track results view after a short delay (when results are shown)
+      setTimeout(() => {
+        const totalVotes = poll.vote_counts.option_a + poll.vote_counts.option_b;
+        const optionAPercentage = Math.round((poll.vote_counts.option_a / totalVotes) * 100);
+        const optionBPercentage = Math.round((poll.vote_counts.option_b / totalVotes) * 100);
+        const winningOption = optionAPercentage > optionBPercentage ? 'option_a' : 'option_b';
+        const margin = Math.abs(optionAPercentage - optionBPercentage);
+        
+        trackHomepageViewResults(winningOption, margin, totalVotes);
+      }, 500);
+    }
+    
     return success;
   };
 
@@ -69,6 +96,7 @@ export default function HomePollCard({ initialPoll }: HomePollCardProps) {
         hasVoted={hasVoted}
         userVote={userVote}
         onRefetch={handleRefetch}
+        showConversionCTA={true} // Enable conversion CTA for homepage
         className="bg-background"
       />
       

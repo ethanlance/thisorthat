@@ -20,6 +20,7 @@ interface PollViewProps {
   hasVoted: boolean;
   userVote: 'option_a' | 'option_b' | null;
   onRefetch?: () => void;
+  showConversionCTA?: boolean; // Show conversion CTA for homepage
   className?: string;
 }
 
@@ -30,6 +31,7 @@ export default function PollView({
   hasVoted,
   userVote,
   onRefetch,
+  showConversionCTA = false,
   className,
 }: PollViewProps) {
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
@@ -130,7 +132,12 @@ export default function PollView({
             onShare={handleShare}
           />
         ) : (
-          <PollResults poll={poll} userVote={userVote} onShare={handleShare} />
+          <PollResults 
+            poll={poll} 
+            userVote={userVote} 
+            onShare={handleShare}
+            showConversionCTA={showConversionCTA}
+          />
         )}
 
         {/* Poll Info Footer */}
