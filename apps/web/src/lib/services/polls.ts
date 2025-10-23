@@ -113,12 +113,18 @@ export class PollsService {
 
   // Create a new poll with proper expiration
   static async createPoll(pollData: CreatePollData): Promise<Poll> {
+    // Use placeholder URLs since option_a_image_url and option_b_image_url are NOT NULL
+    // These will be updated with actual URLs after image upload
+    const placeholderUrl = 'https://via.placeholder.com/400x400.png?text=Uploading...';
+    
     const { data, error } = await supabase
       .from('polls')
       .insert({
         creator_id: pollData.creatorId,
         option_a_label: pollData.optionALabel || null,
         option_b_label: pollData.optionBLabel || null,
+        option_a_image_url: placeholderUrl,
+        option_b_image_url: placeholderUrl,
         description: pollData.description || null,
         is_public: pollData.isPublic ?? true,
         status: 'active',

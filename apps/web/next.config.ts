@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.supabase.in',
       },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com', // For placeholder images during upload
+      },
     ],
     // Image optimization configuration
     formats: ['image/webp', 'image/avif'], // Modern formats first
