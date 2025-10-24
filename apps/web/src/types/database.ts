@@ -123,6 +123,92 @@ export interface Database {
           created_at?: string;
         };
       };
+      user_interests: {
+        Row: {
+          id: string;
+          user_id: string;
+          interest: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          interest: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          interest?: string;
+          created_at?: string;
+        };
+      };
+      user_follows: {
+        Row: {
+          id: string;
+          follower_id: string;
+          following_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          follower_id: string;
+          following_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          follower_id?: string;
+          following_id?: string;
+          created_at?: string;
+        };
+      };
+      user_achievements: {
+        Row: {
+          id: string;
+          user_id: string;
+          achievement_type: string;
+          achievement_data: any;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          achievement_type: string;
+          achievement_data?: any;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          achievement_type?: string;
+          achievement_data?: any;
+          created_at?: string;
+        };
+      };
+      user_activity: {
+        Row: {
+          id: string;
+          user_id: string;
+          activity_type: string;
+          activity_data: any;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          activity_type: string;
+          activity_data?: any;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          activity_type?: string;
+          activity_data?: any;
+          created_at?: string;
+        };
+      };
     };
     Enums: Record<string, never>;
   };

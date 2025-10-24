@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import ErrorBoundary from '@/components/layout/ErrorBoundary';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { getCriticalCSS } from '@/lib/utils/critical-css';
+import PerformanceMonitor from '@/components/PerformanceMonitor';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,6 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: getCriticalCSS() }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
@@ -38,6 +44,8 @@ export default function RootLayout({
           <AuthProvider>{children}</AuthProvider>
         </ErrorBoundary>
         <Analytics />
+        <SpeedInsights />
+        <PerformanceMonitor />
       </body>
     </html>
   );

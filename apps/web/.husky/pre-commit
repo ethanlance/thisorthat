@@ -1,1 +1,15 @@
+#!/bin/sh
+# Run lint-staged for linting and formatting
 npm run lint-staged
+
+# Run type checking
+echo "Running TypeScript type check..."
+npx tsc --noEmit
+
+# Run tests
+echo "Running tests..."
+npm run test:run
+
+# Run build to ensure everything compiles
+echo "Running build validation..."
+npm run build

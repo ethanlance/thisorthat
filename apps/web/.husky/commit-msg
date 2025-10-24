@@ -1,0 +1,15 @@
+#!/bin/sh
+# Basic commit message validation
+# Check that commit message is not empty and has at least 3 characters
+if [ ${#1} -lt 3 ]; then
+  echo "❌ Commit message too short. Please provide a meaningful commit message."
+  exit 1
+fi
+
+# Check for common prefixes (optional but recommended)
+if echo "$1" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+"; then
+  echo "✅ Commit message follows conventional format"
+else
+  echo "⚠️  Consider using conventional commit format: type(scope): description"
+  echo "   Examples: feat: add new feature, fix: resolve bug, docs: update readme"
+fi

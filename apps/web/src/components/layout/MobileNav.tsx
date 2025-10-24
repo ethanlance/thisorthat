@@ -75,17 +75,8 @@ export default function MobileNav() {
                 </Button>
               </div>
 
-              {/* Navigation links */}
+              {/* Navigation links - Simplified */}
               <nav className="flex-1 p-4 space-y-2">
-                <Link
-                  href="/"
-                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
-                  onClick={closeMenu}
-                >
-                  <Home className="h-5 w-5" />
-                  <span>Home</span>
-                </Link>
-
                 <Link
                   href="/polls"
                   className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
@@ -105,25 +96,14 @@ export default function MobileNav() {
                 </Link>
 
                 {user && (
-                  <>
-                    <Link
-                      href="/poll/create"
-                      className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
-                      onClick={closeMenu}
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span>Create Poll</span>
-                    </Link>
-
-                    <Link
-                      href="/profile"
-                      className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
-                      onClick={closeMenu}
-                    >
-                      <User className="h-5 w-5" />
-                      <span>Profile</span>
-                    </Link>
-                  </>
+                  <Link
+                    href="/profile"
+                    className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+                    onClick={closeMenu}
+                  >
+                    <User className="h-5 w-5" />
+                    <span>Profile</span>
+                  </Link>
                 )}
               </nav>
 

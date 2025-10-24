@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'apps/web/package-lock.json'
+          
+      - name: Install dependencies
+        run: |
+          cd apps/web
+          npm ci
+          
+      - name: Run ESLint
+        run: |
+          cd apps/web
+          npm run lint
+          
+      - name: Run Prettier check
+        run: |
+          cd apps/web
+          npm run format:check
+          
+      - name: Run TypeScript type check
+        run: |
+          cd apps/web
+          npx tsc --noEmit
+          
+      - name: Run tests
+        run: |
+          cd apps/web
+          npm run test:run
+          
+      - name: Build application
+        run: |
+          cd apps/web
+          npm run build
+          
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-artifacts
+          path: apps/web/.next/
+          retention-days: 7

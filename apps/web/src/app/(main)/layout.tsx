@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import BottomActionBar from '@/components/layout/BottomActionBar';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -17,12 +18,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <Header />
       <main
         id="main-content"
-        className="flex-1 container mx-auto px-4 py-6 md:py-8"
+        className="flex-1 container mx-auto px-4 py-6 md:py-8 pb-20 md:pb-8"
         tabIndex={-1}
       >
         <div className="max-w-4xl mx-auto">{children}</div>
       </main>
       <Footer />
+      <BottomActionBar />
     </div>
   );
 }
