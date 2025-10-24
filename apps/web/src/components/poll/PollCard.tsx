@@ -1,17 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  MoreHorizontal,
-  Share2,
-  Trash2,
-  Eye,
-  Users,
-  Clock,
-} from 'lucide-react';
+import { Share2, Eye, Users, Clock } from 'lucide-react';
 import { UserPollSummary } from '@/lib/services/dashboard';
 import { getPollStatus, isPollActive } from '@/lib/services/expiration';
 import { formatRelativeTime } from '@/lib/utils/time-helpers';
@@ -35,8 +27,6 @@ export default function PollCard({
   onView,
   className,
 }: PollCardProps) {
-  const [showActions, setShowActions] = useState(false);
-
   const pollStatus = getPollStatus(poll);
   const isActive = isPollActive(poll);
   const totalVotes = poll.vote_counts.option_a + poll.vote_counts.option_b;

@@ -15,7 +15,7 @@ interface VoteConfirmationProps {
 }
 
 export default function VoteConfirmation({
-  choice,
+  choice: _,
   optionLabel,
   onClose,
   onShare,

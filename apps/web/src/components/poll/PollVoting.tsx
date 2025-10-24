@@ -41,7 +41,7 @@ export default function PollVoting({
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(50); // 50ms vibration
-      } catch (error) {
+      } catch {
         // Vibration API not supported, silently fail
       }
     }

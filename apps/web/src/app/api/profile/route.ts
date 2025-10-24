@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ProfileService } from '@/lib/services/profile';
 import { createClient } from '@/lib/supabase/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = createClient();
     const {

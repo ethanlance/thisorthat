@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MoreHorizontal, Share2, Trash2, Eye, Copy, Check } from 'lucide-react';
+import { MoreHorizontal, Share2, Trash2, Eye, Check } from 'lucide-react';
 import { UserPollSummary } from '@/lib/services/dashboard';
 import { DashboardService } from '@/lib/services/dashboard';
 import { cn } from '@/lib/utils';

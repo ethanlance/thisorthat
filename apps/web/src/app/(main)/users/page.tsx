@@ -1,9 +1,7 @@
 import { Suspense } from 'react';
 import UserSearch from '@/components/profile/UserSearch';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Users, Search } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 export default function UsersPage() {
   return (

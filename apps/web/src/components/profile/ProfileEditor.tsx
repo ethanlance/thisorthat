@@ -26,7 +26,7 @@ interface ProfileEditorProps {
 
 export default function ProfileEditor({ onSave }: ProfileEditorProps) {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 

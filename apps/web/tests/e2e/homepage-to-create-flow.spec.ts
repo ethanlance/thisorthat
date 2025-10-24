@@ -77,7 +77,7 @@ test.describe('Homepage to Create Flow', () => {
 
     // Check for Core Web Vitals tracking
     const vitals = await page.evaluate(() => {
-      return (window as any).__webVitals;
+      return (window as unknown as { __webVitals?: unknown }).__webVitals;
     });
 
     // Should have some performance data
@@ -87,10 +87,22 @@ test.describe('Homepage to Create Flow', () => {
   test('analytics events are fired', async ({ page }) => {
     // Mock analytics
     await page.addInitScript(() => {
-      (window as any).va = (action: string, event: string, data?: any) => {
-        (window as any).__analyticsEvents =
-          (window as any).__analyticsEvents || [];
-        (window as any).__analyticsEvents.push({ action, event, data });
+      const windowWithAnalytics = window as unknown as {
+        va?: (action: string, event: string, data?: unknown) => void;
+        __analyticsEvents?: Array<{
+          action: string;
+          event: string;
+          data?: unknown;
+        }>;
+      };
+      windowWithAnalytics.va = (
+        action: string,
+        event: string,
+        data?: unknown
+      ) => {
+        windowWithAnalytics.__analyticsEvents =
+          windowWithAnalytics.__analyticsEvents || [];
+        windowWithAnalytics.__analyticsEvents.push({ action, event, data });
       };
     });
 
@@ -112,7 +124,9 @@ test.describe('Homepage to Create Flow', () => {
     await page.getByText('Option A').click();
 
     const voteEvents = await page.evaluate(
-      () => (window as any).__analyticsEvents
+      () =>
+        (window as unknown as { __analyticsEvents?: Array<unknown> })
+          .__analyticsEvents
     );
     expect(voteEvents).toContainEqual(
       expect.objectContaining({

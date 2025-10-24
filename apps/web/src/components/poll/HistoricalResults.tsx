@@ -74,7 +74,7 @@ export default function HistoricalResults({
         );
 
         setPolls(pollsWithVotes);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch historical polls');
       } finally {
         setLoading(false);

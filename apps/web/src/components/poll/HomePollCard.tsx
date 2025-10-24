@@ -25,12 +25,7 @@ export default function HomePollCard({ initialPoll }: HomePollCardProps) {
   );
 
   // Subscribe to real-time vote updates
-  const {
-    voteCounts,
-    isConnected,
-    lastUpdate,
-    error: realtimeError,
-  } = useRealtimeVotes(poll.id);
+  const { voteCounts } = useRealtimeVotes(poll.id);
 
   // Track homepage view on mount
   useEffect(() => {

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert } from '@/components/ui/alert';
@@ -47,7 +46,7 @@ export default function PollCreationForm({
     description: '',
   });
 
-  const [uploadStatus, setUploadStatus] = useState({
+  const [, setUploadStatus] = useState({
     optionA: {
       status: 'idle' as 'idle' | 'uploading' | 'success' | 'error',
       progress: 0,
@@ -72,7 +71,7 @@ export default function PollCreationForm({
     });
   };
 
-  const handleImageUpload = (option: 'a' | 'b') => (url: string) => {
+  const handleImageUpload = (option: 'a' | 'b') => () => {
     setUploadStatus(prev => ({
       ...prev,
       [`option${option.toUpperCase()}`]: { status: 'success', progress: 100 },

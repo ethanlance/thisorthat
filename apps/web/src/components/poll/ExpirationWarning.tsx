@@ -5,7 +5,7 @@ import {
   calculateTimeLeft,
   getExpirationWarningLevel,
 } from '@/lib/services/expiration';
-import { Clock, AlertTriangle, AlertCircle } from 'lucide-react';
+import { AlertTriangle, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ExpirationWarningProps {

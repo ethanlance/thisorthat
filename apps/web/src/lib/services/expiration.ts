@@ -91,15 +91,22 @@ export const calculateTimeLeft = (expiresAt: string): TimeLeft | null => {
 /**
  * Format time left as a human-readable string
  */
-export const formatTimeLeft = (timeLeft: TimeLeft): string => {
+export const formatTimeLeft = (
+  timeLeft: TimeLeft,
+  showSeconds: boolean = true
+): string => {
   if (timeLeft.days > 0) {
     return `${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m`;
   } else if (timeLeft.hours > 0) {
-    return `${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`;
+    return showSeconds
+      ? `${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`
+      : `${timeLeft.hours}h ${timeLeft.minutes}m`;
   } else if (timeLeft.minutes > 0) {
-    return `${timeLeft.minutes}m ${timeLeft.seconds}s`;
+    return showSeconds
+      ? `${timeLeft.minutes}m ${timeLeft.seconds}s`
+      : `${timeLeft.minutes}m`;
   } else {
-    return `${timeLeft.seconds}s`;
+    return showSeconds ? `${timeLeft.seconds}s` : '0m';
   }
 };
 

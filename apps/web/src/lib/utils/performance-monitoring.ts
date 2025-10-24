@@ -162,6 +162,10 @@ export function usePerformanceMonitoring() {
 // Extend Window interface for Vercel Analytics
 declare global {
   interface Window {
-    va?: (action: string, event: string, data?: Record<string, unknown>) => void;
+    va?: (
+      action: string,
+      event: string,
+      data?: Record<string, unknown>
+    ) => void;
   }
 }

@@ -2,16 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import {
-  Menu,
-  X,
-  Home,
-  BarChart3,
-  User,
-  LogOut,
-  Plus,
-  Info,
-} from 'lucide-react';
+import { Menu, X, BarChart3, User, LogOut, Info } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 

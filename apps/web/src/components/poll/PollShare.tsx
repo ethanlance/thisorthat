@@ -23,7 +23,7 @@ export default function PollShare({
   pollId,
   pollTitle,
   pollDescription,
-  pollImages,
+  pollImages: _,
   className,
 }: PollShareProps) {
   const [shareSuccess, setShareSuccess] = useState(false);
@@ -59,7 +59,7 @@ export default function PollShare({
       setShareSuccess(true);
       setTimeout(() => setShareSuccess(false), 3000);
       await trackShare(pollId, 'clipboard');
-    } catch (error) {
+    } catch {
       setShareError('Failed to copy link');
     }
   };

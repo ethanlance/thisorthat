@@ -37,7 +37,7 @@ interface PollFormFieldsProps {
 export default function PollFormFields({
   formData,
   fieldErrors,
-  uploadStatus,
+  uploadStatus: _,
   isSubmitting,
   onImageSelect,
   onImageUpload,

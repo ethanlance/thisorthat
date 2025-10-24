@@ -11,6 +11,7 @@ import CountdownTimer from './CountdownTimer';
 import PollImages from './PollImages';
 import PollVoting from './PollVoting';
 import PollResults from './PollResults';
+import CommentsList from '@/components/comments/CommentsList';
 import { cn } from '@/lib/utils';
 
 interface PollViewProps {
@@ -139,6 +140,12 @@ export default function PollView({
             showConversionCTA={showConversionCTA}
           />
         )}
+
+        {/* Comments Section */}
+        <div className="mt-8 pt-6 border-t border-border">
+          <h3 className="text-xl font-semibold mb-6">Comments</h3>
+          <CommentsList pollId={poll.id} />
+        </div>
 
         {/* Poll Info Footer */}
         <div className="mt-8 pt-6 border-t border-border">

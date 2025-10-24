@@ -80,7 +80,7 @@ export default function CountdownTimer({
   }
 
   const warningLevel = getExpirationWarningLevel(timeLeft);
-  const formattedTime = formatTimeLeft(timeLeft);
+  const formattedTime = formatTimeLeft(timeLeft, showSeconds);
 
   const getWarningStyles = () => {
     switch (warningLevel) {

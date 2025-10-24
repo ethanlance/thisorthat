@@ -209,6 +209,134 @@ export interface Database {
           created_at?: string;
         };
       };
+      comments: {
+        Row: {
+          id: string;
+          poll_id: string;
+          user_id: string;
+          parent_id: string | null;
+          content: string;
+          is_edited: boolean;
+          edited_at: string | null;
+          is_deleted: boolean;
+          deleted_at: string | null;
+          deleted_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          poll_id: string;
+          user_id: string;
+          parent_id?: string | null;
+          content: string;
+          is_edited?: boolean;
+          edited_at?: string | null;
+          is_deleted?: boolean;
+          deleted_at?: string | null;
+          deleted_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          poll_id?: string;
+          user_id?: string;
+          parent_id?: string | null;
+          content?: string;
+          is_edited?: boolean;
+          edited_at?: string | null;
+          is_deleted?: boolean;
+          deleted_at?: string | null;
+          deleted_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      comment_reactions: {
+        Row: {
+          id: string;
+          comment_id: string;
+          user_id: string;
+          reaction_type: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          comment_id: string;
+          user_id: string;
+          reaction_type: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          comment_id?: string;
+          user_id?: string;
+          reaction_type?: string;
+          created_at?: string;
+        };
+      };
+      comment_reports: {
+        Row: {
+          id: string;
+          comment_id: string;
+          reporter_id: string;
+          reason: string;
+          description: string | null;
+          status: string;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          comment_id: string;
+          reporter_id: string;
+          reason: string;
+          description?: string | null;
+          status?: string;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          comment_id?: string;
+          reporter_id?: string;
+          reason?: string;
+          description?: string | null;
+          status?: string;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          created_at?: string;
+        };
+      };
+      comment_moderation_actions: {
+        Row: {
+          id: string;
+          comment_id: string;
+          moderator_id: string;
+          action_type: string;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          comment_id: string;
+          moderator_id: string;
+          action_type: string;
+          reason?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          comment_id?: string;
+          moderator_id?: string;
+          action_type?: string;
+          reason?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Enums: Record<string, never>;
   };

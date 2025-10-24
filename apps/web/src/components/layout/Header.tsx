@@ -1,21 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { User, LogOut } from 'lucide-react';
+import { User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import MobileNav from './MobileNav';
 
 export default function Header() {
-  const { user, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
-  };
+  const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">

@@ -1,12 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Share2, Users, TrendingUp } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { PollWithResults } from '@/lib/services/polls';
 import { cn } from '@/lib/utils';
 import { useRealtimeVotes } from '@/lib/hooks/useRealtimeVotes';
-import VoteCountDisplay from './VoteCountDisplay';
 import ResultsChart from './ResultsChart';
 import ResultsShare from './ResultsShare';
 import { ConversionCTA } from './ConversionCTA';
@@ -22,34 +19,14 @@ interface PollResultsProps {
 export default function PollResults({
   poll,
   userVote,
-  onShare,
+  onShare: _,
   showConversionCTA = false,
   className,
 }: PollResultsProps) {
   // Use real-time vote counts
-  const { voteCounts, isConnected, lastUpdate, error } = useRealtimeVotes(
-    poll.id
-  );
+  const { voteCounts } = useRealtimeVotes(poll.id);
 
   const totalVotes = voteCounts.option_a + voteCounts.option_b;
-  const optionAPercentage =
-    totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0;
-  const optionBPercentage =
-    totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0;
-
-  const handleShare = async () => {
-    if (onShare) {
-      onShare();
-      return;
-    }
-
-    try {
-      const shareUrl = `${window.location.origin}/poll/${poll.id}`;
-      await navigator.clipboard.writeText(shareUrl);
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
-    }
-  };
 
   if (totalVotes === 0) {
     return (

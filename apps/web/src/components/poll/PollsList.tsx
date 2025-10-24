@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PollWithResults } from '@/lib/services/polls';
 import { PollsService } from '@/lib/services/polls';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -25,9 +25,9 @@ export function PollsList({ className }: PollsListProps) {
 
   useEffect(() => {
     loadPolls();
-  }, [activeTab]);
+  }, [activeTab, loadPolls]);
 
-  const loadPolls = async () => {
+  const loadPolls = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -42,33 +42,7 @@ export function PollsList({ className }: PollsListProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getPollStatus = (poll: PollWithResults) => {
-    const now = new Date();
-    const expiresAt = new Date(poll.expires_at);
-
-    if (poll.status === 'closed' || expiresAt <= now) {
-      return 'closed';
-    }
-    return 'active';
-  };
-
-  const getTimeRemaining = (poll: PollWithResults) => {
-    const now = new Date();
-    const expiresAt = new Date(poll.expires_at);
-
-    if (expiresAt <= now) {
-      return 'Closed';
-    }
-
-    return `Closes ${formatDistanceToNow(expiresAt, { addSuffix: true })}`;
-  };
-
-  const getVotePercentage = (votes: number, total: number) => {
-    if (total === 0) return 0;
-    return Math.round((votes / total) * 100);
-  };
+  }, [activeTab]);
 
   if (loading) {
     return (
