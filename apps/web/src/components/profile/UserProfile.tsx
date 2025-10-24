@@ -1,21 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  User,
-  Calendar,
-  Users,
-  BarChart3,
-  Heart,
-  MessageSquare,
-} from 'lucide-react';
+import { User, Calendar, Users, BarChart3, Heart } from 'lucide-react';
 import { ProfileData } from '@/lib/services/profile';
 import { ProfileService } from '@/lib/services/profile';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
+import FollowButton from './FollowButton';
+import UserConnections from './UserConnections';
 
 interface UserProfileProps {
   userId: string;
@@ -27,16 +21,11 @@ export default function UserProfile({
   isOwnProfile = false,
 }: UserProfileProps) {
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isFollowingLoading, setIsFollowingLoading] = useState(false);
 
   useEffect(() => {
     loadProfile();
-    if (!isOwnProfile) {
-      checkFollowStatus();
-    }
-  }, [userId, isOwnProfile]);
+  }, [userId]);
 
   const loadProfile = async () => {
     try {
@@ -47,55 +36,6 @@ export default function UserProfile({
       console.error('Error loading profile:', error);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const checkFollowStatus = async () => {
-    try {
-      const following = await ProfileService.isFollowing(
-        // This would need to be the current user's ID
-        'current-user-id',
-        userId
-      );
-      setIsFollowing(following);
-    } catch (error) {
-      console.error('Error checking follow status:', error);
-    }
-  };
-
-  const handleFollow = async () => {
-    if (!profile) return;
-
-    try {
-      setIsFollowingLoading(true);
-
-      if (isFollowing) {
-        await ProfileService.unfollowUser('current-user-id', userId);
-        setIsFollowing(false);
-        setProfile(prev =>
-          prev
-            ? {
-                ...prev,
-                followers_count: prev.followers_count - 1,
-              }
-            : null
-        );
-      } else {
-        await ProfileService.followUser('current-user-id', userId);
-        setIsFollowing(true);
-        setProfile(prev =>
-          prev
-            ? {
-                ...prev,
-                followers_count: prev.followers_count + 1,
-              }
-            : null
-        );
-      }
-    } catch (error) {
-      console.error('Error toggling follow:', error);
-    } finally {
-      setIsFollowingLoading(false);
     }
   };
 
@@ -158,18 +98,11 @@ export default function UserProfile({
               </div>
             </div>
             {!isOwnProfile && (
-              <Button
-                onClick={handleFollow}
-                disabled={isFollowingLoading}
-                variant={isFollowing ? 'outline' : 'default'}
+              <FollowButton
+                userId={userId}
+                displayName={profile.display_name || undefined}
                 className="min-w-[100px]"
-              >
-                {isFollowingLoading
-                  ? 'Loading...'
-                  : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
-              </Button>
+              />
             )}
           </div>
         </CardContent>
@@ -257,6 +190,12 @@ export default function UserProfile({
           </div>
         </CardContent>
       </Card>
+
+      {/* Connections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <UserConnections userId={userId} type="followers" />
+        <UserConnections userId={userId} type="following" />
+      </div>
     </div>
   );
 }

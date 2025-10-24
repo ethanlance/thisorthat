@@ -436,4 +436,103 @@ export class ProfileService {
       return false;
     }
   }
+
+  /**
+   * Upload user avatar
+   */
+  static async uploadAvatar(userId: string, file: File): Promise<string> {
+    try {
+      const supabase = createClient();
+
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      // Upload file to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (error) {
+        throw new Error(`Upload failed: ${error.message}`);
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      if (!urlData.publicUrl) {
+        throw new Error('Failed to get public URL');
+      }
+
+      // Update user profile with new avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: urlData.publicUrl })
+        .eq('user_id', userId);
+
+      if (updateError) {
+        throw new Error(`Profile update failed: ${updateError.message}`);
+      }
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete user avatar
+   */
+  static async deleteAvatar(userId: string): Promise<void> {
+    try {
+      const supabase = createClient();
+
+      // Get current profile to find avatar URL
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('user_id', userId)
+        .single();
+
+      if (profileError) {
+        throw new Error(`Profile fetch failed: ${profileError.message}`);
+      }
+
+      if (profile?.avatar_url) {
+        // Extract file path from URL
+        const url = new URL(profile.avatar_url);
+        const pathParts = url.pathname.split('/');
+        const filePath = pathParts.slice(-2).join('/'); // Get 'avatars/filename'
+
+        // Delete file from storage
+        const { error: deleteError } = await supabase.storage
+          .from('avatars')
+          .remove([filePath]);
+
+        if (deleteError) {
+          console.warn('Failed to delete file from storage:', deleteError);
+        }
+      }
+
+      // Update profile to remove avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: null })
+        .eq('user_id', userId);
+
+      if (updateError) {
+        throw new Error(`Profile update failed: ${updateError.message}`);
+      }
+    } catch (error) {
+      console.error('Error deleting avatar:', error);
+      throw error;
+    }
+  }
 }

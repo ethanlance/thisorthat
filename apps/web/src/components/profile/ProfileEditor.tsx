@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -17,8 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { X, Plus, Upload } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import AvatarUpload from './AvatarUpload';
 
 interface ProfileEditorProps {
   onSave?: () => void;
@@ -136,30 +136,13 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Avatar */}
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={avatarUrl} alt={displayName || 'User'} />
-              <AvatarFallback className="text-lg">
-                {displayName.charAt(0) ||
-                  user?.email?.charAt(0)?.toUpperCase() ||
-                  'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="space-y-2">
-              <Label htmlFor="avatar-url">Avatar URL</Label>
-              <div className="flex space-x-2">
-                <Input
-                  id="avatar-url"
-                  value={avatarUrl}
-                  onChange={e => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                  className="flex-1"
-                />
-                <Button variant="outline" size="icon">
-                  <Upload className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label>Profile Picture</Label>
+            <AvatarUpload
+              currentAvatarUrl={avatarUrl}
+              onAvatarChange={newUrl => setAvatarUrl(newUrl || '')}
+              disabled={isSaving}
+            />
           </div>
 
           {/* Display Name */}
