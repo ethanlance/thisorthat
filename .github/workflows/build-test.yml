@@ -1,0 +1,49 @@
+name: Build Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'apps/web/package-lock.json'
+        
+    - name: Install dependencies
+      run: |
+        cd apps/web
+        npm ci
+        
+    - name: Run linting
+      run: |
+        cd apps/web
+        npm run lint
+        
+    - name: Run type checking
+      run: |
+        cd apps/web
+        npx tsc --noEmit
+        
+    - name: Build application
+      run: |
+        cd apps/web
+        npm run build
+        
+    - name: Test build output
+      run: |
+        cd apps/web
+        ls -la .next/
+        test -d .next/static
+        test -f .next/BUILD_ID
