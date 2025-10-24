@@ -308,6 +308,252 @@ export interface Database {
           created_at?: string;
         };
       };
+      content_reports: {
+        Row: {
+          id: string;
+          reporter_id: string;
+          content_type: 'poll' | 'comment' | 'user' | 'image';
+          content_id: string;
+          report_category:
+            | 'inappropriate_content'
+            | 'spam'
+            | 'harassment'
+            | 'violence'
+            | 'hate_speech'
+            | 'other';
+          description: string | null;
+          status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          resolution: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          reporter_id: string;
+          content_type: 'poll' | 'comment' | 'user' | 'image';
+          content_id: string;
+          report_category:
+            | 'inappropriate_content'
+            | 'spam'
+            | 'harassment'
+            | 'violence'
+            | 'hate_speech'
+            | 'other';
+          description?: string | null;
+          status?: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          resolution?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          reporter_id?: string;
+          content_type?: 'poll' | 'comment' | 'user' | 'image';
+          content_id?: string;
+          report_category?:
+            | 'inappropriate_content'
+            | 'spam'
+            | 'harassment'
+            | 'violence'
+            | 'hate_speech'
+            | 'other';
+          description?: string | null;
+          status?: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          resolution?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      moderation_actions: {
+        Row: {
+          id: string;
+          moderator_id: string;
+          content_type: 'poll' | 'comment' | 'user' | 'image';
+          content_id: string;
+          action_type:
+            | 'approve'
+            | 'reject'
+            | 'delete'
+            | 'hide'
+            | 'escalate'
+            | 'warn_user';
+          reason: string | null;
+          severity: 'low' | 'medium' | 'high' | 'critical';
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          moderator_id: string;
+          content_type: 'poll' | 'comment' | 'user' | 'image';
+          content_id: string;
+          action_type:
+            | 'approve'
+            | 'reject'
+            | 'delete'
+            | 'hide'
+            | 'escalate'
+            | 'warn_user';
+          reason?: string | null;
+          severity?: 'low' | 'medium' | 'high' | 'critical';
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          moderator_id?: string;
+          content_type?: 'poll' | 'comment' | 'user' | 'image';
+          content_id?: string;
+          action_type?:
+            | 'approve'
+            | 'reject'
+            | 'delete'
+            | 'hide'
+            | 'escalate'
+            | 'warn_user';
+          reason?: string | null;
+          severity?: 'low' | 'medium' | 'high' | 'critical';
+          created_at?: string;
+        };
+      };
+      content_classifications: {
+        Row: {
+          id: string;
+          content_type: 'poll' | 'comment' | 'image';
+          content_id: string;
+          classification: 'safe' | 'questionable' | 'inappropriate' | 'spam';
+          confidence_score: number;
+          detection_method: string;
+          details: Record<string, unknown> | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          content_type: 'poll' | 'comment' | 'image';
+          content_id: string;
+          classification: 'safe' | 'questionable' | 'inappropriate' | 'spam';
+          confidence_score: number;
+          detection_method: string;
+          details?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          content_type?: 'poll' | 'comment' | 'image';
+          content_id?: string;
+          classification?: 'safe' | 'questionable' | 'inappropriate' | 'spam';
+          confidence_score?: number;
+          detection_method?: string;
+          details?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+      };
+      moderation_policies: {
+        Row: {
+          id: string;
+          policy_name: string;
+          policy_type: 'content' | 'behavior' | 'spam';
+          rules: Record<string, unknown>;
+          is_active: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          policy_name: string;
+          policy_type: 'content' | 'behavior' | 'spam';
+          rules: Record<string, unknown>;
+          is_active?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          policy_name?: string;
+          policy_type?: 'content' | 'behavior' | 'spam';
+          rules?: Record<string, unknown>;
+          is_active?: boolean;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      content_appeals: {
+        Row: {
+          id: string;
+          appealer_id: string;
+          moderation_action_id: string;
+          appeal_reason: string;
+          status: 'pending' | 'approved' | 'rejected';
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          review_notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          appealer_id: string;
+          moderation_action_id: string;
+          appeal_reason: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          review_notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          appealer_id?: string;
+          moderation_action_id?: string;
+          appeal_reason?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          review_notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      user_moderation_history: {
+        Row: {
+          id: string;
+          user_id: string;
+          violation_type: string;
+          violation_description: string | null;
+          severity: 'low' | 'medium' | 'high' | 'critical';
+          action_taken: string;
+          moderator_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          violation_type: string;
+          violation_description?: string | null;
+          severity?: 'low' | 'medium' | 'high' | 'critical';
+          action_taken: string;
+          moderator_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          violation_type?: string;
+          violation_description?: string | null;
+          severity?: 'low' | 'medium' | 'high' | 'critical';
+          action_taken?: string;
+          moderator_id?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Enums: Record<string, never>;
   };

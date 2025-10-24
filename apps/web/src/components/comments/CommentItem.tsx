@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import CommentForm from './CommentForm';
 import CommentReplies from './CommentReplies';
+import ReportContent from '@/components/moderation/ReportContent';
 
 interface CommentItemProps {
   comment: CommentWithUser;
@@ -31,6 +32,7 @@ export default function CommentItem({
   onCommentUpdated,
   onCommentDeleted,
 }: CommentItemProps) {
+  const [showReportForm, setShowReportForm] = useState(false);
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -120,35 +122,9 @@ export default function CommentItem({
     }
   };
 
-  const handleReport = async () => {
-    if (!user) return;
-
-    const reason = prompt(
-      'Why are you reporting this comment? (spam, harassment, inappropriate, off_topic, other)'
-    );
-    if (!reason) return;
-
-    try {
-      const success = await CommentService.reportComment(
-        comment.id,
-        reason as
-          | 'spam'
-          | 'harassment'
-          | 'inappropriate'
-          | 'off_topic'
-          | 'other',
-        'User reported comment'
-      );
-
-      if (success) {
-        toast.success('Comment reported');
-      } else {
-        toast.error('Failed to report comment');
-      }
-    } catch (error) {
-      console.error('Error reporting comment:', error);
-      toast.error('Failed to report comment');
-    }
+  const handleReport = () => {
+    setShowReportForm(true);
+    setShowActions(false);
   };
 
   const getReactionButton = (type: 'like' | 'dislike') => {
@@ -338,6 +314,19 @@ export default function CommentItem({
       {showReplies && (
         <div className="ml-11">
           <CommentReplies parentId={comment.id} />
+        </div>
+      )}
+
+      {showReportForm && (
+        <div className="ml-11 mt-4">
+          <ReportContent
+            contentType="comment"
+            contentId={comment.id}
+            onReportSubmitted={() => {
+              setShowReportForm(false);
+              toast.success('Comment reported successfully');
+            }}
+          />
         </div>
       )}
     </div>

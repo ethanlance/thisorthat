@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Share2, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Share2, ArrowLeft, RefreshCw, Flag } from 'lucide-react';
+import ReportContent from '@/components/moderation/ReportContent';
 import { PollWithResults } from '@/lib/services/polls';
 import { getPollStatus, isPollActive } from '@/lib/services/expiration';
 import PollStatusBadge from './PollStatusBadge';
@@ -35,6 +36,7 @@ export default function PollView({
   showConversionCTA = false,
   className,
 }: PollViewProps) {
+  const [showReportForm, setShowReportForm] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(
     null
   );
@@ -145,6 +147,40 @@ export default function PollView({
         <div className="mt-8 pt-6 border-t border-border">
           <h3 className="text-xl font-semibold mb-6">Comments</h3>
           <CommentsList pollId={poll.id} />
+        </div>
+
+        {/* Report Section */}
+        <div className="mt-8 pt-6 border-t border-border">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Report Content</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowReportForm(!showReportForm)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Flag className="h-4 w-4 mr-2" />
+              {showReportForm ? 'Cancel' : 'Report'}
+            </Button>
+          </div>
+
+          {showReportForm && (
+            <ReportContent
+              contentType="poll"
+              contentId={poll.id}
+              onReportSubmitted={() => {
+                setShowReportForm(false);
+                setShowSuccessMessage('Report submitted successfully');
+                setTimeout(() => setShowSuccessMessage(null), 5000);
+              }}
+            />
+          )}
+
+          {showSuccessMessage && (
+            <Alert className="mt-4">
+              <AlertDescription>{showSuccessMessage}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         {/* Poll Info Footer */}
