@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import FollowButton from './FollowButton';
 import UserConnections from './UserConnections';
+import UserAchievements from './UserAchievements';
+import UserActivity from './UserActivity';
 
 interface UserProfileProps {
   userId: string;
@@ -195,6 +197,12 @@ export default function UserProfile({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UserConnections userId={userId} type="followers" />
         <UserConnections userId={userId} type="following" />
+      </div>
+
+      {/* Achievements and Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <UserAchievements userId={userId} />
+        <UserActivity userId={userId} />
       </div>
     </div>
   );

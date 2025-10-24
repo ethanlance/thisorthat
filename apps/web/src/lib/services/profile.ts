@@ -3,8 +3,9 @@ import { Database } from '@/types/database';
 
 type UserProfile = Database['public']['Tables']['user_interests']['Row'];
 type UserFollow = Database['public']['Tables']['user_follows']['Row'];
-type UserAchievement = Database['public']['Tables']['user_achievements']['Row'];
-type UserActivity = Database['public']['Tables']['user_activity']['Row'];
+export type UserAchievement =
+  Database['public']['Tables']['user_achievements']['Row'];
+export type UserActivity = Database['public']['Tables']['user_activity']['Row'];
 
 export interface ProfileData {
   id: string;
@@ -21,6 +22,10 @@ export interface ProfileData {
   polls_voted: number;
   followers_count: number;
   following_count: number;
+  show_email?: boolean;
+  show_activity?: boolean;
+  allow_follows?: boolean;
+  show_achievements?: boolean;
 }
 
 export interface UserSearchResult {
@@ -69,6 +74,10 @@ export class ProfileService {
       avatar_url?: string;
       interests?: string[];
       privacy_level?: 'public' | 'friends' | 'private';
+      show_email?: boolean;
+      show_activity?: boolean;
+      allow_follows?: boolean;
+      show_achievements?: boolean;
     }
   ): Promise<boolean> {
     try {
@@ -81,6 +90,10 @@ export class ProfileService {
           avatar_url: updates.avatar_url,
           interests: updates.interests,
           privacy_level: updates.privacy_level,
+          show_email: updates.show_email,
+          show_activity: updates.show_activity,
+          allow_follows: updates.allow_follows,
+          show_achievements: updates.show_achievements,
           profile_completed: true,
           updated_at: new Date().toISOString(),
         })

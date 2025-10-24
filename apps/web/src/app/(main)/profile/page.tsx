@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import ProfileEditor from '@/components/profile/ProfileEditor';
+import PrivacySettings from '@/components/profile/PrivacySettings';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
 
 export default function ProfilePage() {
@@ -13,9 +14,15 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        <Suspense fallback={<LoadingSpinner />}>
-          <ProfileEditor />
-        </Suspense>
+        <div className="space-y-8">
+          <Suspense fallback={<LoadingSpinner />}>
+            <ProfileEditor />
+          </Suspense>
+
+          <Suspense fallback={<LoadingSpinner />}>
+            <PrivacySettings />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
