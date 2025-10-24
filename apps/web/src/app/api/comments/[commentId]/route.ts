@@ -4,9 +4,9 @@ import { CommentService } from '@/lib/services/comments';
 
 export async function GET(
   request: Request,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
-  const { commentId } = params;
+  const { commentId } = await params;
 
   if (!commentId) {
     return NextResponse.json(
@@ -34,10 +34,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
-  const { commentId } = params;
-  const supabase = createClient();
+  const { commentId } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
     error: authError,
@@ -117,10 +117,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
-  const { commentId } = params;
-  const supabase = createClient();
+  const { commentId } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
     error: authError,

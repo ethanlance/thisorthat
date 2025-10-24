@@ -3,7 +3,7 @@
   "outputDirectory": "apps/web/.next",
   "installCommand": "cd apps/web && npm ci",
   "framework": "nextjs",
-  "nodeVersion": "18.x",
+  "nodejs": "18.x",
   "functions": {
     "apps/web/src/app/api/**/*.ts": {
       "runtime": "nodejs18.x"

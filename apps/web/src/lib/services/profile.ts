@@ -234,21 +234,7 @@ export class ProfileService {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('user_follows')
-        .select(
-          `
-          follower_id,
-          created_at,
-          follower:auth.users!user_follows_follower_id_fkey (
-            id,
-            display_name,
-            bio,
-            avatar_url,
-            interests,
-            privacy_level,
-            last_active_at
-          )
-        `
-        )
+        .select('follower_id, created_at')
         .eq('following_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -258,19 +244,31 @@ export class ProfileService {
         return [];
       }
 
-      return (
-        data?.map(follow => ({
-          id: follow.follower.id,
-          display_name: follow.follower.display_name,
-          bio: follow.follower.bio,
-          avatar_url: follow.follower.avatar_url,
-          interests: follow.follower.interests,
-          privacy_level: follow.follower.privacy_level,
-          last_active_at: follow.follower.last_active_at,
-          polls_created: 0, // Would need additional query
-          followers_count: 0, // Would need additional query
-        })) || []
-      );
+      // Get user data for each follower
+      const followers = [];
+      for (const follow of data || []) {
+        const { data: userData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', follow.follower_id)
+          .single();
+
+        if (userData) {
+          followers.push({
+            id: userData.id,
+            display_name: userData.display_name,
+            bio: userData.bio,
+            avatar_url: userData.avatar_url,
+            interests: userData.interests,
+            privacy_level: userData.privacy_level,
+            last_active_at: userData.last_active_at,
+            polls_created: 0, // Would need additional query
+            followers_count: 0, // Would need additional query
+          });
+        }
+      }
+
+      return followers;
     } catch (error) {
       console.error('Error in getFollowers:', error);
       return [];
@@ -289,21 +287,7 @@ export class ProfileService {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('user_follows')
-        .select(
-          `
-          following_id,
-          created_at,
-          following:auth.users!user_follows_following_id_fkey (
-            id,
-            display_name,
-            bio,
-            avatar_url,
-            interests,
-            privacy_level,
-            last_active_at
-          )
-        `
-        )
+        .select('following_id, created_at')
         .eq('follower_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -313,19 +297,31 @@ export class ProfileService {
         return [];
       }
 
-      return (
-        data?.map(follow => ({
-          id: follow.following.id,
-          display_name: follow.following.display_name,
-          bio: follow.following.bio,
-          avatar_url: follow.following.avatar_url,
-          interests: follow.following.interests,
-          privacy_level: follow.following.privacy_level,
-          last_active_at: follow.following.last_active_at,
-          polls_created: 0, // Would need additional query
-          followers_count: 0, // Would need additional query
-        })) || []
-      );
+      // Get user data for each following
+      const following = [];
+      for (const follow of data || []) {
+        const { data: userData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', follow.following_id)
+          .single();
+
+        if (userData) {
+          following.push({
+            id: userData.id,
+            display_name: userData.display_name,
+            bio: userData.bio,
+            avatar_url: userData.avatar_url,
+            interests: userData.interests,
+            privacy_level: userData.privacy_level,
+            last_active_at: userData.last_active_at,
+            polls_created: 0, // Would need additional query
+            followers_count: 0, // Would need additional query
+          });
+        }
+      }
+
+      return following;
     } catch (error) {
       console.error('Error in getFollowing:', error);
       return [];

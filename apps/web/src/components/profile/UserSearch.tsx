@@ -10,16 +10,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { useDebounce } from '@/lib/hooks/useDebounce';
+import { useRouter } from 'next/navigation';
 
 interface UserSearchProps {
-  onUserSelect?: (user: UserSearchResult) => void;
   placeholder?: string;
 }
 
 export default function UserSearch({
-  onUserSelect,
   placeholder = 'Search users...',
 }: UserSearchProps) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function UserSearch({
   }, [debouncedSearchTerm, searchUsers]);
 
   const handleUserClick = (user: UserSearchResult) => {
-    onUserSelect?.(user);
+    router.push(`/users/${user.id}`);
   };
 
   return (

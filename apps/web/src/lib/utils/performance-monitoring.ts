@@ -20,29 +20,29 @@ export function trackWebVitals() {
   if (typeof window === 'undefined') return;
 
   // Import web-vitals dynamically to avoid SSR issues
-  import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-    getCLS(metric => {
+  import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+    onCLS(metric => {
       console.log('CLS:', metric.value);
       // Send to analytics service
       sendMetric('cls', metric.value);
     });
 
-    getFID(metric => {
+    onFID(metric => {
       console.log('FID:', metric.value);
       sendMetric('fid', metric.value);
     });
 
-    getFCP(metric => {
+    onFCP(metric => {
       console.log('FCP:', metric.value);
       sendMetric('fcp', metric.value);
     });
 
-    getLCP(metric => {
+    onLCP(metric => {
       console.log('LCP:', metric.value);
       sendMetric('lcp', metric.value);
     });
 
-    getTTFB(metric => {
+    onTTFB(metric => {
       console.log('TTFB:', metric.value);
       sendMetric('ttfb', metric.value);
     });
@@ -55,11 +55,7 @@ export function trackWebVitals() {
 function sendMetric(name: string, value: number) {
   // Send to Vercel Analytics
   if (typeof window !== 'undefined' && window.va) {
-    window.va('track', 'performance_metric', {
-      metric: name,
-      value: Math.round(value),
-      timestamp: Date.now(),
-    });
+    window.va('event', `performance_${name}`);
   }
 
   // Send to custom analytics endpoint if needed
@@ -145,7 +141,7 @@ export function usePerformanceMonitoring() {
       if (navigation) {
         const metrics: PerformanceMetrics = {
           ttfb: navigation.responseStart - navigation.requestStart,
-          fcp: navigation.domContentLoadedEventEnd - navigation.navigationStart,
+          fcp: navigation.domContentLoadedEventEnd - navigation.fetchStart,
         };
 
         const violations = checkPerformanceBudget(metrics);
@@ -160,12 +156,4 @@ export function usePerformanceMonitoring() {
 }
 
 // Extend Window interface for Vercel Analytics
-declare global {
-  interface Window {
-    va?: (
-      action: string,
-      event: string,
-      data?: Record<string, unknown>
-    ) => void;
-  }
-}
+// Vercel Analytics is available globally

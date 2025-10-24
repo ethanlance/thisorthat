@@ -23,10 +23,6 @@ export function PollsList({ className }: PollsListProps) {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'active' | 'closed'>('active');
 
-  useEffect(() => {
-    loadPolls();
-  }, [activeTab, loadPolls]);
-
   const loadPolls = useCallback(async () => {
     try {
       setLoading(true);
@@ -43,6 +39,10 @@ export function PollsList({ className }: PollsListProps) {
       setLoading(false);
     }
   }, [activeTab]);
+
+  useEffect(() => {
+    loadPolls();
+  }, [activeTab, loadPolls]);
 
   if (loading) {
     return (

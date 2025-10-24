@@ -4,10 +4,10 @@ import { CommentService } from '@/lib/services/comments';
 
 export async function POST(
   request: Request,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
-  const { commentId } = params;
-  const supabase = createClient();
+  const { commentId } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
     error: authError,

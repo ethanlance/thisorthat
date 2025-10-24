@@ -75,10 +75,10 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
       setIsSaving(true);
 
       const success = await ProfileService.updateProfile(user.id, {
-        display_name: displayName.trim() || null,
-        bio: bio.trim() || null,
-        avatar_url: avatarUrl.trim() || null,
-        interests: interests.length > 0 ? interests : null,
+        display_name: displayName.trim() || undefined,
+        bio: bio.trim() || undefined,
+        avatar_url: avatarUrl.trim() || undefined,
+        interests: interests.length > 0 ? interests : undefined,
         privacy_level: privacyLevel,
       });
 

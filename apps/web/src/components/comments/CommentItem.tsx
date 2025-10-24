@@ -337,10 +337,7 @@ export default function CommentItem({
 
       {showReplies && (
         <div className="ml-11">
-          <CommentReplies
-            parentId={comment.id}
-            onReplyAdded={onCommentUpdated}
-          />
+          <CommentReplies parentId={comment.id} />
         </div>
       )}
     </div>

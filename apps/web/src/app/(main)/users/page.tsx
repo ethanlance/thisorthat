@@ -19,12 +19,7 @@ export default function UsersPage() {
 
         <div className="space-y-6">
           <Suspense fallback={<LoadingSpinner />}>
-            <UserSearch
-              onUserSelect={user => {
-                // Navigate to user profile
-                window.location.href = `/users/${user.id}`;
-              }}
-            />
+            <UserSearch />
           </Suspense>
         </div>
       </div>

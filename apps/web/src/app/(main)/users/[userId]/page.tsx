@@ -4,13 +4,13 @@ import LoadingSpinner from '@/components/layout/LoadingSpinner';
 import { notFound } from 'next/navigation';
 
 interface UserPageProps {
-  params: {
+  params: Promise<{
     userId: string;
-  };
+  }>;
 }
 
-export default function UserPage({ params }: UserPageProps) {
-  const { userId } = params;
+export default async function UserPage({ params }: UserPageProps) {
+  const { userId } = await params;
 
   if (!userId) {
     notFound();

@@ -4,9 +4,9 @@ import { CommentService } from '@/lib/services/comments';
 
 export async function GET(
   request: Request,
-  { params }: { params: { pollId: string } }
+  { params }: { params: Promise<{ pollId: string }> }
 ) {
-  const { pollId } = params;
+  const { pollId } = await params;
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get('limit') || '50');
   const offset = parseInt(searchParams.get('offset') || '0');
@@ -33,10 +33,10 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { pollId: string } }
+  { params }: { params: Promise<{ pollId: string }> }
 ) {
-  const { pollId } = params;
-  const supabase = createClient();
+  const { pollId } = await params;
+  const supabase = await createClient();
   const {
     data: { user },
     error: authError,

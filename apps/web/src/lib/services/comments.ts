@@ -12,6 +12,11 @@ export interface CommentWithUser extends Comment {
   dislike_count: number;
   user_reaction: string | null;
   reply_count: number;
+  is_deleted: boolean;
+  is_edited: boolean;
+  edited_at: string | null;
+  deleted_at: string | null;
+  deleted_by: string | null;
 }
 
 export interface CommentReply extends Comment {
@@ -245,24 +250,22 @@ export class CommentService {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('comments')
-        .select(
-          `
-          *,
-          user:auth.users!comments_user_id_fkey (
-            display_name,
-            avatar_url,
-            email
-          )
-        `
-        )
+        .select('*')
         .eq('id', commentId)
         .eq('is_deleted', false)
         .single();
 
-      if (error) {
+      if (error || !data) {
         console.error('Error fetching comment:', error);
         return null;
       }
+
+      // Get user information
+      const { data: userData } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', data.user_id)
+        .single();
 
       // Get reaction counts
       const { data: reactions } = await supabase
@@ -291,15 +294,25 @@ export class CommentService {
         .eq('is_deleted', false);
 
       return {
-        ...data,
-        user_display_name:
-          data.user?.display_name || data.user?.email || 'Anonymous',
-        user_avatar_url: data.user?.avatar_url,
+        id: data.id,
+        poll_id: data.poll_id,
+        user_id: data.user_id,
+        parent_id: data.parent_id,
+        content: data.content,
+        is_edited: data.is_edited,
+        edited_at: data.edited_at,
+        is_deleted: data.is_deleted,
+        deleted_at: data.deleted_at,
+        deleted_by: data.deleted_by,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        user_display_name: userData?.display_name || 'Anonymous',
+        user_avatar_url: userData?.avatar_url,
         like_count: likeCount,
         dislike_count: dislikeCount,
         user_reaction: userReaction?.reaction_type || null,
         reply_count: replyCount || 0,
-      };
+      } as CommentWithUser;
     } catch (error) {
       console.error('Error in getCommentById:', error);
       return null;

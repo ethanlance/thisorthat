@@ -3,9 +3,9 @@ import { CommentService } from '@/lib/services/comments';
 
 export async function GET(
   request: Request,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
-  const { commentId } = params;
+  const { commentId } = await params;
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get('limit') || '20');
   const offset = parseInt(searchParams.get('offset') || '0');
