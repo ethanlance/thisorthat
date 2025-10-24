@@ -367,7 +367,7 @@ export class ProfileService {
   static async trackActivity(
     userId: string,
     activityType: string,
-    activityData?: any
+    activityData?: Record<string, unknown>
   ): Promise<boolean> {
     try {
       const supabase = createClient();
@@ -419,7 +419,7 @@ export class ProfileService {
   static async addAchievement(
     userId: string,
     achievementType: string,
-    achievementData?: any
+    achievementData?: Record<string, unknown>
   ): Promise<boolean> {
     try {
       const supabase = createClient();

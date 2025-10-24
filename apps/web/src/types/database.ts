@@ -168,21 +168,21 @@ export interface Database {
           id: string;
           user_id: string;
           achievement_type: string;
-          achievement_data: any;
+          achievement_data: Record<string, unknown>;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           achievement_type: string;
-          achievement_data?: any;
+          achievement_data?: Record<string, unknown>;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
           achievement_type?: string;
-          achievement_data?: any;
+          achievement_data?: Record<string, unknown>;
           created_at?: string;
         };
       };
@@ -191,21 +191,21 @@ export interface Database {
           id: string;
           user_id: string;
           activity_type: string;
-          activity_data: any;
+          activity_data: Record<string, unknown>;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           activity_type: string;
-          activity_data?: any;
+          activity_data?: Record<string, unknown>;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
           activity_type?: string;
-          activity_data?: any;
+          activity_data?: Record<string, unknown>;
           created_at?: string;
         };
       };

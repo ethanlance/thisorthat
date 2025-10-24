@@ -16,6 +16,7 @@
     "test:coverage": "vitest run --coverage",
     "lighthouse": "lhci autorun",
     "validate": "./scripts/validate.sh",
+    "build:vercel": "NODE_ENV=production npm run build",
     "prepare": "cd ../.. && husky apps/web/.husky || true"
   },
   "dependencies": {
