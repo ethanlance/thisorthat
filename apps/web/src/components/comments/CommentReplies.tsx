@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   CommentService,
   CommentReply,
@@ -21,30 +21,33 @@ export default function CommentReplies({ parentId }: CommentRepliesProps) {
   const [offset, setOffset] = useState(0);
   const limit = 10;
 
-  const loadReplies = async (reset = false) => {
-    setLoading(true);
-    try {
-      const newReplies = await CommentService.getCommentReplies(
-        parentId,
-        limit,
-        reset ? 0 : offset
-      );
+  const loadReplies = useCallback(
+    async (reset = false) => {
+      setLoading(true);
+      try {
+        const newReplies = await CommentService.getCommentReplies(
+          parentId,
+          limit,
+          reset ? 0 : offset
+        );
 
-      if (reset) {
-        setReplies(newReplies);
-        setOffset(newReplies.length);
-      } else {
-        setReplies(prev => [...prev, ...newReplies]);
-        setOffset(prev => prev + newReplies.length);
+        if (reset) {
+          setReplies(newReplies);
+          setOffset(newReplies.length);
+        } else {
+          setReplies(prev => [...prev, ...newReplies]);
+          setOffset(prev => prev + newReplies.length);
+        }
+
+        setHasMore(newReplies.length === limit);
+      } catch (error) {
+        console.error('Error loading replies:', error);
+      } finally {
+        setLoading(false);
       }
-
-      setHasMore(newReplies.length === limit);
-    } catch (error) {
-      console.error('Error loading replies:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [parentId, limit, offset]
+  );
 
   useEffect(() => {
     loadReplies(true);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { CommentService, CommentWithUser } from '@/lib/services/comments';
 import CommentItem from './CommentItem';
 import CommentForm from './CommentForm';
@@ -21,33 +21,36 @@ export default function CommentsList({ pollId }: CommentsListProps) {
   const [error, setError] = useState<string | null>(null);
   const limit = 20;
 
-  const loadComments = async (reset = false) => {
-    setLoading(true);
-    setError(null);
+  const loadComments = useCallback(
+    async (reset = false) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const newComments = await CommentService.getPollComments(
-        pollId,
-        limit,
-        reset ? 0 : offset
-      );
+      try {
+        const newComments = await CommentService.getPollComments(
+          pollId,
+          limit,
+          reset ? 0 : offset
+        );
 
-      if (reset) {
-        setComments(newComments);
-        setOffset(newComments.length);
-      } else {
-        setComments(prev => [...prev, ...newComments]);
-        setOffset(prev => prev + newComments.length);
+        if (reset) {
+          setComments(newComments);
+          setOffset(newComments.length);
+        } else {
+          setComments(prev => [...prev, ...newComments]);
+          setOffset(prev => prev + newComments.length);
+        }
+
+        setHasMore(newComments.length === limit);
+      } catch (err) {
+        console.error('Error loading comments:', err);
+        setError('Failed to load comments');
+      } finally {
+        setLoading(false);
       }
-
-      setHasMore(newComments.length === limit);
-    } catch (err) {
-      console.error('Error loading comments:', err);
-      setError('Failed to load comments');
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [pollId, limit, offset]
+  );
 
   useEffect(() => {
     loadComments(true);
