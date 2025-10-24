@@ -43,18 +43,138 @@ export class CommentService {
   ): Promise<CommentWithUser[]> {
     try {
       const supabase = createClient();
-      const { data, error } = await supabase.rpc('get_comment_thread', {
-        poll_uuid: pollId,
-        limit_count: limit,
-        offset_count: offset,
-      });
 
-      if (error) {
-        console.error('Error fetching poll comments:', error);
+      // First, get the comments with basic info
+      const { data: comments, error: commentsError } = await supabase
+        .from('comments')
+        .select(
+          `
+          id,
+          poll_id,
+          user_id,
+          parent_id,
+          content,
+          is_edited,
+          edited_at,
+          is_deleted,
+          deleted_at,
+          deleted_by,
+          created_at,
+          updated_at
+        `
+        )
+        .eq('poll_id', pollId)
+        .eq('is_deleted', false)
+        .is('parent_id', null) // Only get top-level comments
+        .order('created_at', { ascending: true })
+        .range(offset, offset + limit - 1);
+
+      if (commentsError) {
+        console.error('Error fetching poll comments:', commentsError);
         return [];
       }
 
-      return data || [];
+      if (!comments || comments.length === 0) {
+        return [];
+      }
+
+      // Get user info for each comment
+      const userIds = [...new Set(comments.map(c => c.user_id))];
+      const { data: users, error: usersError } = await supabase
+        .from('auth.users')
+        .select('id, email, raw_user_meta_data')
+        .in('id', userIds);
+
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+        return [];
+      }
+
+      // Get reaction counts for each comment
+      const commentIds = comments.map(c => c.id);
+      const { data: reactions, error: reactionsError } = await supabase
+        .from('comment_reactions')
+        .select('comment_id, reaction_type, user_id')
+        .in('comment_id', commentIds);
+
+      if (reactionsError) {
+        console.error('Error fetching reactions:', reactionsError);
+      }
+
+      // Get reply counts for each comment
+      const { data: replies, error: repliesError } = await supabase
+        .from('comments')
+        .select('parent_id')
+        .in('parent_id', commentIds)
+        .eq('is_deleted', false);
+
+      if (repliesError) {
+        console.error('Error fetching replies:', repliesError);
+      }
+
+      // Combine all data
+      const userMap = new Map(users?.map(u => [u.id, u]) || []);
+      const reactionMap = new Map<
+        string,
+        { like: number; dislike: number; userReaction?: string }
+      >();
+
+      // Process reactions
+      reactions?.forEach(reaction => {
+        const key = reaction.comment_id;
+        if (!reactionMap.has(key)) {
+          reactionMap.set(key, { like: 0, dislike: 0 });
+        }
+        const stats = reactionMap.get(key)!;
+        if (reaction.reaction_type === 'like') {
+          stats.like++;
+        } else if (reaction.reaction_type === 'dislike') {
+          stats.dislike++;
+        }
+      });
+
+      // Process reply counts
+      const replyCountMap = new Map<string, number>();
+      replies?.forEach(reply => {
+        const key = reply.parent_id;
+        replyCountMap.set(key, (replyCountMap.get(key) || 0) + 1);
+      });
+
+      // Build the final result
+      const result: CommentWithUser[] = comments.map(comment => {
+        const user = userMap.get(comment.user_id);
+        const reactionStats = reactionMap.get(comment.id) || {
+          like: 0,
+          dislike: 0,
+        };
+        const replyCount = replyCountMap.get(comment.id) || 0;
+
+        return {
+          id: comment.id,
+          poll_id: comment.poll_id,
+          user_id: comment.user_id,
+          parent_id: comment.parent_id,
+          content: comment.content,
+          is_edited: comment.is_edited,
+          edited_at: comment.edited_at,
+          is_deleted: comment.is_deleted,
+          deleted_at: comment.deleted_at,
+          deleted_by: comment.deleted_by,
+          created_at: comment.created_at,
+          updated_at: comment.updated_at,
+          user_display_name:
+            user?.raw_user_meta_data?.display_name ||
+            user?.email ||
+            'Anonymous',
+          user_avatar_url: user?.raw_user_meta_data?.avatar_url || null,
+          like_count: reactionStats.like,
+          dislike_count: reactionStats.dislike,
+          user_reaction: reactionStats.userReaction || null,
+          reply_count: replyCount,
+        };
+      });
+
+      return result;
     } catch (error) {
       console.error('Error in getPollComments:', error);
       return [];
@@ -71,18 +191,117 @@ export class CommentService {
   ): Promise<CommentReply[]> {
     try {
       const supabase = createClient();
-      const { data, error } = await supabase.rpc('get_comment_replies', {
-        parent_uuid: parentId,
-        limit_count: limit,
-        offset_count: offset,
-      });
 
-      if (error) {
-        console.error('Error fetching comment replies:', error);
+      // Get replies with basic info
+      const { data: replies, error: repliesError } = await supabase
+        .from('comments')
+        .select(
+          `
+          id,
+          poll_id,
+          user_id,
+          parent_id,
+          content,
+          is_edited,
+          edited_at,
+          is_deleted,
+          deleted_at,
+          deleted_by,
+          created_at,
+          updated_at
+        `
+        )
+        .eq('parent_id', parentId)
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: true })
+        .range(offset, offset + limit - 1);
+
+      if (repliesError) {
+        console.error('Error fetching comment replies:', repliesError);
         return [];
       }
 
-      return data || [];
+      if (!replies || replies.length === 0) {
+        return [];
+      }
+
+      // Get user info for each reply
+      const userIds = [...new Set(replies.map(r => r.user_id))];
+      const { data: users, error: usersError } = await supabase
+        .from('auth.users')
+        .select('id, email, raw_user_meta_data')
+        .in('id', userIds);
+
+      if (usersError) {
+        console.error('Error fetching users:', usersError);
+        return [];
+      }
+
+      // Get reaction counts for each reply
+      const replyIds = replies.map(r => r.id);
+      const { data: reactions, error: reactionsError } = await supabase
+        .from('comment_reactions')
+        .select('comment_id, reaction_type, user_id')
+        .in('comment_id', replyIds);
+
+      if (reactionsError) {
+        console.error('Error fetching reactions:', reactionsError);
+      }
+
+      // Combine all data
+      const userMap = new Map(users?.map(u => [u.id, u]) || []);
+      const reactionMap = new Map<
+        string,
+        { like: number; dislike: number; userReaction?: string }
+      >();
+
+      // Process reactions
+      reactions?.forEach(reaction => {
+        const key = reaction.comment_id;
+        if (!reactionMap.has(key)) {
+          reactionMap.set(key, { like: 0, dislike: 0 });
+        }
+        const stats = reactionMap.get(key)!;
+        if (reaction.reaction_type === 'like') {
+          stats.like++;
+        } else if (reaction.reaction_type === 'dislike') {
+          stats.dislike++;
+        }
+      });
+
+      // Build the final result
+      const result: CommentReply[] = replies.map(reply => {
+        const user = userMap.get(reply.user_id);
+        const reactionStats = reactionMap.get(reply.id) || {
+          like: 0,
+          dislike: 0,
+        };
+
+        return {
+          id: reply.id,
+          poll_id: reply.poll_id,
+          user_id: reply.user_id,
+          parent_id: reply.parent_id,
+          content: reply.content,
+          is_edited: reply.is_edited,
+          edited_at: reply.edited_at,
+          is_deleted: reply.is_deleted,
+          deleted_at: reply.deleted_at,
+          deleted_by: reply.deleted_by,
+          created_at: reply.created_at,
+          updated_at: reply.updated_at,
+          user_display_name:
+            user?.raw_user_meta_data?.display_name ||
+            user?.email ||
+            'Anonymous',
+          user_avatar_url: user?.raw_user_meta_data?.avatar_url || null,
+          like_count: reactionStats.like,
+          dislike_count: reactionStats.dislike,
+          user_reaction: reactionStats.userReaction || null,
+        };
+      });
+
+      return result;
     } catch (error) {
       console.error('Error in getCommentReplies:', error);
       return [];
