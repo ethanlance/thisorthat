@@ -10,7 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { X, Plus, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,14 +29,16 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Form state
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
   const [newInterest, setNewInterest] = useState('');
-  const [privacyLevel, setPrivacyLevel] = useState<'public' | 'friends' | 'private'>('public');
+  const [privacyLevel, setPrivacyLevel] = useState<
+    'public' | 'friends' | 'private'
+  >('public');
 
   useEffect(() => {
     if (user?.id) {
@@ -65,13 +73,13 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
 
     try {
       setIsSaving(true);
-      
+
       const success = await ProfileService.updateProfile(user.id, {
         display_name: displayName.trim() || null,
         bio: bio.trim() || null,
         avatar_url: avatarUrl.trim() || null,
         interests: interests.length > 0 ? interests : null,
-        privacy_level: privacyLevel
+        privacy_level: privacyLevel,
       });
 
       if (success) {
@@ -132,7 +140,9 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
             <Avatar className="h-20 w-20">
               <AvatarImage src={avatarUrl} alt={displayName || 'User'} />
               <AvatarFallback className="text-lg">
-                {displayName.charAt(0) || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                {displayName.charAt(0) ||
+                  user?.email?.charAt(0)?.toUpperCase() ||
+                  'U'}
               </AvatarFallback>
             </Avatar>
             <div className="space-y-2">
@@ -141,7 +151,7 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
                 <Input
                   id="avatar-url"
                   value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  onChange={e => setAvatarUrl(e.target.value)}
                   placeholder="https://example.com/avatar.jpg"
                   className="flex-1"
                 />
@@ -158,7 +168,7 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
             <Input
               id="display-name"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={e => setDisplayName(e.target.value)}
               placeholder="Enter your display name"
               maxLength={50}
             />
@@ -173,7 +183,7 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
             <Textarea
               id="bio"
               value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              onChange={e => setBio(e.target.value)}
               placeholder="Tell us about yourself..."
               maxLength={500}
               rows={4}
@@ -188,7 +198,11 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
             <Label>Interests</Label>
             <div className="flex flex-wrap gap-2 mb-2">
               {interests.map((interest, index) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                >
                   {interest}
                   <button
                     onClick={() => removeInterest(interest)}
@@ -202,7 +216,7 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
             <div className="flex space-x-2">
               <Input
                 value={newInterest}
-                onChange={(e) => setNewInterest(e.target.value)}
+                onChange={e => setNewInterest(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Add an interest..."
                 maxLength={30}
@@ -216,14 +230,25 @@ export default function ProfileEditor({ onSave }: ProfileEditorProps) {
           {/* Privacy Level */}
           <div className="space-y-2">
             <Label htmlFor="privacy-level">Privacy Level</Label>
-            <Select value={privacyLevel} onValueChange={(value: 'public' | 'friends' | 'private') => setPrivacyLevel(value)}>
+            <Select
+              value={privacyLevel}
+              onValueChange={(value: 'public' | 'friends' | 'private') =>
+                setPrivacyLevel(value)
+              }
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="public">Public - Anyone can see your profile</SelectItem>
-                <SelectItem value="friends">Friends - Only people you follow can see your profile</SelectItem>
-                <SelectItem value="private">Private - Only you can see your profile</SelectItem>
+                <SelectItem value="public">
+                  Public - Anyone can see your profile
+                </SelectItem>
+                <SelectItem value="friends">
+                  Friends - Only people you follow can see your profile
+                </SelectItem>
+                <SelectItem value="private">
+                  Private - Only you can see your profile
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

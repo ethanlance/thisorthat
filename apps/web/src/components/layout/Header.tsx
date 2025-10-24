@@ -53,7 +53,9 @@ export default function Header() {
                 className="flex items-center space-x-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 <User className="h-4 w-4" />
-                <span className="hidden lg:inline">{user.user_metadata?.full_name || user.email}</span>
+                <span className="hidden lg:inline">
+                  {user.user_metadata?.full_name || user.email}
+                </span>
               </Link>
             )}
           </nav>

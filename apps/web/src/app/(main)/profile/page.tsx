@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { ProfileEditor } from '@/components/profile/ProfileEditor';
-import { LoadingSpinner } from '@/components/layout/LoadingSpinner';
+import ProfileEditor from '@/components/profile/ProfileEditor';
+import LoadingSpinner from '@/components/layout/LoadingSpinner';
 
 export default function ProfilePage() {
   return (
@@ -12,7 +12,7 @@ export default function ProfilePage() {
             Manage your profile information and preferences
           </p>
         </div>
-        
+
         <Suspense fallback={<LoadingSpinner />}>
           <ProfileEditor />
         </Suspense>

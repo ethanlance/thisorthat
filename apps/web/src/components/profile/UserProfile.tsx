@@ -1,7 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Calendar, Users, BarChart3, Heart, MessageSquare } from 'lucide-react';
+import {
+  User,
+  Calendar,
+  Users,
+  BarChart3,
+  Heart,
+  MessageSquare,
+} from 'lucide-react';
 import { ProfileData } from '@/lib/services/profile';
 import { ProfileService } from '@/lib/services/profile';
 import { Button } from '@/components/ui/button';
@@ -15,7 +22,10 @@ interface UserProfileProps {
   isOwnProfile?: boolean;
 }
 
-export default function UserProfile({ userId, isOwnProfile = false }: UserProfileProps) {
+export default function UserProfile({
+  userId,
+  isOwnProfile = false,
+}: UserProfileProps) {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +54,7 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
     try {
       const following = await ProfileService.isFollowing(
         // This would need to be the current user's ID
-        'current-user-id', 
+        'current-user-id',
         userId
       );
       setIsFollowing(following);
@@ -58,21 +68,29 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
 
     try {
       setIsFollowingLoading(true);
-      
+
       if (isFollowing) {
         await ProfileService.unfollowUser('current-user-id', userId);
         setIsFollowing(false);
-        setProfile(prev => prev ? {
-          ...prev,
-          followers_count: prev.followers_count - 1
-        } : null);
+        setProfile(prev =>
+          prev
+            ? {
+                ...prev,
+                followers_count: prev.followers_count - 1,
+              }
+            : null
+        );
       } else {
         await ProfileService.followUser('current-user-id', userId);
         setIsFollowing(true);
-        setProfile(prev => prev ? {
-          ...prev,
-          followers_count: prev.followers_count + 1
-        } : null);
+        setProfile(prev =>
+          prev
+            ? {
+                ...prev,
+                followers_count: prev.followers_count + 1,
+              }
+            : null
+        );
       }
     } catch (error) {
       console.error('Error toggling follow:', error);
@@ -111,9 +129,13 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-4">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={profile.avatar_url || ''} alt={profile.display_name || 'User'} />
+                <AvatarImage
+                  src={profile.avatar_url || ''}
+                  alt={profile.display_name || 'User'}
+                />
                 <AvatarFallback className="text-lg">
-                  {profile.display_name?.charAt(0) || profile.email.charAt(0).toUpperCase()}
+                  {profile.display_name?.charAt(0) ||
+                    profile.email.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-1">
@@ -122,11 +144,16 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
                 </h1>
                 <p className="text-muted-foreground">{profile.email}</p>
                 {profile.bio && (
-                  <p className="text-sm text-muted-foreground max-w-md">{profile.bio}</p>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    {profile.bio}
+                  </p>
                 )}
                 <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>Joined {formatDistanceToNow(new Date(profile.created_at))} ago</span>
+                  <span>
+                    Joined {formatDistanceToNow(new Date(profile.created_at))}{' '}
+                    ago
+                  </span>
                 </div>
               </div>
             </div>
@@ -137,7 +164,11 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
                 variant={isFollowing ? 'outline' : 'default'}
                 className="min-w-[100px]"
               >
-                {isFollowingLoading ? 'Loading...' : isFollowing ? 'Following' : 'Follow'}
+                {isFollowingLoading
+                  ? 'Loading...'
+                  : isFollowing
+                    ? 'Following'
+                    : 'Follow'}
               </Button>
             )}
           </div>
@@ -150,12 +181,14 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <BarChart3 className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold">{profile.polls_created}</span>
+              <span className="text-2xl font-bold">
+                {profile.polls_created}
+              </span>
             </div>
             <p className="text-sm text-muted-foreground">Polls Created</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
@@ -165,22 +198,26 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
             <p className="text-sm text-muted-foreground">Votes Cast</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <Users className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold">{profile.followers_count}</span>
+              <span className="text-2xl font-bold">
+                {profile.followers_count}
+              </span>
             </div>
             <p className="text-sm text-muted-foreground">Followers</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <User className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold">{profile.following_count}</span>
+              <span className="text-2xl font-bold">
+                {profile.following_count}
+              </span>
             </div>
             <p className="text-sm text-muted-foreground">Following</p>
           </CardContent>
@@ -210,7 +247,11 @@ export default function UserProfile({ userId, isOwnProfile = false }: UserProfil
         <CardContent className="p-4">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium">Privacy Level:</span>
-            <Badge variant={profile.privacy_level === 'public' ? 'default' : 'secondary'}>
+            <Badge
+              variant={
+                profile.privacy_level === 'public' ? 'default' : 'secondary'
+              }
+            >
               {profile.privacy_level}
             </Badge>
           </div>

@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
 type UserProfile = Database['public']['Tables']['user_interests']['Row'];
@@ -41,8 +41,9 @@ export class ProfileService {
    */
   static async getUserProfile(userId: string): Promise<ProfileData | null> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase.rpc('get_user_profile', {
-        p_user_id: userId
+        p_user_id: userId,
       });
 
       if (error) {
@@ -71,6 +72,7 @@ export class ProfileService {
     }
   ): Promise<boolean> {
     try {
+      const supabase = createClient();
       const { error } = await supabase
         .from('auth.users')
         .update({
@@ -80,7 +82,7 @@ export class ProfileService {
           interests: updates.interests,
           privacy_level: updates.privacy_level,
           profile_completed: true,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', userId);
 
@@ -91,7 +93,7 @@ export class ProfileService {
 
       // Track profile update activity
       await this.trackActivity(userId, 'profile_updated', {
-        updated_fields: Object.keys(updates)
+        updated_fields: Object.keys(updates),
       });
 
       return true;
@@ -110,10 +112,11 @@ export class ProfileService {
     offset: number = 0
   ): Promise<UserSearchResult[]> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase.rpc('search_users', {
         p_search_term: searchTerm,
         p_limit: limit,
-        p_offset: offset
+        p_offset: offset,
       });
 
       if (error) {
@@ -131,14 +134,16 @@ export class ProfileService {
   /**
    * Follow a user
    */
-  static async followUser(followerId: string, followingId: string): Promise<boolean> {
+  static async followUser(
+    followerId: string,
+    followingId: string
+  ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('user_follows')
-        .insert({
-          follower_id: followerId,
-          following_id: followingId
-        });
+      const supabase = createClient();
+      const { error } = await supabase.from('user_follows').insert({
+        follower_id: followerId,
+        following_id: followingId,
+      });
 
       if (error) {
         console.error('Error following user:', error);
@@ -147,7 +152,7 @@ export class ProfileService {
 
       // Track follow activity
       await this.trackActivity(followerId, 'user_followed', {
-        following_id: followingId
+        following_id: followingId,
       });
 
       return true;
@@ -160,8 +165,12 @@ export class ProfileService {
   /**
    * Unfollow a user
    */
-  static async unfollowUser(followerId: string, followingId: string): Promise<boolean> {
+  static async unfollowUser(
+    followerId: string,
+    followingId: string
+  ): Promise<boolean> {
     try {
+      const supabase = createClient();
       const { error } = await supabase
         .from('user_follows')
         .delete()
@@ -175,7 +184,7 @@ export class ProfileService {
 
       // Track unfollow activity
       await this.trackActivity(followerId, 'user_unfollowed', {
-        following_id: followingId
+        following_id: followingId,
       });
 
       return true;
@@ -188,8 +197,12 @@ export class ProfileService {
   /**
    * Check if user is following another user
    */
-  static async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+  static async isFollowing(
+    followerId: string,
+    followingId: string
+  ): Promise<boolean> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('user_follows')
         .select('id')
@@ -212,11 +225,17 @@ export class ProfileService {
   /**
    * Get user's followers
    */
-  static async getFollowers(userId: string, limit: number = 20, offset: number = 0): Promise<UserSearchResult[]> {
+  static async getFollowers(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<UserSearchResult[]> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           follower_id,
           created_at,
           follower:auth.users!user_follows_follower_id_fkey (
@@ -228,7 +247,8 @@ export class ProfileService {
             privacy_level,
             last_active_at
           )
-        `)
+        `
+        )
         .eq('following_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -238,17 +258,19 @@ export class ProfileService {
         return [];
       }
 
-      return data?.map(follow => ({
-        id: follow.follower.id,
-        display_name: follow.follower.display_name,
-        bio: follow.follower.bio,
-        avatar_url: follow.follower.avatar_url,
-        interests: follow.follower.interests,
-        privacy_level: follow.follower.privacy_level,
-        last_active_at: follow.follower.last_active_at,
-        polls_created: 0, // Would need additional query
-        followers_count: 0 // Would need additional query
-      })) || [];
+      return (
+        data?.map(follow => ({
+          id: follow.follower.id,
+          display_name: follow.follower.display_name,
+          bio: follow.follower.bio,
+          avatar_url: follow.follower.avatar_url,
+          interests: follow.follower.interests,
+          privacy_level: follow.follower.privacy_level,
+          last_active_at: follow.follower.last_active_at,
+          polls_created: 0, // Would need additional query
+          followers_count: 0, // Would need additional query
+        })) || []
+      );
     } catch (error) {
       console.error('Error in getFollowers:', error);
       return [];
@@ -258,11 +280,17 @@ export class ProfileService {
   /**
    * Get users that a user is following
    */
-  static async getFollowing(userId: string, limit: number = 20, offset: number = 0): Promise<UserSearchResult[]> {
+  static async getFollowing(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<UserSearchResult[]> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           following_id,
           created_at,
           following:auth.users!user_follows_following_id_fkey (
@@ -274,7 +302,8 @@ export class ProfileService {
             privacy_level,
             last_active_at
           )
-        `)
+        `
+        )
         .eq('follower_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -284,17 +313,19 @@ export class ProfileService {
         return [];
       }
 
-      return data?.map(follow => ({
-        id: follow.following.id,
-        display_name: follow.following.display_name,
-        bio: follow.following.bio,
-        avatar_url: follow.following.avatar_url,
-        interests: follow.following.interests,
-        privacy_level: follow.following.privacy_level,
-        last_active_at: follow.following.last_active_at,
-        polls_created: 0, // Would need additional query
-        followers_count: 0 // Would need additional query
-      })) || [];
+      return (
+        data?.map(follow => ({
+          id: follow.following.id,
+          display_name: follow.following.display_name,
+          bio: follow.following.bio,
+          avatar_url: follow.following.avatar_url,
+          interests: follow.following.interests,
+          privacy_level: follow.following.privacy_level,
+          last_active_at: follow.following.last_active_at,
+          polls_created: 0, // Would need additional query
+          followers_count: 0, // Would need additional query
+        })) || []
+      );
     } catch (error) {
       console.error('Error in getFollowing:', error);
       return [];
@@ -304,8 +335,13 @@ export class ProfileService {
   /**
    * Get user activity
    */
-  static async getUserActivity(userId: string, limit: number = 20, offset: number = 0): Promise<UserActivity[]> {
+  static async getUserActivity(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<UserActivity[]> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('user_activity')
         .select('*')
@@ -334,10 +370,11 @@ export class ProfileService {
     activityData?: any
   ): Promise<boolean> {
     try {
+      const supabase = createClient();
       const { error } = await supabase.rpc('track_user_activity', {
         p_user_id: userId,
         p_activity_type: activityType,
-        p_activity_data: activityData
+        p_activity_data: activityData,
       });
 
       if (error) {
@@ -357,6 +394,7 @@ export class ProfileService {
    */
   static async getUserAchievements(userId: string): Promise<UserAchievement[]> {
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from('user_achievements')
         .select('*')
@@ -384,13 +422,12 @@ export class ProfileService {
     achievementData?: any
   ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('user_achievements')
-        .insert({
-          user_id: userId,
-          achievement_type: achievementType,
-          achievement_data: achievementData
-        });
+      const supabase = createClient();
+      const { error } = await supabase.from('user_achievements').insert({
+        user_id: userId,
+        achievement_type: achievementType,
+        achievement_data: achievementData,
+      });
 
       if (error) {
         console.error('Error adding achievement:', error);

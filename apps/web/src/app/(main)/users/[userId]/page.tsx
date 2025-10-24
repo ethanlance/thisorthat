@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { UserProfile } from '@/components/profile/UserProfile';
-import { LoadingSpinner } from '@/components/layout/LoadingSpinner';
+import UserProfile from '@/components/profile/UserProfile';
+import LoadingSpinner from '@/components/layout/LoadingSpinner';
 import { notFound } from 'next/navigation';
 
 interface UserPageProps {

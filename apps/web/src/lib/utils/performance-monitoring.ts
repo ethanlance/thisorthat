@@ -21,28 +21,28 @@ export function trackWebVitals() {
 
   // Import web-vitals dynamically to avoid SSR issues
   import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-    getCLS((metric) => {
+    getCLS(metric => {
       console.log('CLS:', metric.value);
       // Send to analytics service
       sendMetric('cls', metric.value);
     });
 
-    getFID((metric) => {
+    getFID(metric => {
       console.log('FID:', metric.value);
       sendMetric('fid', metric.value);
     });
 
-    getFCP((metric) => {
+    getFCP(metric => {
       console.log('FCP:', metric.value);
       sendMetric('fcp', metric.value);
     });
 
-    getLCP((metric) => {
+    getLCP(metric => {
       console.log('LCP:', metric.value);
       sendMetric('lcp', metric.value);
     });
 
-    getTTFB((metric) => {
+    getTTFB(metric => {
       console.log('TTFB:', metric.value);
       sendMetric('ttfb', metric.value);
     });
@@ -75,7 +75,7 @@ function sendMetric(name: string, value: number) {
         url: window.location.href,
         timestamp: Date.now(),
       }),
-    }).catch((error) => {
+    }).catch(error => {
       console.warn('Failed to send performance metric:', error);
     });
   }
@@ -88,8 +88,8 @@ function sendMetric(name: string, value: number) {
 export const PERFORMANCE_BUDGETS = {
   fcp: 1500, // 1.5s
   lcp: 2500, // 2.5s
-  fid: 100,  // 100ms
-  cls: 0.1,  // 0.1
+  fid: 100, // 100ms
+  cls: 0.1, // 0.1
   ttfb: 600, // 600ms
 } as const;
 
@@ -97,23 +97,33 @@ export function checkPerformanceBudget(metrics: PerformanceMetrics): string[] {
   const violations: string[] = [];
 
   if (metrics.fcp && metrics.fcp > PERFORMANCE_BUDGETS.fcp) {
-    violations.push(`FCP exceeded budget: ${metrics.fcp}ms > ${PERFORMANCE_BUDGETS.fcp}ms`);
+    violations.push(
+      `FCP exceeded budget: ${metrics.fcp}ms > ${PERFORMANCE_BUDGETS.fcp}ms`
+    );
   }
 
   if (metrics.lcp && metrics.lcp > PERFORMANCE_BUDGETS.lcp) {
-    violations.push(`LCP exceeded budget: ${metrics.lcp}ms > ${PERFORMANCE_BUDGETS.lcp}ms`);
+    violations.push(
+      `LCP exceeded budget: ${metrics.lcp}ms > ${PERFORMANCE_BUDGETS.lcp}ms`
+    );
   }
 
   if (metrics.fid && metrics.fid > PERFORMANCE_BUDGETS.fid) {
-    violations.push(`FID exceeded budget: ${metrics.fid}ms > ${PERFORMANCE_BUDGETS.fid}ms`);
+    violations.push(
+      `FID exceeded budget: ${metrics.fid}ms > ${PERFORMANCE_BUDGETS.fid}ms`
+    );
   }
 
   if (metrics.cls && metrics.cls > PERFORMANCE_BUDGETS.cls) {
-    violations.push(`CLS exceeded budget: ${metrics.cls} > ${PERFORMANCE_BUDGETS.cls}`);
+    violations.push(
+      `CLS exceeded budget: ${metrics.cls} > ${PERFORMANCE_BUDGETS.cls}`
+    );
   }
 
   if (metrics.ttfb && metrics.ttfb > PERFORMANCE_BUDGETS.ttfb) {
-    violations.push(`TTFB exceeded budget: ${metrics.ttfb}ms > ${PERFORMANCE_BUDGETS.ttfb}ms`);
+    violations.push(
+      `TTFB exceeded budget: ${metrics.ttfb}ms > ${PERFORMANCE_BUDGETS.ttfb}ms`
+    );
   }
 
   return violations;
@@ -128,8 +138,10 @@ export function usePerformanceMonitoring() {
   // Track page load performance
   const trackPageLoad = () => {
     if (typeof window !== 'undefined' && window.performance) {
-      const navigation = window.performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      
+      const navigation = window.performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
+
       if (navigation) {
         const metrics: PerformanceMetrics = {
           ttfb: navigation.responseStart - navigation.requestStart,

@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
   compress: true, // Enable gzip compression
   poweredByHeader: false, // Remove X-Powered-By header
   reactStrictMode: true, // Enable strict mode for better debugging
-  
+
   // CSS optimization
   experimental: {
     optimizeCss: true, // Enable CSS optimization
   },
-  
+
   // Bundle analysis - use ANALYZE=true npm run build to analyze bundle
   // Note: Bundle analyzer is configured via package.json build:analyze script
 };

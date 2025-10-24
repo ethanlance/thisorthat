@@ -13,7 +13,11 @@ export default function BottomActionBar() {
       <div className="flex items-center justify-around px-4 py-2">
         {/* Browse */}
         <Link href="/polls">
-          <Button variant="ghost" size="sm" className="flex flex-col items-center space-y-1 h-12 w-16">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex flex-col items-center space-y-1 h-12 w-16"
+          >
             <Eye className="h-5 w-5" />
             <span className="text-xs">Browse</span>
           </Button>
@@ -22,8 +26,8 @@ export default function BottomActionBar() {
         {/* Create - Large center button */}
         {user ? (
           <Link href="/poll/create">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               className="bg-primary hover:bg-primary-dark h-14 w-14 rounded-full flex flex-col items-center justify-center space-y-1 shadow-lg"
             >
               <Plus className="h-6 w-6" />
@@ -32,8 +36,8 @@ export default function BottomActionBar() {
           </Link>
         ) : (
           <Link href="/login">
-            <Button 
-              size="lg" 
+            <Button
+              size="lg"
               variant="outline"
               className="h-14 w-14 rounded-full flex flex-col items-center justify-center space-y-1 shadow-lg"
             >
@@ -46,14 +50,22 @@ export default function BottomActionBar() {
         {/* Profile */}
         {user ? (
           <Link href="/profile">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center space-y-1 h-12 w-16">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center space-y-1 h-12 w-16"
+            >
               <User className="h-5 w-5" />
               <span className="text-xs">Profile</span>
             </Button>
           </Link>
         ) : (
           <Link href="/login">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center space-y-1 h-12 w-16">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-col items-center space-y-1 h-12 w-16"
+            >
               <User className="h-5 w-5" />
               <span className="text-xs">Sign In</span>
             </Button>

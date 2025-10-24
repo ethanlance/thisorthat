@@ -16,12 +16,15 @@ interface UserSearchProps {
   placeholder?: string;
 }
 
-export default function UserSearch({ onUserSelect, placeholder = 'Search users...' }: UserSearchProps) {
+export default function UserSearch({
+  onUserSelect,
+  placeholder = 'Search users...',
+}: UserSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  
+
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const searchUsers = useCallback(async (term: string) => {
@@ -59,7 +62,7 @@ export default function UserSearch({ onUserSelect, placeholder = 'Search users..
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           placeholder={placeholder}
           className="pl-10"
         />
@@ -96,38 +99,55 @@ export default function UserSearch({ onUserSelect, placeholder = 'Search users..
               </p>
             </div>
           ) : (
-            results.map((user) => (
-              <Card key={user.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardContent className="p-4" onClick={() => handleUserClick(user)}>
+            results.map(user => (
+              <Card
+                key={user.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
+              >
+                <CardContent
+                  className="p-4"
+                  onClick={() => handleUserClick(user)}
+                >
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user.avatar_url || ''} alt={user.display_name || 'User'} />
+                      <AvatarImage
+                        src={user.avatar_url || ''}
+                        alt={user.display_name || 'User'}
+                      />
                       <AvatarFallback>
                         {user.display_name?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
                         <h3 className="font-medium truncate">
                           {user.display_name || 'Anonymous User'}
                         </h3>
-                        <Badge variant={user.privacy_level === 'public' ? 'default' : 'secondary'}>
+                        <Badge
+                          variant={
+                            user.privacy_level === 'public'
+                              ? 'default'
+                              : 'secondary'
+                          }
+                        >
                           {user.privacy_level}
                         </Badge>
                       </div>
-                      
+
                       {user.bio && (
                         <p className="text-sm text-muted-foreground truncate">
                           {user.bio}
                         </p>
                       )}
-                      
+
                       <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
                         <div className="flex items-center space-x-1">
                           <Calendar className="h-3 w-3" />
                           <span>
-                            Active {formatDistanceToNow(new Date(user.last_active_at))} ago
+                            Active{' '}
+                            {formatDistanceToNow(new Date(user.last_active_at))}{' '}
+                            ago
                           </span>
                         </div>
                         <div className="flex items-center space-x-1">
@@ -141,12 +161,16 @@ export default function UserSearch({ onUserSelect, placeholder = 'Search users..
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Interests */}
                   {user.interests && user.interests.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {user.interests.slice(0, 3).map((interest, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
+                        <Badge
+                          key={index}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {interest}
                         </Badge>
                       ))}
