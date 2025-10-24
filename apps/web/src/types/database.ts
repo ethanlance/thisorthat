@@ -13,6 +13,9 @@ export interface Database {
           expires_at: string;
           is_public: boolean;
           status: 'active' | 'closed' | 'deleted';
+          privacy_level: 'public' | 'private' | 'group';
+          friend_group_id: string | null;
+          access_expires_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -27,6 +30,9 @@ export interface Database {
           expires_at?: string;
           is_public?: boolean;
           status?: 'active' | 'closed' | 'deleted';
+          privacy_level?: 'public' | 'private' | 'group';
+          friend_group_id?: string | null;
+          access_expires_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -41,6 +47,9 @@ export interface Database {
           expires_at?: string;
           is_public?: boolean;
           status?: 'active' | 'closed' | 'deleted';
+          privacy_level?: 'public' | 'private' | 'group';
+          friend_group_id?: string | null;
+          access_expires_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -68,29 +77,6 @@ export interface Database {
           user_id?: string | null;
           anonymous_id?: string | null;
           choice?: 'option_a' | 'option_b';
-          created_at?: string;
-        };
-      };
-      poll_shares: {
-        Row: {
-          id: string;
-          poll_id: string;
-          user_id: string;
-          shared_by: string;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          poll_id: string;
-          user_id: string;
-          shared_by: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          poll_id?: string;
-          user_id?: string;
-          shared_by?: string;
           created_at?: string;
         };
       };
@@ -552,6 +538,163 @@ export interface Database {
           action_taken?: string;
           moderator_id?: string | null;
           created_at?: string;
+        };
+      };
+      friend_groups: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          is_public: boolean;
+          created_by: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+          is_public?: boolean;
+          created_by: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string | null;
+          is_public?: boolean;
+          created_by?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      group_members: {
+        Row: {
+          id: string;
+          group_id: string;
+          user_id: string;
+          role: 'admin' | 'member';
+          joined_at: string;
+          invited_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          group_id: string;
+          user_id: string;
+          role?: 'admin' | 'member';
+          joined_at?: string;
+          invited_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          group_id?: string;
+          user_id?: string;
+          role?: 'admin' | 'member';
+          joined_at?: string;
+          invited_by?: string | null;
+        };
+      };
+      poll_shares: {
+        Row: {
+          id: string;
+          poll_id: string;
+          user_id: string;
+          shared_by: string;
+          access_level: 'view' | 'view_vote' | 'admin';
+          shared_at: string;
+          expires_at: string | null;
+          is_active: boolean;
+        };
+        Insert: {
+          id?: string;
+          poll_id: string;
+          user_id: string;
+          shared_by: string;
+          access_level?: 'view' | 'view_vote' | 'admin';
+          shared_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean;
+        };
+        Update: {
+          id?: string;
+          poll_id?: string;
+          user_id?: string;
+          shared_by?: string;
+          access_level?: 'view' | 'view_vote' | 'admin';
+          shared_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean;
+        };
+      };
+      poll_invitations: {
+        Row: {
+          id: string;
+          poll_id: string;
+          invited_user_id: string;
+          invited_by: string;
+          message: string | null;
+          status: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at: string;
+          responded_at: string | null;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          poll_id: string;
+          invited_user_id: string;
+          invited_by: string;
+          message?: string | null;
+          status?: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at?: string;
+          responded_at?: string | null;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          poll_id?: string;
+          invited_user_id?: string;
+          invited_by?: string;
+          message?: string | null;
+          status?: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at?: string;
+          responded_at?: string | null;
+          expires_at?: string;
+        };
+      };
+      group_invitations: {
+        Row: {
+          id: string;
+          group_id: string;
+          invited_user_id: string;
+          invited_by: string;
+          message: string | null;
+          status: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at: string;
+          responded_at: string | null;
+          expires_at: string;
+        };
+        Insert: {
+          id?: string;
+          group_id: string;
+          invited_user_id: string;
+          invited_by: string;
+          message?: string | null;
+          status?: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at?: string;
+          responded_at?: string | null;
+          expires_at?: string;
+        };
+        Update: {
+          id?: string;
+          group_id?: string;
+          invited_user_id?: string;
+          invited_by?: string;
+          message?: string | null;
+          status?: 'pending' | 'accepted' | 'declined' | 'expired';
+          created_at?: string;
+          responded_at?: string | null;
+          expires_at?: string;
         };
       };
     };
