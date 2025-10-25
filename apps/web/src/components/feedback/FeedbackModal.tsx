@@ -180,4 +180,3 @@ export function FloatingFeedbackButton({ className }: { className?: string }) {
     </>
   );
 }
-

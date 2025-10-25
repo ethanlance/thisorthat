@@ -77,15 +77,17 @@ export async function POST(request: NextRequest) {
     // Check if performance budget is exceeded
     if (budget && value > budget) {
       // Send alert for budget exceeded
-      console.warn(`Performance budget exceeded for ${metric}: ${value} (budget: ${budget})`);
-      
+      console.warn(
+        `Performance budget exceeded for ${metric}: ${value} (budget: ${budget})`
+      );
+
       // In a real implementation, this would send to monitoring service
       // like Sentry, DataDog, or New Relic
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      metricId: data.id 
+    return NextResponse.json({
+      success: true,
+      metricId: data.id,
     });
   } catch (error) {
     console.error('Error in performance POST API:', error);

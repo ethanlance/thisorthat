@@ -82,7 +82,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return null;
       }
@@ -101,7 +103,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -119,10 +123,7 @@ export class ProfileService {
       // Update interests if provided
       if (profileData.interests) {
         // First, delete existing interests
-        await supabase
-          .from('user_interests')
-          .delete()
-          .eq('user_id', user.id);
+        await supabase.from('user_interests').delete().eq('user_id', user.id);
 
         // Then, insert new interests
         if (profileData.interests.length > 0) {
@@ -161,7 +162,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -229,7 +232,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -238,12 +243,10 @@ export class ProfileService {
         throw new Error('Cannot follow yourself');
       }
 
-      const { error } = await supabase
-        .from('user_follows')
-        .insert({
-          follower_id: user.id,
-          following_id: userId,
-        });
+      const { error } = await supabase.from('user_follows').insert({
+        follower_id: user.id,
+        following_id: userId,
+      });
 
       if (error) {
         console.error('Error following user:', error);
@@ -269,7 +272,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -300,7 +305,10 @@ export class ProfileService {
   /**
    * Check if user is following another user
    */
-  static async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+  static async isFollowing(
+    followerId: string,
+    followingId: string
+  ): Promise<boolean> {
     try {
       const supabase = createClient();
 
@@ -335,7 +343,8 @@ export class ProfileService {
 
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           follower_id,
           created_at,
           follower:auth.users!user_follows_follower_id_fkey(
@@ -347,7 +356,8 @@ export class ProfileService {
             privacy_level,
             last_active_at
           )
-        `)
+        `
+        )
         .eq('following_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -364,7 +374,8 @@ export class ProfileService {
         avatar_url: follow.follower?.avatar_url || null,
         interests: follow.follower?.interests || null,
         privacy_level: follow.follower?.privacy_level || 'public',
-        last_active_at: follow.follower?.last_active_at || new Date().toISOString(),
+        last_active_at:
+          follow.follower?.last_active_at || new Date().toISOString(),
         polls_created: 0, // Would need separate query
         followers_count: 0, // Would need separate query
       }));
@@ -387,7 +398,8 @@ export class ProfileService {
 
       const { data, error } = await supabase
         .from('user_follows')
-        .select(`
+        .select(
+          `
           following_id,
           created_at,
           following:auth.users!user_follows_following_id_fkey(
@@ -399,7 +411,8 @@ export class ProfileService {
             privacy_level,
             last_active_at
           )
-        `)
+        `
+        )
         .eq('follower_id', userId)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -416,7 +429,8 @@ export class ProfileService {
         avatar_url: follow.following?.avatar_url || null,
         interests: follow.following?.interests || null,
         privacy_level: follow.following?.privacy_level || 'public',
-        last_active_at: follow.following?.last_active_at || new Date().toISOString(),
+        last_active_at:
+          follow.following?.last_active_at || new Date().toISOString(),
         polls_created: 0, // Would need separate query
         followers_count: 0, // Would need separate query
       }));
@@ -466,7 +480,9 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
@@ -525,13 +541,11 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const { error } = await supabase
-        .from('user_achievements')
-        .insert({
-          user_id: userId,
-          achievement_type: achievementType,
-          achievement_data: achievementData || null,
-        });
+      const { error } = await supabase.from('user_achievements').insert({
+        user_id: userId,
+        achievement_type: achievementType,
+        achievement_data: achievementData || null,
+      });
 
       if (error) {
         console.error('Error adding achievement:', error);
@@ -558,7 +572,13 @@ export class ProfileService {
     try {
       const supabase = createClient();
 
-      const [pollsResult, votesResult, followersResult, followingResult, achievementsResult] = await Promise.all([
+      const [
+        pollsResult,
+        votesResult,
+        followersResult,
+        followingResult,
+        achievementsResult,
+      ] = await Promise.all([
         supabase
           .from('polls')
           .select('id', { count: 'exact' })

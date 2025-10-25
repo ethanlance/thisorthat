@@ -1,5 +1,5 @@
 import { OfflineStorage, OfflineVote, OfflineDraft } from './OfflineStorage';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
 type Poll = Database['public']['Tables']['polls']['Row'];
@@ -50,7 +50,12 @@ export class OfflineSync {
 
   public async syncWhenOnline(): Promise<SyncResult> {
     if (!this.isOnline || this.syncInProgress) {
-      return { success: false, syncedVotes: 0, syncedDrafts: 0, errors: ['Not online or sync in progress'] };
+      return {
+        success: false,
+        syncedVotes: 0,
+        syncedDrafts: 0,
+        errors: ['Not online or sync in progress'],
+      };
     }
 
     this.syncInProgress = true;
@@ -58,7 +63,7 @@ export class OfflineSync {
       success: true,
       syncedVotes: 0,
       syncedDrafts: 0,
-      errors: []
+      errors: [],
     };
 
     try {
@@ -74,10 +79,11 @@ export class OfflineSync {
 
       // Update last sync time
       await this.storage.setSetting('last_sync', new Date().toISOString());
-
     } catch (error) {
       result.success = false;
-      result.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      result.errors.push(
+        `Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     } finally {
       this.syncInProgress = false;
     }
@@ -112,17 +118,23 @@ export class OfflineSync {
               await this.storage.markVoteSynced(vote.id);
               synced++;
             } else {
-              errors.push(`Vote conflict for poll ${vote.poll_id}: ${error.message}`);
+              errors.push(
+                `Vote conflict for poll ${vote.poll_id}: ${error.message}`
+              );
             }
           } else {
-            errors.push(`Failed to sync vote for poll ${vote.poll_id}: ${error.message}`);
+            errors.push(
+              `Failed to sync vote for poll ${vote.poll_id}: ${error.message}`
+            );
           }
         } else {
           await this.storage.markVoteSynced(vote.id);
           synced++;
         }
       } catch (error) {
-        errors.push(`Vote sync error for poll ${vote.poll_id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Vote sync error for poll ${vote.poll_id}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -164,14 +176,18 @@ export class OfflineSync {
           .single();
 
         if (error) {
-          errors.push(`Failed to sync draft "${draft.title}": ${error.message}`);
+          errors.push(
+            `Failed to sync draft "${draft.title}": ${error.message}`
+          );
         } else {
           // Mark draft as synced and remove from local storage
           await this.storage.deleteDraft(draft.id);
           synced++;
         }
       } catch (error) {
-        errors.push(`Draft sync error for "${draft.title}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Draft sync error for "${draft.title}": ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
       }
     }
 
@@ -191,14 +207,16 @@ export class OfflineSync {
       throw new Error(`Failed to upload image: ${error.message}`);
     }
 
-    const { data: { publicUrl } } = this.supabase.storage
-      .from('poll-images')
-      .getPublicUrl(filePath);
+    const {
+      data: { publicUrl },
+    } = this.supabase.storage.from('poll-images').getPublicUrl(filePath);
 
     return publicUrl;
   }
 
-  private async resolveVoteConflict(vote: OfflineVote): Promise<ConflictResolution> {
+  private async resolveVoteConflict(
+    vote: OfflineVote
+  ): Promise<ConflictResolution> {
     // Get the server's current vote for this poll/user
     const { data: serverVote, error } = await this.supabase
       .from('votes')
@@ -224,11 +242,13 @@ export class OfflineSync {
     try {
       const { data: poll, error } = await this.supabase
         .from('polls')
-        .select(`
+        .select(
+          `
           *,
           votes(count),
           votes!inner(choice, count)
-        `)
+        `
+        )
         .eq('id', pollId)
         .single();
 
@@ -242,8 +262,10 @@ export class OfflineSync {
         .select('choice')
         .eq('poll_id', pollId);
 
-      const optionAVotes = voteCounts?.filter(v => v.choice === 'option_a').length || 0;
-      const optionBVotes = voteCounts?.filter(v => v.choice === 'option_b').length || 0;
+      const optionAVotes =
+        voteCounts?.filter(v => v.choice === 'option_a').length || 0;
+      const optionBVotes =
+        voteCounts?.filter(v => v.choice === 'option_b').length || 0;
 
       // Cache poll data
       const offlinePoll = {
@@ -277,11 +299,13 @@ export class OfflineSync {
     try {
       const { data: polls, error } = await this.supabase
         .from('polls')
-        .select(`
+        .select(
+          `
           *,
           votes(count),
           votes!inner(choice, count)
-        `)
+        `
+        )
         .eq('is_public', true)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -297,8 +321,10 @@ export class OfflineSync {
           .select('choice')
           .eq('poll_id', poll.id);
 
-        const optionAVotes = voteCounts?.filter(v => v.choice === 'option_a').length || 0;
-        const optionBVotes = voteCounts?.filter(v => v.choice === 'option_b').length || 0;
+        const optionAVotes =
+          voteCounts?.filter(v => v.choice === 'option_a').length || 0;
+        const optionBVotes =
+          voteCounts?.filter(v => v.choice === 'option_b').length || 0;
 
         const offlinePoll = {
           id: poll.id,

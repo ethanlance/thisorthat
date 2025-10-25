@@ -71,7 +71,7 @@ export default function ImageUpload({
           if (result.success && result.url) {
             onUploadComplete(result.url);
             setUploadProgress(100);
-            
+
             // Notify parent component of moderation result
             if (result.moderationResult && onModerationResult) {
               onModerationResult(result.moderationResult);

@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
 import {
   RefreshCw,
   TrendingUp,
@@ -17,12 +16,8 @@ import {
   MoreHorizontal,
   Loader2,
   AlertTriangle,
-  Filter,
-  SortAsc,
 } from 'lucide-react';
 import { FeedService, FeedPoll } from '@/lib/services/feed';
-import { useAuth } from '@/contexts/AuthContext';
-import { useDebounce } from '@/lib/hooks/useDebounce';
 
 interface PollFeedProps {
   feedType?: 'personalized' | 'trending' | 'recommendations' | 'saved';
@@ -30,12 +25,11 @@ interface PollFeedProps {
   onPollSelect?: (poll: FeedPoll) => void;
 }
 
-export default function PollFeed({ 
-  feedType = 'personalized', 
+export default function PollFeed({
+  feedType = 'personalized',
   className,
-  onPollSelect 
+  onPollSelect,
 }: PollFeedProps) {
-  const { user } = useAuth();
   const [polls, setPolls] = useState<FeedPoll[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -46,51 +40,60 @@ export default function PollFeed({
 
   const limit = 20;
 
-  const loadPolls = useCallback(async (reset = false) => {
-    try {
-      if (reset) {
-        setLoading(true);
-        setOffset(0);
-        setPolls([]);
-        setError(null);
-      } else {
-        setLoadingMore(true);
+  const loadPolls = useCallback(
+    async (reset = false) => {
+      try {
+        if (reset) {
+          setLoading(true);
+          setOffset(0);
+          setPolls([]);
+          setError(null);
+        } else {
+          setLoadingMore(true);
+        }
+
+        const currentOffset = reset ? 0 : offset;
+        let newPolls: FeedPoll[] = [];
+
+        switch (feedType) {
+          case 'trending':
+            newPolls = await FeedService.getTrendingPolls(limit, currentOffset);
+            break;
+          case 'recommendations':
+            newPolls = await FeedService.getRecommendations(
+              limit,
+              currentOffset
+            );
+            break;
+          case 'saved':
+            newPolls = await FeedService.getSavedPolls(limit, currentOffset);
+            break;
+          default:
+            newPolls = await FeedService.getPersonalizedFeed(
+              limit,
+              currentOffset
+            );
+        }
+
+        if (reset) {
+          setPolls(newPolls);
+        } else {
+          setPolls(prev => [...prev, ...newPolls]);
+        }
+
+        setHasMore(newPolls.length === limit);
+        setOffset(currentOffset + newPolls.length);
+      } catch (err) {
+        console.error('Error loading polls:', err);
+        setError('Failed to load polls');
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+        setRefreshing(false);
       }
-
-      const currentOffset = reset ? 0 : offset;
-      let newPolls: FeedPoll[] = [];
-
-      switch (feedType) {
-        case 'trending':
-          newPolls = await FeedService.getTrendingPolls(limit, currentOffset);
-          break;
-        case 'recommendations':
-          newPolls = await FeedService.getRecommendations(limit, currentOffset);
-          break;
-        case 'saved':
-          newPolls = await FeedService.getSavedPolls(limit, currentOffset);
-          break;
-        default:
-          newPolls = await FeedService.getPersonalizedFeed(limit, currentOffset);
-      }
-
-      if (reset) {
-        setPolls(newPolls);
-      } else {
-        setPolls(prev => [...prev, ...newPolls]);
-      }
-
-      setHasMore(newPolls.length === limit);
-      setOffset(currentOffset + newPolls.length);
-    } catch (err) {
-      console.error('Error loading polls:', err);
-      setError('Failed to load polls');
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-      setRefreshing(false);
-    }
-  }, [feedType, offset, limit]);
+    },
+    [feedType, offset, limit]
+  );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -103,24 +106,32 @@ export default function PollFeed({
     }
   }, [loadPolls, loadingMore, hasMore]);
 
-  const handlePollInteraction = async (pollId: string, interactionType: string) => {
+  const handlePollInteraction = async (
+    pollId: string,
+    interactionType: string
+  ) => {
     try {
-      await FeedService.trackInteraction(pollId, interactionType as any);
-      
+      await FeedService.trackInteraction(
+        pollId,
+        interactionType as 'view' | 'vote' | 'share' | 'comment' | 'save'
+      );
+
       // Update local state to reflect interaction
-      setPolls(prev => prev.map(poll => {
-        if (poll.poll_id === pollId) {
-          switch (interactionType) {
-            case 'save':
-              return { ...poll, engagement_score: poll.engagement_score + 1 };
-            case 'share':
-              return { ...poll, engagement_score: poll.engagement_score + 3 };
-            default:
-              return poll;
+      setPolls(prev =>
+        prev.map(poll => {
+          if (poll.poll_id === pollId) {
+            switch (interactionType) {
+              case 'save':
+                return { ...poll, engagement_score: poll.engagement_score + 1 };
+              case 'share':
+                return { ...poll, engagement_score: poll.engagement_score + 3 };
+              default:
+                return poll;
+            }
           }
-        }
-        return poll;
-      }));
+          return poll;
+        })
+      );
     } catch (err) {
       console.error('Error tracking interaction:', err);
     }
@@ -176,11 +187,11 @@ export default function PollFeed({
   const getFeedDescription = () => {
     switch (feedType) {
       case 'trending':
-        return 'Discover what\'s popular right now';
+        return "Discover what's popular right now";
       case 'recommendations':
-        return 'Polls we think you\'ll love';
+        return "Polls we think you'll love";
       case 'saved':
-        return 'Polls you\'ve saved for later';
+        return "Polls you've saved for later";
       default:
         return 'Your personalized poll feed';
     }
@@ -223,7 +234,9 @@ export default function PollFeed({
             onClick={handleRefresh}
             disabled={refreshing}
           >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+            />
             <span className="ml-2">Refresh</span>
           </Button>
         </div>
@@ -242,8 +255,11 @@ export default function PollFeed({
         </Card>
       ) : (
         <div className="space-y-4">
-          {polls.map((poll, index) => (
-            <Card key={poll.poll_id} className="hover:shadow-md transition-shadow">
+          {polls.map(poll => (
+            <Card
+              key={poll.poll_id}
+              className="hover:shadow-md transition-shadow"
+            >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -252,13 +268,19 @@ export default function PollFeed({
                         {formatDate(poll.created_at)}
                       </Badge>
                       {poll.trending_score > 0 && (
-                        <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                        <Badge
+                          variant="secondary"
+                          className="bg-orange-100 text-orange-800"
+                        >
                           <TrendingUp className="h-3 w-3 mr-1" />
                           Trending
                         </Badge>
                       )}
                       {poll.engagement_score > 100 && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-100 text-green-800"
+                        >
                           <Heart className="h-3 w-3 mr-1" />
                           Popular
                         </Badge>
@@ -266,13 +288,17 @@ export default function PollFeed({
                     </div>
 
                     {poll.description && (
-                      <p className="text-muted-foreground mb-4">{poll.description}</p>
+                      <p className="text-muted-foreground mb-4">
+                        {poll.description}
+                      </p>
                     )}
 
                     {/* Poll Options */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div className="space-y-2">
-                        <div className="text-sm font-medium text-muted-foreground">Option A</div>
+                        <div className="text-sm font-medium text-muted-foreground">
+                          Option A
+                        </div>
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                           <img
                             src={poll.option_a_image_url}
@@ -281,12 +307,16 @@ export default function PollFeed({
                           />
                         </div>
                         {poll.option_a_label && (
-                          <p className="text-sm font-medium">{poll.option_a_label}</p>
+                          <p className="text-sm font-medium">
+                            {poll.option_a_label}
+                          </p>
                         )}
                       </div>
 
                       <div className="space-y-2">
-                        <div className="text-sm font-medium text-muted-foreground">Option B</div>
+                        <div className="text-sm font-medium text-muted-foreground">
+                          Option B
+                        </div>
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                           <img
                             src={poll.option_b_image_url}
@@ -295,7 +325,9 @@ export default function PollFeed({
                           />
                         </div>
                         {poll.option_b_label && (
-                          <p className="text-sm font-medium">{poll.option_b_label}</p>
+                          <p className="text-sm font-medium">
+                            {poll.option_b_label}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -320,15 +352,21 @@ export default function PollFeed({
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
                       <div className="flex items-center space-x-1">
                         <Eye className="h-4 w-4" />
-                        <span>{Math.floor(poll.engagement_score / 10)} views</span>
+                        <span>
+                          {Math.floor(poll.engagement_score / 10)} views
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Heart className="h-4 w-4" />
-                        <span>{Math.floor(poll.engagement_score / 2)} votes</span>
+                        <span>
+                          {Math.floor(poll.engagement_score / 2)} votes
+                        </span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <MessageCircle className="h-4 w-4" />
-                        <span>{Math.floor(poll.engagement_score / 5)} comments</span>
+                        <span>
+                          {Math.floor(poll.engagement_score / 5)} comments
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -353,7 +391,9 @@ export default function PollFeed({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handlePollInteraction(poll.poll_id, 'share')}
+                      onClick={() =>
+                        handlePollInteraction(poll.poll_id, 'share')
+                      }
                     >
                       <Share2 className="h-4 w-4 mr-1" />
                       Share

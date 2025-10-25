@@ -660,7 +660,7 @@ export class DiscoveryService {
         ((poll.poll_metrics as Record<string, unknown>)
           ?.popularity_score as number) || 0,
       categories:
-        (
+        ((
           poll.poll_category_assignments as
             | Record<string, unknown>[]
             | undefined
@@ -669,14 +669,14 @@ export class DiscoveryService {
             (ca: Record<string, unknown>) =>
               (ca.poll_categories as Record<string, unknown>)?.name as string
           )
-          .filter(Boolean) as string[] || [],
+          .filter(Boolean) as string[]) || [],
       tags:
-        (poll.poll_tag_assignments as Record<string, unknown>[] | undefined)
+        ((poll.poll_tag_assignments as Record<string, unknown>[] | undefined)
           ?.map(
             (ta: Record<string, unknown>) =>
               (ta.poll_tags as Record<string, unknown>)?.name as string
           )
-          .filter(Boolean) as string[] || [],
+          .filter(Boolean) as string[]) || [],
       feed_score: 0, // Will be calculated by the database function
     }));
   }

@@ -16,7 +16,12 @@ export interface ContentDetectionResult {
 export interface ImageDetectionResult {
   safeSearch: {
     adult: 'VERY_UNLIKELY' | 'UNLIKELY' | 'POSSIBLE' | 'LIKELY' | 'VERY_LIKELY';
-    violence: 'VERY_UNLIKELY' | 'UNLIKELY' | 'POSSIBLE' | 'LIKELY' | 'VERY_LIKELY';
+    violence:
+      | 'VERY_UNLIKELY'
+      | 'UNLIKELY'
+      | 'POSSIBLE'
+      | 'LIKELY'
+      | 'VERY_LIKELY';
     racy: 'VERY_UNLIKELY' | 'UNLIKELY' | 'POSSIBLE' | 'LIKELY' | 'VERY_LIKELY';
   };
   labels: Array<{
@@ -26,8 +31,10 @@ export interface ImageDetectionResult {
 }
 
 export class ContentDetectionService {
-  private static readonly GOOGLE_CLOUD_VISION_API_URL = 'https://vision.googleapis.com/v1/images:annotate';
-  private static readonly AWS_REKOGNITION_API_URL = 'https://rekognition.us-east-1.amazonaws.com';
+  private static readonly GOOGLE_CLOUD_VISION_API_URL =
+    'https://vision.googleapis.com/v1/images:annotate';
+  private static readonly AWS_REKOGNITION_API_URL =
+    'https://rekognition.us-east-1.amazonaws.com';
 
   /**
    * Detect inappropriate content in an image using Google Cloud Vision API
@@ -204,11 +211,14 @@ export class ContentDetectionService {
     const racyLikelihood = safeSearch?.racy || 'VERY_UNLIKELY';
 
     const adultContent = ['LIKELY', 'VERY_LIKELY'].includes(adultLikelihood);
-    const violenceContent = ['LIKELY', 'VERY_LIKELY'].includes(violenceLikelihood);
+    const violenceContent = ['LIKELY', 'VERY_LIKELY'].includes(
+      violenceLikelihood
+    );
     const racyContent = ['LIKELY', 'VERY_LIKELY'].includes(racyLikelihood);
 
     // Determine classification
-    let classification: 'safe' | 'questionable' | 'inappropriate' | 'spam' = 'safe';
+    let classification: 'safe' | 'questionable' | 'inappropriate' | 'spam' =
+      'safe';
     let confidence = 0.9;
     let reason: string | undefined;
     let requiresHumanReview = false;
@@ -340,7 +350,11 @@ export class ContentDetectionService {
       }
 
       // Store classification result
-      await ModerationService.classifyContent(contentType, contentId, contentData);
+      await ModerationService.classifyContent(
+        contentType,
+        contentId,
+        contentData
+      );
 
       return result;
     } catch (error) {
@@ -386,9 +400,12 @@ export class ContentDetectionService {
       const stats = {
         totalScans: data.length,
         safeContent: data.filter(c => c.classification === 'safe').length,
-        inappropriateContent: data.filter(c => c.classification === 'inappropriate').length,
+        inappropriateContent: data.filter(
+          c => c.classification === 'inappropriate'
+        ).length,
         spamContent: data.filter(c => c.classification === 'spam').length,
-        humanReviewRequired: data.filter(c => c.details?.requires_human_review).length,
+        humanReviewRequired: data.filter(c => c.details?.requires_human_review)
+          .length,
       };
 
       return stats;

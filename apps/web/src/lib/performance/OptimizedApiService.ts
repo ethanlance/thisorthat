@@ -52,7 +52,11 @@ export class OptimizedApiService {
 
     // Check cache for GET requests
     if (method === 'GET' && cache) {
-      const cached = this.cache.get(cacheKey, () => this.makeRequest(url, options), cacheTTL);
+      const cached = this.cache.get(
+        cacheKey,
+        () => this.makeRequest(url, options),
+        cacheTTL
+      );
       if (cached) {
         return {
           data: cached,
@@ -96,7 +100,7 @@ export class OptimizedApiService {
         };
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === retries) {
           break;
         }
@@ -113,12 +117,7 @@ export class OptimizedApiService {
     url: string,
     options: ApiRequestOptions
   ): Promise<T> {
-    const {
-      method = 'GET',
-      headers = {},
-      body,
-      timeout = 10000,
-    } = options;
+    const { method = 'GET', headers = {}, body, timeout = 10000 } = options;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -154,23 +153,41 @@ export class OptimizedApiService {
   }
 
   // Convenience methods
-  public async get<T>(endpoint: string, options: Omit<ApiRequestOptions, 'method'> = {}): Promise<ApiResponse<T>> {
+  public async get<T>(
+    endpoint: string,
+    options: Omit<ApiRequestOptions, 'method'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'GET' });
   }
 
-  public async post<T>(endpoint: string, body: any, options: Omit<ApiRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  public async post<T>(
+    endpoint: string,
+    body: any,
+    options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'POST', body });
   }
 
-  public async put<T>(endpoint: string, body: any, options: Omit<ApiRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  public async put<T>(
+    endpoint: string,
+    body: any,
+    options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PUT', body });
   }
 
-  public async delete<T>(endpoint: string, options: Omit<ApiRequestOptions, 'method'> = {}): Promise<ApiResponse<T>> {
+  public async delete<T>(
+    endpoint: string,
+    options: Omit<ApiRequestOptions, 'method'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
 
-  public async patch<T>(endpoint: string, body: any, options: Omit<ApiRequestOptions, 'method' | 'body'> = {}): Promise<ApiResponse<T>> {
+  public async patch<T>(
+    endpoint: string,
+    body: any,
+    options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PATCH', body });
   }
 
@@ -204,8 +221,12 @@ export class OptimizedApiService {
     endpoint: string,
     options: ApiRequestOptions = {}
   ): Promise<ApiResponse<T>> {
-    const key = this.generateCacheKey(endpoint, options.method || 'GET', options.body);
-    
+    const key = this.generateCacheKey(
+      endpoint,
+      options.method || 'GET',
+      options.body
+    );
+
     if (this.pendingRequests.has(key)) {
       return this.pendingRequests.get(key)!;
     }

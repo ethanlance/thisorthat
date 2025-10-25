@@ -1075,7 +1075,12 @@ export interface Database {
         preferred_tags: string[];
         excluded_categories: string[];
         excluded_tags: string[];
-        feed_algorithm: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        feed_algorithm:
+          | 'chronological'
+          | 'popular'
+          | 'trending'
+          | 'personalized'
+          | 'mixed';
         show_following_only: boolean;
         show_public_only: boolean;
         created_at: string;
@@ -1088,7 +1093,12 @@ export interface Database {
         preferred_tags?: string[];
         excluded_categories?: string[];
         excluded_tags?: string[];
-        feed_algorithm?: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        feed_algorithm?:
+          | 'chronological'
+          | 'popular'
+          | 'trending'
+          | 'personalized'
+          | 'mixed';
         show_following_only?: boolean;
         show_public_only?: boolean;
         created_at?: string;
@@ -1101,7 +1111,12 @@ export interface Database {
         preferred_tags?: string[];
         excluded_categories?: string[];
         excluded_tags?: string[];
-        feed_algorithm?: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        feed_algorithm?:
+          | 'chronological'
+          | 'popular'
+          | 'trending'
+          | 'personalized'
+          | 'mixed';
         show_following_only?: boolean;
         show_public_only?: boolean;
         created_at?: string;
@@ -1157,21 +1172,39 @@ export interface Database {
         id: string;
         user_id: string;
         poll_id: string;
-        interaction_type: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        interaction_type:
+          | 'view'
+          | 'vote'
+          | 'share'
+          | 'comment'
+          | 'save'
+          | 'hide';
         created_at: string;
       };
       Insert: {
         id?: string;
         user_id: string;
         poll_id: string;
-        interaction_type: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        interaction_type:
+          | 'view'
+          | 'vote'
+          | 'share'
+          | 'comment'
+          | 'save'
+          | 'hide';
         created_at?: string;
       };
       Update: {
         id?: string;
         user_id?: string;
         poll_id?: string;
-        interaction_type?: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        interaction_type?:
+          | 'view'
+          | 'vote'
+          | 'share'
+          | 'comment'
+          | 'save'
+          | 'hide';
         created_at?: string;
       };
     };
@@ -1250,7 +1283,13 @@ export interface Database {
     error_reports: {
       Row: {
         id: string;
-        type: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        type:
+          | 'network'
+          | 'validation'
+          | 'system'
+          | 'authentication'
+          | 'authorization'
+          | 'unknown';
         severity: 'low' | 'medium' | 'high' | 'critical';
         message: string;
         user_message: string;
@@ -1265,7 +1304,13 @@ export interface Database {
       };
       Insert: {
         id?: string;
-        type: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        type:
+          | 'network'
+          | 'validation'
+          | 'system'
+          | 'authentication'
+          | 'authorization'
+          | 'unknown';
         severity: 'low' | 'medium' | 'high' | 'critical';
         message: string;
         user_message: string;
@@ -1280,7 +1325,13 @@ export interface Database {
       };
       Update: {
         id?: string;
-        type?: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        type?:
+          | 'network'
+          | 'validation'
+          | 'system'
+          | 'authentication'
+          | 'authorization'
+          | 'unknown';
         severity?: 'low' | 'medium' | 'high' | 'critical';
         message?: string;
         user_message?: string;

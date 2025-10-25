@@ -20,7 +20,10 @@ export async function GET(
     const { groupId } = params;
 
     // Check if user is member of the group
-    const isMember = await FriendGroupService.isUserGroupMember(groupId, user.id);
+    const isMember = await FriendGroupService.isUserGroupMember(
+      groupId,
+      user.id
+    );
     if (!isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -65,7 +68,10 @@ export async function POST(
     }
 
     // Check if user is admin of the group
-    const isMember = await FriendGroupService.isUserGroupMember(groupId, user.id);
+    const isMember = await FriendGroupService.isUserGroupMember(
+      groupId,
+      user.id
+    );
     if (!isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

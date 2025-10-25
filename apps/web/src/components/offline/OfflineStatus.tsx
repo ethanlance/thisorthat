@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -9,14 +9,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Wifi,
   WifiOff,
-  Sync,
   CheckCircle,
   AlertCircle,
-  Clock,
   Database,
   Trash2,
-  Download,
   Upload,
+  RotateCcw,
 } from 'lucide-react';
 import { OfflineSync } from '@/lib/offline/OfflineSync';
 import { OfflineStorage } from '@/lib/offline/OfflineStorage';
@@ -27,7 +25,10 @@ interface OfflineStatusProps {
   showDetails?: boolean;
 }
 
-export function OfflineStatus({ className, showDetails = false }: OfflineStatusProps) {
+export function OfflineStatus({
+  className,
+  showDetails = false,
+}: OfflineStatusProps) {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [syncStatus, setSyncStatus] = useState({
     isOnline: navigator.onLine,
@@ -36,8 +37,11 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
     pendingDrafts: 0,
     syncInProgress: false,
   });
-  const [storageUsage, setStorageUsage] = useState({ used: 0, quota: 0, percentage: 0 });
-  const [showStorageDetails, setShowStorageDetails] = useState(false);
+  const [storageUsage, setStorageUsage] = useState({
+    used: 0,
+    quota: 0,
+    percentage: 0,
+  });
 
   const offlineSync = OfflineSync.getInstance();
   const offlineStorage = OfflineStorage.getInstance();
@@ -95,7 +99,11 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
   };
 
   const handleClearData = async () => {
-    if (confirm('Are you sure you want to clear all offline data? This cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to clear all offline data? This cannot be undone.'
+      )
+    ) {
       await offlineStorage.clearAllData();
       const status = await offlineSync.getSyncStatus();
       setSyncStatus(status);
@@ -167,10 +175,14 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Sync className={cn(
-              'h-5 w-5',
-              syncStatus.syncInProgress ? 'animate-spin text-blue-500' : 'text-muted-foreground'
-            )} />
+            <RotateCcw
+              className={cn(
+                'h-5 w-5',
+                syncStatus.syncInProgress
+                  ? 'animate-spin text-blue-500'
+                  : 'text-muted-foreground'
+              )}
+            />
             Sync Status
           </CardTitle>
         </CardHeader>
@@ -200,7 +212,8 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {syncStatus.pendingVotes + syncStatus.pendingDrafts} items waiting to sync
+                {syncStatus.pendingVotes + syncStatus.pendingDrafts} items
+                waiting to sync
               </AlertDescription>
             </Alert>
           ) : (
@@ -210,26 +223,27 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
             </div>
           )}
 
-          {isOnline && (syncStatus.pendingVotes > 0 || syncStatus.pendingDrafts > 0) && (
-            <Button
-              onClick={handleSync}
-              disabled={syncStatus.syncInProgress}
-              className="w-full"
-              size="sm"
-            >
-              {syncStatus.syncInProgress ? (
-                <>
-                  <Sync className="h-4 w-4 mr-2 animate-spin" />
-                  Syncing...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Sync Now
-                </>
-              )}
-            </Button>
-          )}
+          {isOnline &&
+            (syncStatus.pendingVotes > 0 || syncStatus.pendingDrafts > 0) && (
+              <Button
+                onClick={handleSync}
+                disabled={syncStatus.syncInProgress}
+                className="w-full"
+                size="sm"
+              >
+                {syncStatus.syncInProgress ? (
+                  <>
+                    <RotateCcw className="h-4 w-4 mr-2 animate-spin" />
+                    Syncing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Sync Now
+                  </>
+                )}
+              </Button>
+            )}
         </CardContent>
       </Card>
 
@@ -246,7 +260,10 @@ export function OfflineStatus({ className, showDetails = false }: OfflineStatusP
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span>Storage Used</span>
-                <span>{formatBytes(storageUsage.used)} / {formatBytes(storageUsage.quota)}</span>
+                <span>
+                  {formatBytes(storageUsage.used)} /{' '}
+                  {formatBytes(storageUsage.quota)}
+                </span>
               </div>
               <Progress value={storageUsage.percentage} className="h-2" />
               <p className="text-xs text-muted-foreground">

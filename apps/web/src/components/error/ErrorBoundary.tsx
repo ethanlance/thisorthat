@@ -4,13 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  AlertTriangle,
-  RefreshCw,
-  Home,
-  Bug,
-  Loader2,
-} from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug, Loader2 } from 'lucide-react';
 import { ErrorService } from '@/lib/error-handling/ErrorService';
 
 interface Props {
@@ -89,8 +83,8 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     if (hasError && resetOnPropsChange) {
       if (resetKeys && prevProps.resetKeys) {
-        const hasResetKeyChanged = resetKeys.some((key, index) => 
-          key !== prevProps.resetKeys?.[index]
+        const hasResetKeyChanged = resetKeys.some(
+          (key, index) => key !== prevProps.resetKeys?.[index]
         );
         if (hasResetKeyChanged) {
           this.resetErrorBoundary();
@@ -166,12 +160,14 @@ export default class ErrorBoundary extends Component<Props, State> {
               <div className="space-y-2">
                 <h4 className="font-semibold text-sm">What you can do:</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
-                  {this.errorService.getErrorRecoveryOptions(this.state.error!).map((option, index) => (
-                    <li key={index} className="flex items-center space-x-2">
-                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full" />
-                      <span>{option}</span>
-                    </li>
-                  ))}
+                  {this.errorService
+                    .getErrorRecoveryOptions(this.state.error!)
+                    .map((option, index) => (
+                      <li key={index} className="flex items-center space-x-2">
+                        <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full" />
+                        <span>{option}</span>
+                      </li>
+                    ))}
                 </ul>
               </div>
 
@@ -191,7 +187,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
                 <Button
                   variant="outline"
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => (window.location.href = '/')}
                   className="w-full"
                 >
                   <Home className="h-4 w-4 mr-2" />

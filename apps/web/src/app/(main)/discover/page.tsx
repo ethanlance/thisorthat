@@ -10,7 +10,9 @@ export default function DiscoverPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          <Suspense fallback={<LoadingSpinner text="Loading personalized feed..." />}>
+          <Suspense
+            fallback={<LoadingSpinner text="Loading personalized feed..." />}
+          >
             <PollFeed feedType="personalized" />
           </Suspense>
         </div>
@@ -20,8 +22,10 @@ export default function DiscoverPage() {
           <Suspense fallback={<LoadingSpinner text="Loading search..." />}>
             <PollSearch />
           </Suspense>
-          
-          <Suspense fallback={<LoadingSpinner text="Loading trending polls..." />}>
+
+          <Suspense
+            fallback={<LoadingSpinner text="Loading trending polls..." />}
+          >
             <TrendingPolls limit={5} />
           </Suspense>
         </div>

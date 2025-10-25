@@ -8,7 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -77,7 +83,9 @@ export default function PollAccessManager({
   // Invitation form states
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteMessage, setInviteMessage] = useState('');
-  const [accessLevel, setAccessLevel] = useState<'view' | 'view_vote' | 'admin'>('view_vote');
+  const [accessLevel, setAccessLevel] = useState<
+    'view' | 'view_vote' | 'admin'
+  >('view_vote');
   const [expiresAt, setExpiresAt] = useState('');
 
   useEffect(() => {
@@ -153,18 +161,23 @@ export default function PollAccessManager({
       await loadPollAccess();
     } catch (err) {
       console.error('Error inviting user:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send invitation');
+      setError(
+        err instanceof Error ? err.message : 'Failed to send invitation'
+      );
     }
   };
 
   const handleRevokeAccess = async (accessId: string) => {
-    if (confirm('Are you sure you want to revoke this user\'s access?')) {
+    if (confirm("Are you sure you want to revoke this user's access?")) {
       try {
         setError(null);
 
-        const response = await fetch(`/api/polls/${pollId}/access/${accessId}`, {
-          method: 'DELETE',
-        });
+        const response = await fetch(
+          `/api/polls/${pollId}/access/${accessId}`,
+          {
+            method: 'DELETE',
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -174,7 +187,9 @@ export default function PollAccessManager({
         await loadPollAccess();
       } catch (err) {
         console.error('Error revoking access:', err);
-        setError(err instanceof Error ? err.message : 'Failed to revoke access');
+        setError(
+          err instanceof Error ? err.message : 'Failed to revoke access'
+        );
       }
     }
   };
@@ -184,9 +199,12 @@ export default function PollAccessManager({
       try {
         setError(null);
 
-        const response = await fetch(`/api/polls/${pollId}/invitations/${invitationId}`, {
-          method: 'DELETE',
-        });
+        const response = await fetch(
+          `/api/polls/${pollId}/invitations/${invitationId}`,
+          {
+            method: 'DELETE',
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -196,7 +214,9 @@ export default function PollAccessManager({
         await loadPollAccess();
       } catch (err) {
         console.error('Error canceling invitation:', err);
-        setError(err instanceof Error ? err.message : 'Failed to cancel invitation');
+        setError(
+          err instanceof Error ? err.message : 'Failed to cancel invitation'
+        );
       }
     }
   };
@@ -284,14 +304,17 @@ export default function PollAccessManager({
                     id="invite-email"
                     type="email"
                     value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
+                    onChange={e => setInviteEmail(e.target.value)}
                     placeholder="user@example.com"
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="access-level">Access Level</Label>
-                  <Select value={accessLevel} onValueChange={(value) => setAccessLevel(value as any)}>
+                  <Select
+                    value={accessLevel}
+                    onValueChange={value => setAccessLevel(value as any)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -323,7 +346,7 @@ export default function PollAccessManager({
                     id="expires-at"
                     type="datetime-local"
                     value={expiresAt}
-                    onChange={(e) => setExpiresAt(e.target.value)}
+                    onChange={e => setExpiresAt(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -331,7 +354,7 @@ export default function PollAccessManager({
                   <Textarea
                     id="invite-message"
                     value={inviteMessage}
-                    onChange={(e) => setInviteMessage(e.target.value)}
+                    onChange={e => setInviteMessage(e.target.value)}
                     placeholder="Add a personal message..."
                     rows={3}
                   />
@@ -366,7 +389,9 @@ export default function PollAccessManager({
           <div className="flex items-center space-x-2">
             <Shield className="h-4 w-4 text-primary" />
             <span className="font-medium">Privacy Level:</span>
-            <Badge variant={privacyLevel === 'public' ? 'default' : 'secondary'}>
+            <Badge
+              variant={privacyLevel === 'public' ? 'default' : 'secondary'}
+            >
               {privacyLevel.charAt(0).toUpperCase() + privacyLevel.slice(1)}
             </Badge>
           </div>
@@ -382,7 +407,8 @@ export default function PollAccessManager({
           )}
           {privacyLevel === 'group' && (
             <p className="text-sm text-muted-foreground mt-2">
-              This poll is accessible to all members of the associated friend group.
+              This poll is accessible to all members of the associated friend
+              group.
             </p>
           )}
         </CardContent>
@@ -415,7 +441,9 @@ export default function PollAccessManager({
                     </div>
                     <div>
                       <p className="font-medium">{access.display_name}</p>
-                      <p className="text-sm text-muted-foreground">{access.email}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {access.email}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Added {new Date(access.shared_at).toLocaleDateString()}
                       </p>
@@ -428,7 +456,8 @@ export default function PollAccessManager({
                     {access.expires_at && (
                       <Badge variant="outline" className="text-xs">
                         <Clock className="h-3 w-3 mr-1" />
-                        Expires {new Date(access.expires_at).toLocaleDateString()}
+                        Expires{' '}
+                        {new Date(access.expires_at).toLocaleDateString()}
                       </Badge>
                     )}
                     <Button
@@ -469,10 +498,13 @@ export default function PollAccessManager({
                     <div>
                       <p className="font-medium">{invitation.email}</p>
                       {invitation.message && (
-                        <p className="text-sm text-muted-foreground">{invitation.message}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {invitation.message}
+                        </p>
                       )}
                       <p className="text-xs text-muted-foreground">
-                        Sent {new Date(invitation.created_at).toLocaleDateString()}
+                        Sent{' '}
+                        {new Date(invitation.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>

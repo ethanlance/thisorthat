@@ -43,8 +43,13 @@ export default function CommentsList({ pollId }: CommentsListProps) {
 
         setHasMore(newComments.length === limit);
       } catch (err) {
-        console.error('Error loading comments:', err);
-        setError('Failed to load comments');
+        console.error('Error loading comments:', {
+          error: err,
+          pollId,
+          limit,
+          offset
+        });
+        setError('Failed to load comments. Please try again.');
       } finally {
         setLoading(false);
       }

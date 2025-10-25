@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -26,11 +32,16 @@ interface OfflinePollViewerProps {
   className?: string;
 }
 
-export function OfflinePollViewer({ pollId, className }: OfflinePollViewerProps) {
+export function OfflinePollViewer({
+  pollId,
+  className,
+}: OfflinePollViewerProps) {
   const [poll, setPoll] = useState<OfflinePoll | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userVote, setUserVote] = useState<'option_a' | 'option_b' | null>(null);
+  const [userVote, setUserVote] = useState<'option_a' | 'option_b' | null>(
+    null
+  );
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   const offlineStorage = OfflineStorage.getInstance();
@@ -49,10 +60,10 @@ export function OfflinePollViewer({ pollId, className }: OfflinePollViewerProps)
     try {
       setLoading(true);
       const cachedPoll = await offlineStorage.getCachedPoll(pollId);
-      
+
       if (cachedPoll) {
         setPoll(cachedPoll);
-        
+
         // Check if user has voted on this poll
         const votes = await offlineStorage.getOfflineVotes(pollId);
         const userVotes = votes.filter(v => v.synced || !isOffline);
@@ -97,7 +108,6 @@ export function OfflinePollViewer({ pollId, className }: OfflinePollViewerProps)
       }
       updatedPoll.votes_count += 1;
       setPoll(updatedPoll);
-
     } catch (err) {
       console.error('Error saving vote:', err);
     }
@@ -154,8 +164,14 @@ export function OfflinePollViewer({ pollId, className }: OfflinePollViewerProps)
     );
   }
 
-  const optionAPercentage = getPercentage(poll.option_a_votes, poll.votes_count);
-  const optionBPercentage = getPercentage(poll.option_b_votes, poll.votes_count);
+  const optionAPercentage = getPercentage(
+    poll.option_a_votes,
+    poll.votes_count
+  );
+  const optionBPercentage = getPercentage(
+    poll.option_b_votes,
+    poll.votes_count
+  );
 
   return (
     <Card className={className}>
@@ -259,7 +275,8 @@ export function OfflinePollViewer({ pollId, className }: OfflinePollViewerProps)
           <Alert>
             <WifiOff className="h-4 w-4" />
             <AlertDescription>
-              You're viewing this poll offline. Your vote will be synced when you're back online.
+              You&apos;re viewing this poll offline. Your vote will be synced
+              when you&apos;re back online.
             </AlertDescription>
           </Alert>
         )}

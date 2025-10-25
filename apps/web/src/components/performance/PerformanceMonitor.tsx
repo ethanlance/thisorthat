@@ -25,9 +25,9 @@ interface PerformanceMonitorProps {
   className?: string;
 }
 
-export default function PerformanceMonitor({ 
-  showDetails = false, 
-  className 
+export default function PerformanceMonitor({
+  showDetails = false,
+  className,
 }: PerformanceMonitorProps) {
   const { metrics, score, report } = usePerformanceMonitoring();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -110,7 +110,7 @@ export default function PerformanceMonitor({
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Performance Score */}
         <div className="space-y-2">
@@ -137,7 +137,9 @@ export default function PerformanceMonitor({
                 <span className="text-sm font-mono">
                   {formatMetric(report.metrics.lcp)}
                 </span>
-                {getMetricIcon(getMetricStatus(report.metrics.lcp, report.budget.lcp))}
+                {getMetricIcon(
+                  getMetricStatus(report.metrics.lcp, report.budget.lcp)
+                )}
               </div>
             </div>
 
@@ -151,7 +153,9 @@ export default function PerformanceMonitor({
                 <span className="text-sm font-mono">
                   {formatMetric(report.metrics.fid)}
                 </span>
-                {getMetricIcon(getMetricStatus(report.metrics.fid, report.budget.fid))}
+                {getMetricIcon(
+                  getMetricStatus(report.metrics.fid, report.budget.fid)
+                )}
               </div>
             </div>
 
@@ -165,7 +169,9 @@ export default function PerformanceMonitor({
                 <span className="text-sm font-mono">
                   {formatMetric(report.metrics.cls, '')}
                 </span>
-                {getMetricIcon(getMetricStatus(report.metrics.cls, report.budget.cls))}
+                {getMetricIcon(
+                  getMetricStatus(report.metrics.cls, report.budget.cls)
+                )}
               </div>
             </div>
 
@@ -179,7 +185,9 @@ export default function PerformanceMonitor({
                 <span className="text-sm font-mono">
                   {formatMetric(report.metrics.fcp)}
                 </span>
-                {getMetricIcon(getMetricStatus(report.metrics.fcp, report.budget.fcp))}
+                {getMetricIcon(
+                  getMetricStatus(report.metrics.fcp, report.budget.fcp)
+                )}
               </div>
             </div>
           </div>

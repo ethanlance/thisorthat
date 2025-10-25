@@ -14,15 +14,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const {
-      type,
-      title,
-      description,
-      priority,
-      category,
-      tags,
-      attachments,
-    } = body;
+    const { type, title, description, priority, category, tags, attachments } =
+      body;
 
     // Validate required fields
     if (!type || !title || !description) {
@@ -74,9 +67,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      feedbackId: data.id 
+    return NextResponse.json({
+      success: true,
+      feedbackId: data.id,
     });
   } catch (error) {
     console.error('Error in feedback POST API:', error);

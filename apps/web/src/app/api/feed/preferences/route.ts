@@ -50,7 +50,16 @@ export async function PUT(request: NextRequest) {
     } = body;
 
     // Validate feed algorithm
-    if (feed_algorithm && !['chronological', 'popular', 'trending', 'personalized', 'mixed'].includes(feed_algorithm)) {
+    if (
+      feed_algorithm &&
+      ![
+        'chronological',
+        'popular',
+        'trending',
+        'personalized',
+        'mixed',
+      ].includes(feed_algorithm)
+    ) {
       return NextResponse.json(
         { error: 'Invalid feed algorithm' },
         { status: 400 }

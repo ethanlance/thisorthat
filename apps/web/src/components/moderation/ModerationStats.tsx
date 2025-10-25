@@ -34,8 +34,10 @@ interface DetectionStatsData {
 }
 
 export default function ModerationStats() {
-  const [moderationStats, setModerationStats] = useState<ModerationStatsData | null>(null);
-  const [detectionStats, setDetectionStats] = useState<DetectionStatsData | null>(null);
+  const [moderationStats, setModerationStats] =
+    useState<ModerationStatsData | null>(null);
+  const [detectionStats, setDetectionStats] =
+    useState<DetectionStatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -124,7 +126,9 @@ export default function ModerationStats() {
                 <Flag className="h-4 w-4 text-blue-500" />
                 <div>
                   <p className="text-sm font-medium">Total Reports</p>
-                  <p className="text-2xl font-bold">{moderationStats.total_reports}</p>
+                  <p className="text-2xl font-bold">
+                    {moderationStats.total_reports}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -135,7 +139,9 @@ export default function ModerationStats() {
                 <Clock className="h-4 w-4 text-yellow-500" />
                 <div>
                   <p className="text-sm font-medium">Pending</p>
-                  <p className="text-2xl font-bold">{moderationStats.pending_reports}</p>
+                  <p className="text-2xl font-bold">
+                    {moderationStats.pending_reports}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -146,7 +152,9 @@ export default function ModerationStats() {
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 <div>
                   <p className="text-sm font-medium">Resolved</p>
-                  <p className="text-2xl font-bold">{moderationStats.resolved_reports}</p>
+                  <p className="text-2xl font-bold">
+                    {moderationStats.resolved_reports}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -157,7 +165,9 @@ export default function ModerationStats() {
                 <Shield className="h-4 w-4 text-purple-500" />
                 <div>
                   <p className="text-sm font-medium">Actions</p>
-                  <p className="text-2xl font-bold">{moderationStats.total_actions}</p>
+                  <p className="text-2xl font-bold">
+                    {moderationStats.total_actions}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -168,7 +178,9 @@ export default function ModerationStats() {
                 <Users className="h-4 w-4 text-orange-500" />
                 <div>
                   <p className="text-sm font-medium">Appeals</p>
-                  <p className="text-2xl font-bold">{moderationStats.appeals_pending}</p>
+                  <p className="text-2xl font-bold">
+                    {moderationStats.appeals_pending}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -185,7 +197,9 @@ export default function ModerationStats() {
                 <BarChart3 className="h-4 w-4 text-blue-500" />
                 <div>
                   <p className="text-sm font-medium">Total Scans</p>
-                  <p className="text-2xl font-bold">{detectionStats.totalScans}</p>
+                  <p className="text-2xl font-bold">
+                    {detectionStats.totalScans}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -196,7 +210,9 @@ export default function ModerationStats() {
                 <CheckCircle className="h-4 w-4 text-green-500" />
                 <div>
                   <p className="text-sm font-medium">Safe Content</p>
-                  <p className="text-2xl font-bold">{detectionStats.safeContent}</p>
+                  <p className="text-2xl font-bold">
+                    {detectionStats.safeContent}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -207,7 +223,9 @@ export default function ModerationStats() {
                 <AlertTriangle className="h-4 w-4 text-red-500" />
                 <div>
                   <p className="text-sm font-medium">Inappropriate</p>
-                  <p className="text-2xl font-bold">{detectionStats.inappropriateContent}</p>
+                  <p className="text-2xl font-bold">
+                    {detectionStats.inappropriateContent}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -218,7 +236,9 @@ export default function ModerationStats() {
                 <Shield className="h-4 w-4 text-yellow-500" />
                 <div>
                   <p className="text-sm font-medium">Spam</p>
-                  <p className="text-2xl font-bold">{detectionStats.spamContent}</p>
+                  <p className="text-2xl font-bold">
+                    {detectionStats.spamContent}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -229,7 +249,9 @@ export default function ModerationStats() {
                 <Users className="h-4 w-4 text-orange-500" />
                 <div>
                   <p className="text-sm font-medium">Human Review</p>
-                  <p className="text-2xl font-bold">{detectionStats.humanReviewRequired}</p>
+                  <p className="text-2xl font-bold">
+                    {detectionStats.humanReviewRequired}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -251,7 +273,8 @@ export default function ModerationStats() {
                   <span className="font-medium">
                     {detectionStats.totalScans > 0
                       ? Math.round(
-                          ((detectionStats.inappropriateContent + detectionStats.spamContent) /
+                          ((detectionStats.inappropriateContent +
+                            detectionStats.spamContent) /
                             detectionStats.totalScans) *
                             100
                         )
@@ -264,7 +287,8 @@ export default function ModerationStats() {
                   <span className="font-medium">
                     {detectionStats.totalScans > 0
                       ? Math.round(
-                          (detectionStats.humanReviewRequired / detectionStats.totalScans) *
+                          (detectionStats.humanReviewRequired /
+                            detectionStats.totalScans) *
                             100
                         )
                       : 0}
@@ -276,7 +300,8 @@ export default function ModerationStats() {
                   <span className="font-medium">
                     {detectionStats.totalScans > 0
                       ? Math.round(
-                          ((detectionStats.totalScans - detectionStats.humanReviewRequired) /
+                          ((detectionStats.totalScans -
+                            detectionStats.humanReviewRequired) /
                             detectionStats.totalScans) *
                             100
                         )
@@ -301,7 +326,8 @@ export default function ModerationStats() {
                   <span className="font-medium">
                     {moderationStats.total_reports > 0
                       ? Math.round(
-                          (moderationStats.resolved_reports / moderationStats.total_reports) *
+                          (moderationStats.resolved_reports /
+                            moderationStats.total_reports) *
                             100
                         )
                       : 0}
@@ -313,7 +339,8 @@ export default function ModerationStats() {
                   <span className="font-medium">
                     {moderationStats.total_reports > 0
                       ? Math.round(
-                          (moderationStats.pending_reports / moderationStats.total_reports) *
+                          (moderationStats.pending_reports /
+                            moderationStats.total_reports) *
                             100
                         )
                       : 0}
@@ -324,7 +351,10 @@ export default function ModerationStats() {
                   <span className="text-sm">Actions per Report</span>
                   <span className="font-medium">
                     {moderationStats.total_reports > 0
-                      ? (moderationStats.total_actions / moderationStats.total_reports).toFixed(1)
+                      ? (
+                          moderationStats.total_actions /
+                          moderationStats.total_reports
+                        ).toFixed(1)
                       : 0}
                   </span>
                 </div>

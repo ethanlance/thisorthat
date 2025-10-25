@@ -2,8 +2,6 @@
 
 import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Camera,
@@ -11,7 +9,6 @@ import {
   RotateCcw,
   Check,
   X,
-  Upload,
   Image as ImageIcon,
   AlertTriangle,
   Loader2,
@@ -24,17 +21,19 @@ interface MobileCameraProps {
   className?: string;
 }
 
-export default function MobileCamera({ 
-  onImageCapture, 
-  onClose, 
-  className 
+export default function MobileCamera({
+  onImageCapture,
+  onClose,
+  className,
 }: MobileCameraProps) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
-  
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>(
+    'environment'
+  );
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,7 +42,7 @@ export default function MobileCamera({
   const startCamera = useCallback(async () => {
     try {
       setError(null);
-      
+
       const constraints: MediaStreamConstraints = {
         video: {
           facingMode,
@@ -55,7 +54,7 @@ export default function MobileCamera({
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
@@ -92,17 +91,21 @@ export default function MobileCamera({
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Convert to blob
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const imageUrl = URL.createObjectURL(blob);
-        setCapturedImage(imageUrl);
-        stopCamera();
-      }
-    }, 'image/jpeg', 0.8);
+    canvas.toBlob(
+      blob => {
+        if (blob) {
+          const imageUrl = URL.createObjectURL(blob);
+          setCapturedImage(imageUrl);
+          stopCamera();
+        }
+      },
+      'image/jpeg',
+      0.8
+    );
   }, [stopCamera]);
 
   const switchCamera = useCallback(() => {
-    setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
+    setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
   }, []);
 
   const retakePhoto = useCallback(() => {
@@ -115,16 +118,22 @@ export default function MobileCamera({
 
     try {
       setIsProcessing(true);
-      
+
       // Convert canvas to file
       const canvas = canvasRef.current;
-      canvas.toBlob(async (blob) => {
-        if (blob) {
-          const file = new File([blob], 'poll-image.jpg', { type: 'image/jpeg' });
-          onImageCapture(file);
-          onClose();
-        }
-      }, 'image/jpeg', 0.8);
+      canvas.toBlob(
+        async blob => {
+          if (blob) {
+            const file = new File([blob], 'poll-image.jpg', {
+              type: 'image/jpeg',
+            });
+            onImageCapture(file);
+            onClose();
+          }
+        },
+        'image/jpeg',
+        0.8
+      );
     } catch (err) {
       console.error('Error processing image:', err);
       setError('Failed to process image. Please try again.');
@@ -133,13 +142,16 @@ export default function MobileCamera({
     }
   }, [capturedImage, onImageCapture, onClose]);
 
-  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setCapturedImage(imageUrl);
-    }
-  }, []);
+  const handleFileUpload = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        const imageUrl = URL.createObjectURL(file);
+        setCapturedImage(imageUrl);
+      }
+    },
+    []
+  );
 
   const openFilePicker = useCallback(() => {
     fileInputRef.current?.click();
@@ -182,10 +194,7 @@ export default function MobileCamera({
                 playsInline
                 muted
               />
-              <canvas
-                ref={canvasRef}
-                className="hidden"
-              />
+              <canvas ref={canvasRef} className="hidden" />
             </>
           ) : (
             <img
@@ -233,7 +242,6 @@ export default function MobileCamera({
                 <ImageIcon className="h-6 w-6 mr-2" />
                 Gallery
               </Button>
-
               <Button
                 size="lg"
                 onClick={isStreaming ? capturePhoto : startCamera}
@@ -245,7 +253,6 @@ export default function MobileCamera({
                   <CameraOff className="h-8 w-8" />
                 )}
               </Button>
-
               <div className="w-16" /> {/* Spacer */}
             </div>
           ) : (

@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { OfflineStorage } from '@/lib/offline/OfflineStorage';
 import { OfflineSync } from '@/lib/offline/OfflineSync';
-import { OfflinePoll, OfflineVote, OfflineDraft } from '@/lib/offline/OfflineStorage';
+import {
+  OfflinePoll,
+  OfflineVote,
+  OfflineDraft,
+} from '@/lib/offline/OfflineStorage';
 
 export function useOffline() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -92,28 +96,34 @@ export function useOfflinePolls() {
     }
   }, [offlineSync, loadPolls]);
 
-  const downloadPoll = useCallback(async (pollId: string) => {
-    try {
-      const success = await offlineSync.downloadPollData(pollId);
-      if (success) {
-        await loadPolls();
+  const downloadPoll = useCallback(
+    async (pollId: string) => {
+      try {
+        const success = await offlineSync.downloadPollData(pollId);
+        if (success) {
+          await loadPolls();
+        }
+        return success;
+      } catch (err) {
+        console.error('Error downloading poll:', err);
+        return false;
       }
-      return success;
-    } catch (err) {
-      console.error('Error downloading poll:', err);
-      return false;
-    }
-  }, [offlineSync, loadPolls]);
+    },
+    [offlineSync, loadPolls]
+  );
 
-  const getPoll = useCallback(async (pollId: string) => {
-    try {
-      const poll = await offlineStorage.getCachedPoll(pollId);
-      return poll;
-    } catch (err) {
-      console.error('Error getting poll:', err);
-      return null;
-    }
-  }, [offlineStorage]);
+  const getPoll = useCallback(
+    async (pollId: string) => {
+      try {
+        const poll = await offlineStorage.getCachedPoll(pollId);
+        return poll;
+      } catch (err) {
+        console.error('Error getting poll:', err);
+        return null;
+      }
+    },
+    [offlineStorage]
+  );
 
   useEffect(() => {
     loadPolls();
@@ -131,7 +141,9 @@ export function useOfflinePolls() {
 }
 
 export function useOfflineVoting() {
-  const [userVotes, setUserVotes] = useState<Map<string, OfflineVote>>(new Map());
+  const [userVotes, setUserVotes] = useState<Map<string, OfflineVote>>(
+    new Map()
+  );
   const [loading, setLoading] = useState(true);
 
   const offlineStorage = OfflineStorage.getInstance();
@@ -152,42 +164,51 @@ export function useOfflineVoting() {
     }
   }, [offlineStorage]);
 
-  const vote = useCallback(async (
-    pollId: string,
-    choice: 'option_a' | 'option_b',
-    userId?: string,
-    anonymousId?: string
-  ) => {
-    try {
-      const vote: OfflineVote = {
-        id: `offline_${Date.now()}_${Math.random()}`,
-        poll_id: pollId,
-        choice,
-        user_id: userId,
-        anonymous_id: anonymousId,
-        created_at: new Date().toISOString(),
-        synced: false,
-      };
+  const vote = useCallback(
+    async (
+      pollId: string,
+      choice: 'option_a' | 'option_b',
+      userId?: string,
+      anonymousId?: string
+    ) => {
+      try {
+        const vote: OfflineVote = {
+          id: `offline_${Date.now()}_${Math.random()}`,
+          poll_id: pollId,
+          choice,
+          user_id: userId,
+          anonymous_id: anonymousId,
+          created_at: new Date().toISOString(),
+          synced: false,
+        };
 
-      await offlineStorage.saveOfflineVote(vote);
-      
-      // Update local state
-      setUserVotes(prev => new Map(prev.set(pollId, vote)));
-      
-      return vote;
-    } catch (err) {
-      console.error('Error saving vote:', err);
-      throw err;
-    }
-  }, [offlineStorage]);
+        await offlineStorage.saveOfflineVote(vote);
 
-  const getUserVote = useCallback((pollId: string) => {
-    return userVotes.get(pollId);
-  }, [userVotes]);
+        // Update local state
+        setUserVotes(prev => new Map(prev.set(pollId, vote)));
 
-  const hasVoted = useCallback((pollId: string) => {
-    return userVotes.has(pollId);
-  }, [userVotes]);
+        return vote;
+      } catch (err) {
+        console.error('Error saving vote:', err);
+        throw err;
+      }
+    },
+    [offlineStorage]
+  );
+
+  const getUserVote = useCallback(
+    (pollId: string) => {
+      return userVotes.get(pollId);
+    },
+    [userVotes]
+  );
+
+  const hasVoted = useCallback(
+    (pollId: string) => {
+      return userVotes.has(pollId);
+    },
+    [userVotes]
+  );
 
   useEffect(() => {
     loadUserVotes();
@@ -224,37 +245,46 @@ export function useOfflineDrafts() {
     }
   }, [offlineStorage]);
 
-  const saveDraft = useCallback(async (draft: OfflineDraft) => {
-    try {
-      await offlineStorage.saveDraft(draft);
-      await loadDrafts();
-    } catch (err) {
-      setError('Failed to save draft');
-      console.error('Error saving draft:', err);
-      throw err;
-    }
-  }, [offlineStorage, loadDrafts]);
+  const saveDraft = useCallback(
+    async (draft: OfflineDraft) => {
+      try {
+        await offlineStorage.saveDraft(draft);
+        await loadDrafts();
+      } catch (err) {
+        setError('Failed to save draft');
+        console.error('Error saving draft:', err);
+        throw err;
+      }
+    },
+    [offlineStorage, loadDrafts]
+  );
 
-  const deleteDraft = useCallback(async (draftId: string) => {
-    try {
-      await offlineStorage.deleteDraft(draftId);
-      await loadDrafts();
-    } catch (err) {
-      setError('Failed to delete draft');
-      console.error('Error deleting draft:', err);
-      throw err;
-    }
-  }, [offlineStorage, loadDrafts]);
+  const deleteDraft = useCallback(
+    async (draftId: string) => {
+      try {
+        await offlineStorage.deleteDraft(draftId);
+        await loadDrafts();
+      } catch (err) {
+        setError('Failed to delete draft');
+        console.error('Error deleting draft:', err);
+        throw err;
+      }
+    },
+    [offlineStorage, loadDrafts]
+  );
 
-  const getDraft = useCallback(async (draftId: string) => {
-    try {
-      const drafts = await offlineStorage.getDrafts();
-      return drafts.find(d => d.id === draftId) || null;
-    } catch (err) {
-      console.error('Error getting draft:', err);
-      return null;
-    }
-  }, [offlineStorage]);
+  const getDraft = useCallback(
+    async (draftId: string) => {
+      try {
+        const drafts = await offlineStorage.getDrafts();
+        return drafts.find(d => d.id === draftId) || null;
+      } catch (err) {
+        console.error('Error getting draft:', err);
+        return null;
+      }
+    },
+    [offlineStorage]
+  );
 
   useEffect(() => {
     loadDrafts();
@@ -272,7 +302,11 @@ export function useOfflineDrafts() {
 }
 
 export function useOfflineStorage() {
-  const [storageUsage, setStorageUsage] = useState({ used: 0, quota: 0, percentage: 0 });
+  const [storageUsage, setStorageUsage] = useState({
+    used: 0,
+    quota: 0,
+    percentage: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   const offlineStorage = OfflineStorage.getInstance();
@@ -289,15 +323,18 @@ export function useOfflineStorage() {
     }
   }, [offlineStorage]);
 
-  const cleanupOldData = useCallback(async (maxAge = 7 * 24 * 60 * 60 * 1000) => {
-    try {
-      await offlineStorage.cleanupOldData(maxAge);
-      await updateStorageUsage();
-    } catch (err) {
-      console.error('Error cleaning up old data:', err);
-      throw err;
-    }
-  }, [offlineStorage, updateStorageUsage]);
+  const cleanupOldData = useCallback(
+    async (maxAge = 7 * 24 * 60 * 60 * 1000) => {
+      try {
+        await offlineStorage.cleanupOldData(maxAge);
+        await updateStorageUsage();
+      } catch (err) {
+        console.error('Error cleaning up old data:', err);
+        throw err;
+      }
+    },
+    [offlineStorage, updateStorageUsage]
+  );
 
   const clearAllData = useCallback(async () => {
     try {

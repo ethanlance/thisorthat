@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import {
-  Wifi,
   WifiOff,
   RefreshCw,
   CheckCircle,
@@ -122,7 +121,7 @@ export default function NetworkErrorHandler() {
     if (networkStatus.connectionAttempts > 0) {
       return `Connection failed. This is attempt ${networkStatus.connectionAttempts + 1}.`;
     }
-    return 'You\'re currently offline. Some features may not be available.';
+    return "You're currently offline. Some features may not be available.";
   };
 
   const getReconnectMessage = () => {
@@ -159,10 +158,9 @@ export default function NetworkErrorHandler() {
           <Alert variant={networkStatus.isOnline ? 'default' : 'destructive'}>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {networkStatus.isOnline 
-                ? 'Connection restored! You\'re back online.'
-                : getOfflineMessage()
-              }
+              {networkStatus.isOnline
+                ? "Connection restored! You're back online."
+                : getOfflineMessage()}
             </AlertDescription>
           </Alert>
 
@@ -171,7 +169,7 @@ export default function NetworkErrorHandler() {
               <p className="text-sm text-muted-foreground">
                 {getReconnectMessage()}
               </p>
-              
+
               <div className="flex space-x-2">
                 <Button
                   onClick={handleReconnect}
@@ -184,7 +182,9 @@ export default function NetworkErrorHandler() {
                   ) : (
                     <RefreshCw className="h-4 w-4 mr-2" />
                   )}
-                  {networkStatus.isReconnecting ? 'Reconnecting...' : 'Try Again'}
+                  {networkStatus.isReconnecting
+                    ? 'Reconnecting...'
+                    : 'Try Again'}
                 </Button>
 
                 <Button

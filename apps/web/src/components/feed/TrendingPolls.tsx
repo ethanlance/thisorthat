@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   TrendingUp,
-  Fire,
   Star,
   Eye,
   Heart,
@@ -15,6 +14,7 @@ import {
   Loader2,
   AlertTriangle,
   RefreshCw,
+  Flame,
 } from 'lucide-react';
 import { FeedService, FeedPoll } from '@/lib/services/feed';
 
@@ -24,10 +24,10 @@ interface TrendingPollsProps {
   onPollSelect?: (poll: FeedPoll) => void;
 }
 
-export default function TrendingPolls({ 
-  limit = 10, 
+export default function TrendingPolls({
+  limit = 10,
   className,
-  onPollSelect 
+  onPollSelect,
 }: TrendingPollsProps) {
   const [polls, setPolls] = useState<FeedPoll[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,10 +72,25 @@ export default function TrendingPolls({
   };
 
   const getTrendingLevel = (trendingScore: number) => {
-    if (trendingScore > 1000) return { level: 'Hot', color: 'bg-red-100 text-red-800', icon: Fire };
-    if (trendingScore > 500) return { level: 'Trending', color: 'bg-orange-100 text-orange-800', icon: TrendingUp };
-    if (trendingScore > 100) return { level: 'Rising', color: 'bg-yellow-100 text-yellow-800', icon: Star };
-    return { level: 'New', color: 'bg-blue-100 text-blue-800', icon: TrendingUp };
+    if (trendingScore > 1000)
+      return { level: 'Hot', color: 'bg-red-100 text-red-800', icon: Flame };
+    if (trendingScore > 500)
+      return {
+        level: 'Trending',
+        color: 'bg-orange-100 text-orange-800',
+        icon: TrendingUp,
+      };
+    if (trendingScore > 100)
+      return {
+        level: 'Rising',
+        color: 'bg-yellow-100 text-yellow-800',
+        icon: Star,
+      };
+    return {
+      level: 'New',
+      color: 'bg-blue-100 text-blue-800',
+      icon: TrendingUp,
+    };
   };
 
   useEffect(() => {
@@ -114,7 +129,9 @@ export default function TrendingPolls({
           onClick={handleRefresh}
           disabled={refreshing}
         >
-          <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+          />
           <span className="ml-2">Refresh</span>
         </Button>
       </div>
@@ -137,7 +154,10 @@ export default function TrendingPolls({
             const TrendingIcon = trendingInfo.icon;
 
             return (
-              <Card key={poll.poll_id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={poll.poll_id}
+                className="hover:shadow-md transition-shadow"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-start space-x-4">
                     {/* Trending Rank */}
@@ -159,7 +179,10 @@ export default function TrendingPolls({
                             <Badge variant="outline">
                               {formatDate(poll.created_at)}
                             </Badge>
-                            <Badge variant="secondary" className="bg-green-100 text-green-800">
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800"
+                            >
                               <Star className="h-3 w-3 mr-1" />
                               {Math.round(poll.engagement_score)} engagement
                             </Badge>
@@ -174,7 +197,9 @@ export default function TrendingPolls({
                           {/* Poll Options Preview */}
                           <div className="grid grid-cols-2 gap-3 mb-3">
                             <div className="space-y-1">
-                              <div className="text-xs text-muted-foreground">Option A</div>
+                              <div className="text-xs text-muted-foreground">
+                                Option A
+                              </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                                 <img
                                   src={poll.option_a_image_url}
@@ -183,12 +208,16 @@ export default function TrendingPolls({
                                 />
                               </div>
                               {poll.option_a_label && (
-                                <p className="text-xs font-medium truncate">{poll.option_a_label}</p>
+                                <p className="text-xs font-medium truncate">
+                                  {poll.option_a_label}
+                                </p>
                               )}
                             </div>
 
                             <div className="space-y-1">
-                              <div className="text-xs text-muted-foreground">Option B</div>
+                              <div className="text-xs text-muted-foreground">
+                                Option B
+                              </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                                 <img
                                   src={poll.option_b_image_url}
@@ -197,27 +226,45 @@ export default function TrendingPolls({
                                 />
                               </div>
                               {poll.option_b_label && (
-                                <p className="text-xs font-medium truncate">{poll.option_b_label}</p>
+                                <p className="text-xs font-medium truncate">
+                                  {poll.option_b_label}
+                                </p>
                               )}
                             </div>
                           </div>
 
                           {/* Categories and Tags */}
-                          {(poll.categories.length > 0 || poll.tags.length > 0) && (
+                          {(poll.categories.length > 0 ||
+                            poll.tags.length > 0) && (
                             <div className="flex flex-wrap gap-1 mb-3">
-                              {poll.categories.slice(0, 2).map((category, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
-                                  {category}
-                                </Badge>
-                              ))}
+                              {poll.categories
+                                .slice(0, 2)
+                                .map((category, idx) => (
+                                  <Badge
+                                    key={idx}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {category}
+                                  </Badge>
+                                ))}
                               {poll.tags.slice(0, 2).map((tag, idx) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
+                                <Badge
+                                  key={idx}
+                                  variant="secondary"
+                                  className="text-xs"
+                                >
                                   {tag}
                                 </Badge>
                               ))}
-                              {(poll.categories.length > 2 || poll.tags.length > 2) && (
+                              {(poll.categories.length > 2 ||
+                                poll.tags.length > 2) && (
                                 <Badge variant="outline" className="text-xs">
-                                  +{poll.categories.length + poll.tags.length - 2} more
+                                  +
+                                  {poll.categories.length +
+                                    poll.tags.length -
+                                    2}{' '}
+                                  more
                                 </Badge>
                               )}
                             </div>
@@ -227,19 +274,27 @@ export default function TrendingPolls({
                           <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                             <div className="flex items-center space-x-1">
                               <Eye className="h-3 w-3" />
-                              <span>{Math.floor(poll.engagement_score / 10)} views</span>
+                              <span>
+                                {Math.floor(poll.engagement_score / 10)} views
+                              </span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <Heart className="h-3 w-3" />
-                              <span>{Math.floor(poll.engagement_score / 2)} votes</span>
+                              <span>
+                                {Math.floor(poll.engagement_score / 2)} votes
+                              </span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <MessageCircle className="h-3 w-3" />
-                              <span>{Math.floor(poll.engagement_score / 5)} comments</span>
+                              <span>
+                                {Math.floor(poll.engagement_score / 5)} comments
+                              </span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <TrendingUp className="h-3 w-3" />
-                              <span>{Math.round(poll.trending_score)} trending</span>
+                              <span>
+                                {Math.round(poll.trending_score)} trending
+                              </span>
                             </div>
                           </div>
                         </div>

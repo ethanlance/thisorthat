@@ -11,7 +11,7 @@ export default function ModerationPage() {
       >
         <ModerationStats />
       </Suspense>
-      
+
       <Suspense
         fallback={<LoadingSpinner text="Loading moderation dashboard..." />}
       >

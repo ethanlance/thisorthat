@@ -84,7 +84,7 @@ export class OfflineStorage {
         resolve();
       };
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result;
 
         // Create polls store
@@ -106,7 +106,9 @@ export class OfflineStorage {
         if (!db.objectStoreNames.contains('drafts')) {
           const draftsStore = db.createObjectStore('drafts', { keyPath: 'id' });
           draftsStore.createIndex('synced', 'synced', { unique: false });
-          draftsStore.createIndex('created_at', 'created_at', { unique: false });
+          draftsStore.createIndex('created_at', 'created_at', {
+            unique: false,
+          });
         }
 
         // Create sync queue store
@@ -124,7 +126,7 @@ export class OfflineStorage {
 
   private async waitForDB(): Promise<IDBDatabase> {
     if (this.db) return this.db;
-    
+
     return new Promise((resolve, reject) => {
       const checkDB = () => {
         if (this.db) {
@@ -142,7 +144,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['polls'], 'readwrite');
     const store = transaction.objectStore('polls');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.put(poll);
       request.onsuccess = () => resolve();
@@ -154,7 +156,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['polls'], 'readonly');
     const store = transaction.objectStore('polls');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.get(pollId);
       request.onsuccess = () => resolve(request.result || null);
@@ -167,12 +169,12 @@ export class OfflineStorage {
     const transaction = db.transaction(['polls'], 'readonly');
     const store = transaction.objectStore('polls');
     const index = store.index('cached_at');
-    
+
     return new Promise((resolve, reject) => {
       const request = index.openCursor(null, 'prev');
       const polls: OfflinePoll[] = [];
-      
-      request.onsuccess = (event) => {
+
+      request.onsuccess = event => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor && polls.length < limit) {
           polls.push(cursor.value);
@@ -185,7 +187,12 @@ export class OfflineStorage {
     });
   }
 
-  public async updatePollVotes(pollId: string, optionA: number, optionB: number, total: number): Promise<void> {
+  public async updatePollVotes(
+    pollId: string,
+    optionA: number,
+    optionB: number,
+    total: number
+  ): Promise<void> {
     const poll = await this.getCachedPoll(pollId);
     if (poll) {
       poll.option_a_votes = optionA;
@@ -200,7 +207,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['votes'], 'readwrite');
     const store = transaction.objectStore('votes');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.put(vote);
       request.onsuccess = () => resolve();
@@ -212,9 +219,11 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['votes'], 'readonly');
     const store = transaction.objectStore('votes');
-    
+
     return new Promise((resolve, reject) => {
-      const request = pollId ? store.index('poll_id').getAll(pollId) : store.getAll();
+      const request = pollId
+        ? store.index('poll_id').getAll(pollId)
+        : store.getAll();
       request.onsuccess = () => resolve(request.result || []);
       request.onerror = () => reject(request.error);
     });
@@ -225,7 +234,7 @@ export class OfflineStorage {
     const transaction = db.transaction(['votes'], 'readonly');
     const store = transaction.objectStore('votes');
     const index = store.index('synced');
-    
+
     return new Promise((resolve, reject) => {
       const request = index.getAll(false);
       request.onsuccess = () => resolve(request.result || []);
@@ -237,7 +246,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['votes'], 'readwrite');
     const store = transaction.objectStore('votes');
-    
+
     return new Promise((resolve, reject) => {
       const getRequest = store.get(voteId);
       getRequest.onsuccess = () => {
@@ -260,7 +269,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['drafts'], 'readwrite');
     const store = transaction.objectStore('drafts');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.put(draft);
       request.onsuccess = () => resolve();
@@ -272,7 +281,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['drafts'], 'readonly');
     const store = transaction.objectStore('drafts');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.getAll();
       request.onsuccess = () => resolve(request.result || []);
@@ -285,7 +294,7 @@ export class OfflineStorage {
     const transaction = db.transaction(['drafts'], 'readonly');
     const store = transaction.objectStore('drafts');
     const index = store.index('synced');
-    
+
     return new Promise((resolve, reject) => {
       const request = index.getAll(false);
       request.onsuccess = () => resolve(request.result || []);
@@ -297,7 +306,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['drafts'], 'readwrite');
     const store = transaction.objectStore('drafts');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.delete(draftId);
       request.onsuccess = () => resolve();
@@ -310,7 +319,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['settings'], 'readwrite');
     const store = transaction.objectStore('settings');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.put({ key, value });
       request.onsuccess = () => resolve();
@@ -322,7 +331,7 @@ export class OfflineStorage {
     const db = await this.waitForDB();
     const transaction = db.transaction(['settings'], 'readonly');
     const store = transaction.objectStore('settings');
-    
+
     return new Promise((resolve, reject) => {
       const request = store.get(key);
       request.onsuccess = () => resolve(request.result?.value);
@@ -331,33 +340,37 @@ export class OfflineStorage {
   }
 
   // Storage Management
-  public async getStorageUsage(): Promise<{ used: number; quota: number; percentage: number }> {
+  public async getStorageUsage(): Promise<{
+    used: number;
+    quota: number;
+    percentage: number;
+  }> {
     if ('storage' in navigator && 'estimate' in navigator.storage) {
       const estimate = await navigator.storage.estimate();
       const used = estimate.usage || 0;
       const quota = estimate.quota || 0;
       const percentage = quota > 0 ? (used / quota) * 100 : 0;
-      
+
       return { used, quota, percentage };
     }
-    
+
     return { used: 0, quota: 0, percentage: 0 };
   }
 
   public async cleanupOldData(maxAge = 7 * 24 * 60 * 60 * 1000): Promise<void> {
     const cutoffTime = new Date(Date.now() - maxAge).toISOString();
-    
+
     // Clean up old cached polls
     const db = await this.waitForDB();
     const transaction = db.transaction(['polls'], 'readwrite');
     const store = transaction.objectStore('polls');
     const index = store.index('cached_at');
-    
+
     return new Promise((resolve, reject) => {
       const request = index.openCursor();
       const deletePromises: Promise<void>[] = [];
-      
-      request.onsuccess = (event) => {
+
+      request.onsuccess = event => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor) {
           if (cursor.value.cached_at < cutoffTime) {
@@ -371,7 +384,9 @@ export class OfflineStorage {
           }
           cursor.continue();
         } else {
-          Promise.all(deletePromises).then(() => resolve()).catch(reject);
+          Promise.all(deletePromises)
+            .then(() => resolve())
+            .catch(reject);
         }
       };
       request.onerror = () => reject(request.error);
@@ -381,7 +396,7 @@ export class OfflineStorage {
   public async clearAllData(): Promise<void> {
     const db = await this.waitForDB();
     const stores = ['polls', 'votes', 'drafts', 'sync_queue', 'settings'];
-    
+
     const clearPromises = stores.map(storeName => {
       return new Promise<void>((resolve, reject) => {
         const transaction = db.transaction([storeName], 'readwrite');
@@ -391,7 +406,7 @@ export class OfflineStorage {
         request.onerror = () => reject(request.error);
       });
     });
-    
+
     await Promise.all(clearPromises);
   }
 }

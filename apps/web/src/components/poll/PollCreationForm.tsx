@@ -15,7 +15,9 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import ImageUpload from '@/components/upload/ImageUpload';
-import PollPrivacySettings, { PollPrivacySettings as PrivacySettings } from '@/components/privacy/PollPrivacySettings';
+import PollPrivacySettings, {
+  PollPrivacySettings as PrivacySettings,
+} from '@/components/privacy/PollPrivacySettings';
 import { uploadPollImage } from '@/lib/storage/image-upload';
 import { PollsService } from '@/lib/services/polls';
 import { PollPrivacyService } from '@/lib/services/poll-privacy';

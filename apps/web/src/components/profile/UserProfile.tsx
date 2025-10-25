@@ -78,7 +78,10 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
     if (!currentUser || !profile) return;
 
     try {
-      const following = await ProfileService.isFollowing(currentUser.id, profile.id);
+      const following = await ProfileService.isFollowing(
+        currentUser.id,
+        profile.id
+      );
       setIsFollowing(following);
     } catch (err) {
       console.error('Error checking following status:', err);
@@ -95,19 +98,27 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
         const success = await ProfileService.unfollowUser(profile.id);
         if (success) {
           setIsFollowing(false);
-          setProfile(prev => prev ? {
-            ...prev,
-            followers_count: prev.followers_count - 1
-          } : null);
+          setProfile(prev =>
+            prev
+              ? {
+                  ...prev,
+                  followers_count: prev.followers_count - 1,
+                }
+              : null
+          );
         }
       } else {
         const success = await ProfileService.followUser(profile.id);
         if (success) {
           setIsFollowing(true);
-          setProfile(prev => prev ? {
-            ...prev,
-            followers_count: prev.followers_count + 1
-          } : null);
+          setProfile(prev =>
+            prev
+              ? {
+                  ...prev,
+                  followers_count: prev.followers_count + 1,
+                }
+              : null
+          );
         }
       }
     } catch (err) {
@@ -215,26 +226,40 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
                 {/* Privacy Badge */}
                 <Badge className={getPrivacyColor(profile.privacy_level)}>
                   {getPrivacyIcon(profile.privacy_level)}
-                  <span className="ml-1 capitalize">{profile.privacy_level}</span>
+                  <span className="ml-1 capitalize">
+                    {profile.privacy_level}
+                  </span>
                 </Badge>
               </div>
 
               {/* Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{profile.polls_created}</div>
-                  <div className="text-sm text-muted-foreground">Polls Created</div>
+                  <div className="text-2xl font-bold">
+                    {profile.polls_created}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Polls Created
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{profile.polls_voted}</div>
-                  <div className="text-sm text-muted-foreground">Votes Cast</div>
+                  <div className="text-2xl font-bold">
+                    {profile.polls_voted}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Votes Cast
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{profile.followers_count}</div>
+                  <div className="text-2xl font-bold">
+                    {profile.followers_count}
+                  </div>
                   <div className="text-sm text-muted-foreground">Followers</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">{profile.following_count}</div>
+                  <div className="text-2xl font-bold">
+                    {profile.following_count}
+                  </div>
                   <div className="text-sm text-muted-foreground">Following</div>
                 </div>
               </div>
@@ -298,7 +323,9 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
               <Mail className="h-4 w-4 text-muted-foreground" />
               <div>
                 <div className="text-sm font-medium">Email</div>
-                <div className="text-sm text-muted-foreground">{profile.email}</div>
+                <div className="text-sm text-muted-foreground">
+                  {profile.email}
+                </div>
               </div>
             </div>
 

@@ -47,7 +47,7 @@ export default function TestDatabasePage() {
         // Test fetching polls
         const publicPolls = await PollsService.getPublicPolls();
         setPolls(publicPolls);
-        
+
         // Set the first poll as test poll for comments
         if (publicPolls.length > 0) {
           setTestPollId(publicPolls[0].id);
@@ -102,9 +102,13 @@ export default function TestDatabasePage() {
     try {
       setCommentsTest('Testing...');
       const comments = await CommentService.getPollComments(testPollId, 10, 0);
-      setCommentsTest(`✅ Comments RPC working! Found ${comments.length} comments`);
+      setCommentsTest(
+        `✅ Comments RPC working! Found ${comments.length} comments`
+      );
     } catch (err) {
-      setCommentsTest(`❌ Comments RPC failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setCommentsTest(
+        `❌ Comments RPC failed: ${err instanceof Error ? err.message : 'Unknown error'}`
+      );
     }
   };
 

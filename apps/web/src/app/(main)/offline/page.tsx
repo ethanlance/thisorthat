@@ -1,5 +1,11 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OfflineStatus } from '@/components/offline/OfflineStatus';
 import { OfflinePollViewer } from '@/components/offline/OfflinePollViewer';
@@ -15,7 +21,7 @@ export default function OfflinePage() {
           Offline Mode
         </h1>
         <p className="text-muted-foreground">
-          Manage your offline content and sync when you're back online
+          Manage your offline content and sync when you&apos;re back online
         </p>
       </div>
 
@@ -92,9 +98,7 @@ export default function OfflinePage() {
             <FileText className="h-5 w-5" />
             Poll Drafts
           </CardTitle>
-          <CardDescription>
-            Create and manage polls offline
-          </CardDescription>
+          <CardDescription>Create and manage polls offline</CardDescription>
         </CardHeader>
         <CardContent>
           <Suspense fallback={<Skeleton className="h-64" />}>

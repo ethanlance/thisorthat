@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get('timeRange') || '7d';
-    
+
     // Calculate date range
     const now = new Date();
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
@@ -32,13 +32,13 @@ export async function GET(request: NextRequest) {
         .from('user_profiles')
         .select('id, created_at, last_active_at')
         .gte('created_at', startDate.toISOString()),
-      
+
       // Poll statistics
       supabase
         .from('polls')
         .select('id, created_at, votes_count, shares_count, comments_count')
         .gte('created_at', startDate.toISOString()),
-      
+
       // Session statistics
       supabase
         .from('analytics_events')
@@ -48,7 +48,11 @@ export async function GET(request: NextRequest) {
     ]);
 
     if (userStatsError || pollStatsError || sessionStatsError) {
-      console.error('Error fetching business metrics:', { userStatsError, pollStatsError, sessionStatsError });
+      console.error('Error fetching business metrics:', {
+        userStatsError,
+        pollStatsError,
+        sessionStatsError,
+      });
       return NextResponse.json(
         { error: 'Failed to fetch business metrics' },
         { status: 500 }
@@ -57,14 +61,18 @@ export async function GET(request: NextRequest) {
 
     // Calculate metrics
     const totalUsers = userStats?.length || 0;
-    const newUsers = userStats?.filter(user => 
-      new Date(user.created_at) >= startDate
-    ).length || 0;
-    
+    const newUsers =
+      userStats?.filter(user => new Date(user.created_at) >= startDate)
+        .length || 0;
+
     const totalPolls = pollStats?.length || 0;
-    const totalVotes = pollStats?.reduce((sum, poll) => sum + (poll.votes_count || 0), 0) || 0;
-    const totalShares = pollStats?.reduce((sum, poll) => sum + (poll.shares_count || 0), 0) || 0;
-    const totalComments = pollStats?.reduce((sum, poll) => sum + (poll.comments_count || 0), 0) || 0;
+    const totalVotes =
+      pollStats?.reduce((sum, poll) => sum + (poll.votes_count || 0), 0) || 0;
+    const totalShares =
+      pollStats?.reduce((sum, poll) => sum + (poll.shares_count || 0), 0) || 0;
+    const totalComments =
+      pollStats?.reduce((sum, poll) => sum + (poll.comments_count || 0), 0) ||
+      0;
 
     // Calculate unique sessions
     const uniqueSessions = new Set(sessionStats?.map(s => s.session_id) || []);
@@ -72,16 +80,20 @@ export async function GET(request: NextRequest) {
 
     // Calculate engagement rate
     const totalInteractions = totalVotes + totalShares + totalComments;
-    const engagementRate = totalUsers > 0 ? (totalInteractions / totalUsers) * 100 : 0;
+    const engagementRate =
+      totalUsers > 0 ? (totalInteractions / totalUsers) * 100 : 0;
 
     // Calculate average session duration (simplified)
     const averageSessionDuration = 180000; // 3 minutes default
 
     // Calculate retention rate (simplified)
-    const returningUsers = userStats?.filter(user => 
-      user.last_active_at && new Date(user.last_active_at) >= startDate
-    ).length || 0;
-    const userRetentionRate = totalUsers > 0 ? (returningUsers / totalUsers) * 100 : 0;
+    const returningUsers =
+      userStats?.filter(
+        user =>
+          user.last_active_at && new Date(user.last_active_at) >= startDate
+      ).length || 0;
+    const userRetentionRate =
+      totalUsers > 0 ? (returningUsers / totalUsers) * 100 : 0;
 
     // Calculate bounce rate (simplified)
     const bounceRate = 25; // 25% default

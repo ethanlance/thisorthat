@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      eventsStored: data?.length || 0 
+    return NextResponse.json({
+      success: true,
+      eventsStored: data?.length || 0,
     });
   } catch (error) {
     console.error('Error in analytics events POST API:', error);

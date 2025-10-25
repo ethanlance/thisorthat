@@ -7,7 +7,7 @@ export interface AnalyticsEvent {
   action: string;
   label?: string;
   value?: number;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   timestamp: number;
   url: string;
   userAgent: string;
@@ -123,7 +123,7 @@ export class AnalyticsService {
     action: string,
     label?: string,
     value?: number,
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     if (!this.isEnabled || !this.currentSession) return;
 
@@ -157,7 +157,7 @@ export class AnalyticsService {
     if (!this.currentSession) return;
 
     this.currentSession.pageViews++;
-    
+
     this.track('page_view', 'navigation', 'view', page, undefined, {
       page,
       title: title || document.title,
@@ -170,7 +170,7 @@ export class AnalyticsService {
     category: string,
     label?: string,
     value?: number,
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     this.track('user_action', category, action, label, value, properties);
   }
@@ -178,7 +178,7 @@ export class AnalyticsService {
   public trackPollEvent(
     pollId: string,
     action: 'view' | 'vote' | 'share' | 'comment' | 'create' | 'delete',
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     this.track('poll_event', 'poll', action, pollId, undefined, {
       pollId,
@@ -187,9 +187,14 @@ export class AnalyticsService {
   }
 
   public trackSocialEvent(
-    action: 'follow' | 'unfollow' | 'friend_request' | 'group_join' | 'group_leave',
+    action:
+      | 'follow'
+      | 'unfollow'
+      | 'friend_request'
+      | 'group_join'
+      | 'group_leave',
     targetUserId?: string,
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     this.track('social_event', 'social', action, targetUserId, undefined, {
       targetUserId,
@@ -200,7 +205,7 @@ export class AnalyticsService {
   public trackPerformance(
     metric: string,
     value: number,
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     this.track('performance_metric', 'performance', 'measure', metric, value, {
       metric,
@@ -211,7 +216,7 @@ export class AnalyticsService {
   public trackError(
     error: Error,
     context: string,
-    properties: Record<string, any> = {}
+    properties: Record<string, unknown> = {}
   ): void {
     this.track('error', 'error', 'occurred', error.name, undefined, {
       error: error.message,
@@ -230,7 +235,8 @@ export class AnalyticsService {
   public endSession(): void {
     if (this.currentSession) {
       this.currentSession.endTime = Date.now();
-      this.currentSession.duration = this.currentSession.endTime - this.currentSession.startTime;
+      this.currentSession.duration =
+        this.currentSession.endTime - this.currentSession.startTime;
       this.currentSession.isActive = false;
     }
   }
@@ -346,7 +352,9 @@ export class AnalyticsService {
   }
 
   private getConnectionType(): string {
-    const connection = (navigator as any).connection;
+    const connection = (
+      navigator as Navigator & { connection?: { effectiveType?: string } }
+    ).connection;
     return connection ? connection.effectiveType || 'unknown' : 'unknown';
   }
 

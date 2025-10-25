@@ -27,16 +27,25 @@ export async function GET(
 
     // Check privacy settings
     if (profile.privacy_level === 'private' && profile.id !== user.id) {
-      return NextResponse.json({ error: 'Profile is private' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Profile is private' },
+        { status: 403 }
+      );
     }
 
     if (profile.privacy_level === 'friends' && profile.id !== user.id) {
       // Check if users are friends (following each other)
       const isFollowing = await ProfileService.isFollowing(user.id, profile.id);
-      const isFollowedBy = await ProfileService.isFollowing(profile.id, user.id);
-      
+      const isFollowedBy = await ProfileService.isFollowing(
+        profile.id,
+        user.id
+      );
+
       if (!isFollowing || !isFollowedBy) {
-        return NextResponse.json({ error: 'Profile is friends only' }, { status: 403 });
+        return NextResponse.json(
+          { error: 'Profile is friends only' },
+          { status: 403 }
+        );
       }
     }
 

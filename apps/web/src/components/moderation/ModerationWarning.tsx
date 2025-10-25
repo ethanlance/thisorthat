@@ -5,14 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  AlertTriangle,
-  Shield,
-  Eye,
-  X,
-  CheckCircle,
-  Info,
-} from 'lucide-react';
+import { AlertTriangle, Shield, Eye, X, CheckCircle, Info } from 'lucide-react';
 import { ContentDetectionResult } from '@/lib/services/content-detection';
 
 interface ModerationWarningProps {
@@ -108,20 +101,21 @@ export default function ModerationWarning({
           )}
 
           {/* Detected Categories */}
-          {result.detectedCategories && result.detectedCategories.length > 0 && (
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">
-                Detected Categories:
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {result.detectedCategories.map((category, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {category}
-                  </Badge>
-                ))}
+          {result.detectedCategories &&
+            result.detectedCategories.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  Detected Categories:
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {result.detectedCategories.map((category, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {category}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Content Flags */}
           <div className="space-y-1">

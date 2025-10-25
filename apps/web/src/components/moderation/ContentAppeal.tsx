@@ -142,7 +142,10 @@ export default function ContentAppeal({
                 <p className="font-medium">Appeal Guidelines:</p>
                 <ul className="text-xs space-y-1 list-disc list-inside">
                   <li>Be respectful and constructive in your appeal</li>
-                  <li>Provide specific reasons why you believe the decision was incorrect</li>
+                  <li>
+                    Provide specific reasons why you believe the decision was
+                    incorrect
+                  </li>
                   <li>Include any relevant context or evidence</li>
                   <li>Appeals are reviewed by human moderators</li>
                   <li>You will be notified of the decision via email</li>

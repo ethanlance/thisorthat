@@ -67,7 +67,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    if (privacy_level && !['public', 'friends', 'private'].includes(privacy_level)) {
+    if (
+      privacy_level &&
+      !['public', 'friends', 'private'].includes(privacy_level)
+    ) {
       return NextResponse.json(
         { error: 'Invalid privacy level' },
         { status: 400 }

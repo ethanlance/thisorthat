@@ -27,13 +27,18 @@ interface UserSearchProps {
   className?: string;
 }
 
-export default function UserSearch({ onUserSelect, className }: UserSearchProps) {
+export default function UserSearch({
+  onUserSelect,
+  className,
+}: UserSearchProps) {
   const { user: currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState<UserSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [followingStatus, setFollowingStatus] = useState<Record<string, boolean>>({});
+  const [followingStatus, setFollowingStatus] = useState<
+    Record<string, boolean>
+  >({});
 
   // Debounce search
   const debouncedSearch = useCallback(
@@ -52,16 +57,22 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
 
         // Check following status for each user
         if (currentUser) {
-          const statusPromises = results.map(async (user) => {
-            const isFollowing = await ProfileService.isFollowing(currentUser.id, user.id);
+          const statusPromises = results.map(async user => {
+            const isFollowing = await ProfileService.isFollowing(
+              currentUser.id,
+              user.id
+            );
             return { userId: user.id, isFollowing };
           });
 
           const statuses = await Promise.all(statusPromises);
-          const statusMap = statuses.reduce((acc, { userId, isFollowing }) => {
-            acc[userId] = isFollowing;
-            return acc;
-          }, {} as Record<string, boolean>);
+          const statusMap = statuses.reduce(
+            (acc, { userId, isFollowing }) => {
+              acc[userId] = isFollowing;
+              return acc;
+            },
+            {} as Record<string, boolean>
+          );
 
           setFollowingStatus(statusMap);
         }
@@ -84,26 +95,30 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
 
     try {
       const isFollowing = followingStatus[userId];
-      
+
       if (isFollowing) {
         const success = await ProfileService.unfollowUser(userId);
         if (success) {
           setFollowingStatus(prev => ({ ...prev, [userId]: false }));
-          setUsers(prev => prev.map(user => 
-            user.id === userId 
-              ? { ...user, followers_count: user.followers_count - 1 }
-              : user
-          ));
+          setUsers(prev =>
+            prev.map(user =>
+              user.id === userId
+                ? { ...user, followers_count: user.followers_count - 1 }
+                : user
+            )
+          );
         }
       } else {
         const success = await ProfileService.followUser(userId);
         if (success) {
           setFollowingStatus(prev => ({ ...prev, [userId]: true }));
-          setUsers(prev => prev.map(user => 
-            user.id === userId 
-              ? { ...user, followers_count: user.followers_count + 1 }
-              : user
-          ));
+          setUsers(prev =>
+            prev.map(user =>
+              user.id === userId
+                ? { ...user, followers_count: user.followers_count + 1 }
+                : user
+            )
+          );
         }
       }
     } catch (err) {
@@ -169,7 +184,7 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
             <Input
               placeholder="Search for users by name, bio, or interests..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -217,14 +232,19 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {users.map((user) => (
-                  <Card key={user.id} className="hover:shadow-md transition-shadow">
+                {users.map(user => (
+                  <Card
+                    key={user.id}
+                    className="hover:shadow-md transition-shadow"
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start space-x-3">
                         <Avatar className="h-12 w-12">
                           <AvatarImage src={user.avatar_url || undefined} />
                           <AvatarFallback>
-                            {user.display_name ? getInitials(user.display_name) : 'U'}
+                            {user.display_name
+                              ? getInitials(user.display_name)
+                              : 'U'}
                           </AvatarFallback>
                         </Avatar>
 
@@ -240,7 +260,9 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
                                 </p>
                               )}
                             </div>
-                            <Badge className={getPrivacyColor(user.privacy_level)}>
+                            <Badge
+                              className={getPrivacyColor(user.privacy_level)}
+                            >
                               {getPrivacyIcon(user.privacy_level)}
                             </Badge>
                           </div>
@@ -258,11 +280,17 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
 
                           {user.interests && user.interests.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
-                              {user.interests.slice(0, 3).map((interest, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  {interest}
-                                </Badge>
-                              ))}
+                              {user.interests
+                                .slice(0, 3)
+                                .map((interest, index) => (
+                                  <Badge
+                                    key={index}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {interest}
+                                  </Badge>
+                                ))}
                               {user.interests.length > 3 && (
                                 <Badge variant="outline" className="text-xs">
                                   +{user.interests.length - 3} more
@@ -288,7 +316,11 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
                               {currentUser && currentUser.id !== user.id && (
                                 <Button
                                   size="sm"
-                                  variant={followingStatus[user.id] ? 'outline' : 'default'}
+                                  variant={
+                                    followingStatus[user.id]
+                                      ? 'outline'
+                                      : 'default'
+                                  }
                                   onClick={() => handleFollow(user.id)}
                                 >
                                   {followingStatus[user.id] ? (
@@ -296,7 +328,9 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
                                   ) : (
                                     <UserPlus className="h-3 w-3 mr-1" />
                                   )}
-                                  {followingStatus[user.id] ? 'Unfollow' : 'Follow'}
+                                  {followingStatus[user.id]
+                                    ? 'Unfollow'
+                                    : 'Follow'}
                                 </Button>
                               )}
                             </div>
@@ -319,7 +353,8 @@ export default function UserSearch({ onUserSelect, className }: UserSearchProps)
             <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">Search for Users</h3>
             <p className="text-muted-foreground">
-              Enter a name, bio, or interest to discover other users on the platform.
+              Enter a name, bio, or interest to discover other users on the
+              platform.
             </p>
           </CardContent>
         </Card>

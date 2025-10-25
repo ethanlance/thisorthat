@@ -10,14 +10,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     const body = await request.json();
-    const {
-      type,
-      severity,
-      message,
-      userMessage,
-      context,
-      stack,
-    } = body;
+    const { type, severity, message, userMessage, context, stack } = body;
 
     // Validate required fields
     if (!type || !severity || !message || !userMessage) {
@@ -36,7 +29,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate type
-    if (!['network', 'validation', 'system', 'authentication', 'authorization', 'unknown'].includes(type)) {
+    if (
+      ![
+        'network',
+        'validation',
+        'system',
+        'authentication',
+        'authorization',
+        'unknown',
+      ].includes(type)
+    ) {
       return NextResponse.json(
         { error: 'Invalid error type' },
         { status: 400 }
@@ -77,9 +79,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      errorId: data.id 
+    return NextResponse.json({
+      success: true,
+      errorId: data.id,
     });
   } catch (error) {
     console.error('Error in errors POST API:', error);

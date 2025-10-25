@@ -6,7 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Search,
@@ -28,7 +34,10 @@ interface PollSearchProps {
   className?: string;
 }
 
-export default function PollSearch({ onPollSelect, className }: PollSearchProps) {
+export default function PollSearch({
+  onPollSelect,
+  className,
+}: PollSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [polls, setPolls] = useState<SearchPoll[]>([]);
   const [loading, setLoading] = useState(false);
@@ -37,11 +46,17 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
   const [offset, setOffset] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
-  const [availableCategories, setAvailableCategories] = useState<Array<{id: string, name: string}>>([]);
-  const [availableTags, setAvailableTags] = useState<Array<{id: string, name: string}>>([]);
+  const [availableCategories, setAvailableCategories] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [availableTags, setAvailableTags] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'relevance' | 'trending' | 'popular' | 'newest'>('relevance');
+  const [sortBy, setSortBy] = useState<
+    'relevance' | 'trending' | 'popular' | 'newest'
+  >('relevance');
   const [showFilters, setShowFilters] = useState(false);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -56,7 +71,9 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
           FeedService.getPollTags(),
         ]);
 
-        setAvailableCategories(categoriesData.map(cat => ({ id: cat.id, name: cat.name })));
+        setAvailableCategories(
+          categoriesData.map(cat => ({ id: cat.id, name: cat.name }))
+        );
         setAvailableTags(tagsData.map(tag => ({ id: tag.id, name: tag.name })));
       } catch (err) {
         console.error('Error loading categories and tags:', err);
@@ -66,47 +83,58 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
     loadCategoriesAndTags();
   }, []);
 
-  const searchPolls = useCallback(async (reset = false) => {
-    if (!debouncedSearchTerm.trim() || debouncedSearchTerm.length < 2) {
-      setPolls([]);
-      setError(null);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const currentOffset = reset ? 0 : offset;
-      const filters: SearchFilters = {
-        categories: selectedCategories.length > 0 ? selectedCategories : undefined,
-        tags: selectedTags.length > 0 ? selectedTags : undefined,
-        sort_by: sortBy,
-      };
-
-      const results = await FeedService.searchPolls(
-        debouncedSearchTerm,
-        filters,
-        limit,
-        currentOffset
-      );
-
-      if (reset) {
-        setPolls(results);
-        setOffset(results.length);
-      } else {
-        setPolls(prev => [...prev, ...results]);
-        setOffset(prev => prev + results.length);
+  const searchPolls = useCallback(
+    async (reset = false) => {
+      if (!debouncedSearchTerm.trim() || debouncedSearchTerm.length < 2) {
+        setPolls([]);
+        setError(null);
+        return;
       }
 
-      setHasMore(results.length === limit);
-    } catch (err) {
-      console.error('Error searching polls:', err);
-      setError('Failed to search polls');
-    } finally {
-      setLoading(false);
-    }
-  }, [debouncedSearchTerm, selectedCategories, selectedTags, sortBy, offset, limit]);
+      try {
+        setLoading(true);
+        setError(null);
+
+        const currentOffset = reset ? 0 : offset;
+        const filters: SearchFilters = {
+          categories:
+            selectedCategories.length > 0 ? selectedCategories : undefined,
+          tags: selectedTags.length > 0 ? selectedTags : undefined,
+          sort_by: sortBy,
+        };
+
+        const results = await FeedService.searchPolls(
+          debouncedSearchTerm,
+          filters,
+          limit,
+          currentOffset
+        );
+
+        if (reset) {
+          setPolls(results);
+          setOffset(results.length);
+        } else {
+          setPolls(prev => [...prev, ...results]);
+          setOffset(prev => prev + results.length);
+        }
+
+        setHasMore(results.length === limit);
+      } catch (err) {
+        console.error('Error searching polls:', err);
+        setError('Failed to search polls');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      debouncedSearchTerm,
+      selectedCategories,
+      selectedTags,
+      sortBy,
+      offset,
+      limit,
+    ]
+  );
 
   const handleSearch = useCallback(() => {
     setOffset(0);
@@ -120,18 +148,16 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
   }, [searchPolls, loading, hasMore]);
 
   const handleCategoryToggle = (categoryId: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(categoryId) 
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
         ? prev.filter(id => id !== categoryId)
         : [...prev, categoryId]
     );
   };
 
   const handleTagToggle = (tagId: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tagId) 
-        ? prev.filter(id => id !== tagId)
-        : [...prev, tagId]
+    setSelectedTags(prev =>
+      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
     );
   };
 
@@ -197,7 +223,7 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
               <Input
                 placeholder="Search polls by keywords, topics, or tags..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -215,11 +241,7 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold">Filters</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearFilters}
-                >
+                <Button variant="outline" size="sm" onClick={clearFilters}>
                   Clear All
                 </Button>
               </div>
@@ -227,7 +249,10 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
               {/* Sort By */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sort by</label>
-                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                <Select
+                  value={sortBy}
+                  onValueChange={(value: any) => setSortBy(value)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -264,12 +289,17 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
               <div className="space-y-2">
                 <label className="text-sm font-medium">Categories</label>
                 <div className="grid grid-cols-2 gap-2">
-                  {availableCategories.map((category) => (
-                    <div key={category.id} className="flex items-center space-x-2">
+                  {availableCategories.map(category => (
+                    <div
+                      key={category.id}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={`category-${category.id}`}
                         checked={selectedCategories.includes(category.id)}
-                        onCheckedChange={() => handleCategoryToggle(category.id)}
+                        onCheckedChange={() =>
+                          handleCategoryToggle(category.id)
+                        }
                       />
                       <label
                         htmlFor={`category-${category.id}`}
@@ -286,14 +316,18 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tags</label>
                 <div className="flex flex-wrap gap-2">
-                  {availableTags.slice(0, 10).map((tag) => (
+                  {availableTags.slice(0, 10).map(tag => (
                     <Button
                       key={tag.id}
-                      variant={selectedTags.includes(tag.id) ? 'default' : 'outline'}
+                      variant={
+                        selectedTags.includes(tag.id) ? 'default' : 'outline'
+                      }
                       size="sm"
                       onClick={() => handleTagToggle(tag.id)}
                     >
-                      {selectedTags.includes(tag.id) && <Check className="h-3 w-3 mr-1" />}
+                      {selectedTags.includes(tag.id) && (
+                        <Check className="h-3 w-3 mr-1" />
+                      )}
                       {tag.name}
                     </Button>
                   ))}
@@ -305,26 +339,38 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
           {/* Active Filters */}
           {(selectedCategories.length > 0 || selectedTags.length > 0) && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-muted-foreground">Active filters:</span>
-              {selectedCategories.map((categoryId) => {
-                const category = availableCategories.find(c => c.id === categoryId);
+              <span className="text-sm text-muted-foreground">
+                Active filters:
+              </span>
+              {selectedCategories.map(categoryId => {
+                const category = availableCategories.find(
+                  c => c.id === categoryId
+                );
                 return (
-                  <Badge key={categoryId} variant="secondary" className="flex items-center space-x-1">
+                  <Badge
+                    key={categoryId}
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <span>{category?.name}</span>
-                    <X 
-                      className="h-3 w-3 cursor-pointer" 
+                    <X
+                      className="h-3 w-3 cursor-pointer"
                       onClick={() => handleCategoryToggle(categoryId)}
                     />
                   </Badge>
                 );
               })}
-              {selectedTags.map((tagId) => {
+              {selectedTags.map(tagId => {
                 const tag = availableTags.find(t => t.id === tagId);
                 return (
-                  <Badge key={tagId} variant="secondary" className="flex items-center space-x-1">
+                  <Badge
+                    key={tagId}
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <span>{tag?.name}</span>
-                    <X 
-                      className="h-3 w-3 cursor-pointer" 
+                    <X
+                      className="h-3 w-3 cursor-pointer"
                       onClick={() => handleTagToggle(tagId)}
                     />
                   </Badge>
@@ -371,8 +417,13 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
                   Found {polls.length} poll{polls.length !== 1 ? 's' : ''}
                 </h3>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-muted-foreground">Sorted by:</span>
-                  <Badge variant="outline" className="flex items-center space-x-1">
+                  <span className="text-sm text-muted-foreground">
+                    Sorted by:
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="flex items-center space-x-1"
+                  >
                     {getSortIcon(sortBy)}
                     <span className="capitalize">{sortBy}</span>
                   </Badge>
@@ -380,8 +431,11 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
               </div>
 
               <div className="space-y-4">
-                {polls.map((poll) => (
-                  <Card key={poll.poll_id} className="hover:shadow-md transition-shadow">
+                {polls.map(poll => (
+                  <Card
+                    key={poll.poll_id}
+                    className="hover:shadow-md transition-shadow"
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -390,13 +444,19 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
                               {formatDate(poll.created_at)}
                             </Badge>
                             {poll.trending_score > 0 && (
-                              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                              <Badge
+                                variant="secondary"
+                                className="bg-orange-100 text-orange-800"
+                              >
                                 <TrendingUp className="h-3 w-3 mr-1" />
                                 Trending
                               </Badge>
                             )}
                             {poll.engagement_score > 100 && (
-                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                              <Badge
+                                variant="secondary"
+                                className="bg-green-100 text-green-800"
+                              >
                                 <Star className="h-3 w-3 mr-1" />
                                 Popular
                               </Badge>
@@ -404,13 +464,17 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
                           </div>
 
                           {poll.description && (
-                            <p className="text-muted-foreground mb-4">{poll.description}</p>
+                            <p className="text-muted-foreground mb-4">
+                              {poll.description}
+                            </p>
                           )}
 
                           {/* Poll Options */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div className="space-y-2">
-                              <div className="text-sm font-medium text-muted-foreground">Option A</div>
+                              <div className="text-sm font-medium text-muted-foreground">
+                                Option A
+                              </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                                 <img
                                   src={poll.option_a_image_url}
@@ -419,12 +483,16 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
                                 />
                               </div>
                               {poll.option_a_label && (
-                                <p className="text-sm font-medium">{poll.option_a_label}</p>
+                                <p className="text-sm font-medium">
+                                  {poll.option_a_label}
+                                </p>
                               )}
                             </div>
 
                             <div className="space-y-2">
-                              <div className="text-sm font-medium text-muted-foreground">Option B</div>
+                              <div className="text-sm font-medium text-muted-foreground">
+                                Option B
+                              </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                                 <img
                                   src={poll.option_b_image_url}
@@ -433,13 +501,16 @@ export default function PollSearch({ onPollSelect, className }: PollSearchProps)
                                 />
                               </div>
                               {poll.option_b_label && (
-                                <p className="text-sm font-medium">{poll.option_b_label}</p>
+                                <p className="text-sm font-medium">
+                                  {poll.option_b_label}
+                                </p>
                               )}
                             </div>
                           </div>
 
                           {/* Categories and Tags */}
-                          {(poll.categories.length > 0 || poll.tags.length > 0) && (
+                          {(poll.categories.length > 0 ||
+                            poll.tags.length > 0) && (
                             <div className="flex flex-wrap gap-2 mb-4">
                               {poll.categories.map((category, idx) => (
                                 <Badge key={idx} variant="outline">

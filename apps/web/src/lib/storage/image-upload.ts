@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/client';
-import { ContentDetectionService, ContentDetectionResult } from '@/lib/services/content-detection';
+import {
+  ContentDetectionService,
+  ContentDetectionResult,
+} from '@/lib/services/content-detection';
 
 export interface UploadResult {
   success: boolean;
@@ -50,10 +53,10 @@ export const uploadPollImage = async (
       .from('poll-images')
       .getPublicUrl(fileName);
 
-    return { 
-      success: true, 
+    return {
+      success: true,
       url: urlData.publicUrl,
-      moderationResult 
+      moderationResult,
     };
   } catch (error) {
     return {

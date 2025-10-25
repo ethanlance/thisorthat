@@ -51,11 +51,11 @@ export class MobileShare {
       }
     } catch (error) {
       console.warn('Native sharing failed:', error);
-      
+
       if (fallback) {
         return this.fallbackShare(data, { copyToClipboard, showToast });
       }
-      
+
       return false;
     }
   }
@@ -70,11 +70,11 @@ export class MobileShare {
       // Try to copy URL to clipboard
       if (copyToClipboard && data.url) {
         await navigator.clipboard.writeText(data.url);
-        
+
         if (showToast) {
           this.showToast('Link copied to clipboard!');
         }
-        
+
         return true;
       }
 
@@ -83,11 +83,11 @@ export class MobileShare {
       return true;
     } catch (error) {
       console.error('Fallback sharing failed:', error);
-      
+
       if (showToast) {
         this.showToast('Sharing not available on this device');
       }
-      
+
       return false;
     }
   }
@@ -95,7 +95,8 @@ export class MobileShare {
   private openShareDialog(data: ShareData): void {
     // Create a temporary share dialog
     const shareDialog = document.createElement('div');
-    shareDialog.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+    shareDialog.className =
+      'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
     shareDialog.innerHTML = `
       <div class="bg-white rounded-lg p-6 max-w-sm w-full">
         <h3 class="text-lg font-semibold mb-4">Share Poll</h3>
@@ -133,7 +134,7 @@ export class MobileShare {
     });
 
     // Close on backdrop click
-    shareDialog.addEventListener('click', (e) => {
+    shareDialog.addEventListener('click', e => {
       if (e.target === shareDialog) {
         document.body.removeChild(shareDialog);
       }
@@ -143,11 +144,12 @@ export class MobileShare {
   private showToast(message: string): void {
     // Create toast notification
     const toast = document.createElement('div');
-    toast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg z-50';
+    toast.className =
+      'fixed top-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg z-50';
     toast.textContent = message;
-    
+
     document.body.appendChild(toast);
-    
+
     // Remove toast after 3 seconds
     setTimeout(() => {
       if (document.body.contains(toast)) {
@@ -166,7 +168,10 @@ export class MobileShare {
     return this.share(shareData);
   }
 
-  public async shareProfile(userId: string, userName: string): Promise<boolean> {
+  public async shareProfile(
+    userId: string,
+    userName: string
+  ): Promise<boolean> {
     const shareData: ShareData = {
       title: `Check out ${userName}'s profile on ThisOrThat`,
       text: `Follow ${userName} on ThisOrThat to see their polls!`,
@@ -234,37 +239,40 @@ export class MobileShare {
 export function useMobileShare() {
   const shareService = MobileShare.getInstance();
 
-  const share = useCallback(async (
-    data: ShareData,
-    options?: ShareOptions
-  ): Promise<boolean> => {
-    return shareService.share(data, options);
-  }, [shareService]);
+  const share = useCallback(
+    async (data: ShareData, options?: ShareOptions): Promise<boolean> => {
+      return shareService.share(data, options);
+    },
+    [shareService]
+  );
 
-  const sharePoll = useCallback(async (
-    pollId: string,
-    pollTitle: string
-  ): Promise<boolean> => {
-    return shareService.sharePoll(pollId, pollTitle);
-  }, [shareService]);
+  const sharePoll = useCallback(
+    async (pollId: string, pollTitle: string): Promise<boolean> => {
+      return shareService.sharePoll(pollId, pollTitle);
+    },
+    [shareService]
+  );
 
-  const shareProfile = useCallback(async (
-    userId: string,
-    userName: string
-  ): Promise<boolean> => {
-    return shareService.shareProfile(userId, userName);
-  }, [shareService]);
+  const shareProfile = useCallback(
+    async (userId: string, userName: string): Promise<boolean> => {
+      return shareService.shareProfile(userId, userName);
+    },
+    [shareService]
+  );
 
   const shareApp = useCallback(async (): Promise<boolean> => {
     return shareService.shareApp();
   }, [shareService]);
 
-  const shareToSocial = useCallback(async (
-    platform: 'twitter' | 'facebook' | 'linkedin' | 'whatsapp' | 'telegram',
-    data: ShareData
-  ): Promise<boolean> => {
-    return shareService.shareToSocial(platform, data);
-  }, [shareService]);
+  const shareToSocial = useCallback(
+    async (
+      platform: 'twitter' | 'facebook' | 'linkedin' | 'whatsapp' | 'telegram',
+      data: ShareData
+    ): Promise<boolean> => {
+      return shareService.shareToSocial(platform, data);
+    },
+    [shareService]
+  );
 
   return {
     share,

@@ -3,9 +3,11 @@ import { Database } from '@/types/database';
 
 type PollCategory = Database['public']['Tables']['poll_categories']['Row'];
 type PollTag = Database['public']['Tables']['poll_tags']['Row'];
-type UserFeedPreferences = Database['public']['Tables']['user_feed_preferences']['Row'];
+type UserFeedPreferences =
+  Database['public']['Tables']['user_feed_preferences']['Row'];
 type PollMetrics = Database['public']['Tables']['poll_metrics']['Row'];
-type UserPollInteraction = Database['public']['Tables']['user_poll_interactions']['Row'];
+type UserPollInteraction =
+  Database['public']['Tables']['user_poll_interactions']['Row'];
 
 export interface FeedPoll {
   poll_id: string;
@@ -49,7 +51,12 @@ export interface FeedPreferences {
   preferred_tags: string[];
   excluded_categories: string[];
   excluded_tags: string[];
-  feed_algorithm: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+  feed_algorithm:
+    | 'chronological'
+    | 'popular'
+    | 'trending'
+    | 'personalized'
+    | 'mixed';
   show_following_only: boolean;
   show_public_only: boolean;
 }
@@ -72,7 +79,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -210,7 +219,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return null;
       }
@@ -254,17 +265,17 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
 
-      const { error } = await supabase
-        .from('user_feed_preferences')
-        .upsert({
-          user_id: user.id,
-          ...preferences,
-        });
+      const { error } = await supabase.from('user_feed_preferences').upsert({
+        user_id: user.id,
+        ...preferences,
+      });
 
       if (error) {
         console.error('Error updating feed preferences:', error);
@@ -288,18 +299,18 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
 
-      const { error } = await supabase
-        .from('user_poll_interactions')
-        .upsert({
-          user_id: user.id,
-          poll_id: pollId,
-          interaction_type: interactionType,
-        });
+      const { error } = await supabase.from('user_poll_interactions').upsert({
+        user_id: user.id,
+        poll_id: pollId,
+        interaction_type: interactionType,
+      });
 
       if (error) {
         console.error('Error tracking interaction:', error);
@@ -325,17 +336,17 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
 
-      const { error } = await supabase
-        .from('saved_polls')
-        .insert({
-          user_id: user.id,
-          poll_id: pollId,
-        });
+      const { error } = await supabase.from('saved_polls').insert({
+        user_id: user.id,
+        poll_id: pollId,
+      });
 
       if (error) {
         console.error('Error saving poll:', error);
@@ -359,7 +370,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
@@ -389,18 +402,18 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
 
-      const { error } = await supabase
-        .from('hidden_polls')
-        .insert({
-          user_id: user.id,
-          poll_id: pollId,
-          reason: reason || null,
-        });
+      const { error } = await supabase.from('hidden_polls').insert({
+        user_id: user.id,
+        poll_id: pollId,
+        reason: reason || null,
+      });
 
       if (error) {
         console.error('Error hiding poll:', error);
@@ -427,14 +440,17 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return [];
       }
 
       const { data, error } = await supabase
         .from('saved_polls')
-        .select(`
+        .select(
+          `
           poll_id,
           created_at,
           polls!saved_polls_poll_id_fkey(
@@ -450,7 +466,8 @@ export class FeedService {
             privacy_level,
             created_at
           )
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -494,7 +511,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return [];
       }
@@ -515,10 +534,11 @@ export class FeedService {
 
       // Get polls with similar categories/tags to user's voted polls
       const votedPollIds = interactions.map(i => i.poll_id);
-      
+
       const { data, error } = await supabase
         .from('polls')
-        .select(`
+        .select(
+          `
           id,
           creator_id,
           option_a_image_url,
@@ -535,7 +555,8 @@ export class FeedService {
             trending_score,
             popularity_score
           )
-        `)
+        `
+        )
         .eq('status', 'active')
         .eq('is_public', true)
         .not('id', 'in', `(${votedPollIds.join(',')})`)
@@ -580,7 +601,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return null;
       }
@@ -614,7 +637,9 @@ export class FeedService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return false;
       }
@@ -622,15 +647,13 @@ export class FeedService {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() + 1);
 
-      const { error } = await supabase
-        .from('feed_cache')
-        .upsert({
-          user_id: user.id,
-          feed_type: feedType,
-          poll_ids: pollIds,
-          algorithm_version: '1.0',
-          expires_at: expiresAt.toISOString(),
-        });
+      const { error } = await supabase.from('feed_cache').upsert({
+        user_id: user.id,
+        feed_type: feedType,
+        poll_ids: pollIds,
+        algorithm_version: '1.0',
+        expires_at: expiresAt.toISOString(),
+      });
 
       if (error) {
         console.error('Error setting feed cache:', error);

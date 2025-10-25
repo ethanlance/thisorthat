@@ -8,7 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   User,
@@ -24,7 +30,11 @@ import {
   Star,
   X,
 } from 'lucide-react';
-import { ProfileService, UserProfileData, ProfileUpdateData } from '@/lib/services/profile';
+import {
+  ProfileService,
+  UserProfileData,
+  ProfileUpdateData,
+} from '@/lib/services/profile';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileEditorProps {
@@ -33,7 +43,11 @@ interface ProfileEditorProps {
   className?: string;
 }
 
-export default function ProfileEditor({ onSave, onCancel, className }: ProfileEditorProps) {
+export default function ProfileEditor({
+  onSave,
+  onCancel,
+  className,
+}: ProfileEditorProps) {
   const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +114,8 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
   const handleInterestRemove = (interestToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      interests: prev.interests?.filter(interest => interest !== interestToRemove) || [],
+      interests:
+        prev.interests?.filter(interest => interest !== interestToRemove) || [],
     }));
   };
 
@@ -242,7 +257,9 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
               <Avatar className="h-20 w-20">
                 <AvatarImage src={avatarPreview || undefined} />
                 <AvatarFallback className="text-xl">
-                  {formData.display_name ? getInitials(formData.display_name) : 'U'}
+                  {formData.display_name
+                    ? getInitials(formData.display_name)
+                    : 'U'}
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -284,7 +301,9 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
                 <Input
                   id="display_name"
                   value={formData.display_name || ''}
-                  onChange={(e) => handleInputChange('display_name', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('display_name', e.target.value)
+                  }
                   placeholder="Enter your display name"
                   maxLength={50}
                   required
@@ -298,7 +317,9 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
                 <Label htmlFor="privacy_level">Privacy Level</Label>
                 <Select
                   value={formData.privacy_level || 'public'}
-                  onValueChange={(value) => handleInputChange('privacy_level', value)}
+                  onValueChange={value =>
+                    handleInputChange('privacy_level', value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -332,7 +353,7 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
               <Textarea
                 id="bio"
                 value={formData.bio || ''}
-                onChange={(e) => handleInputChange('bio', e.target.value)}
+                onChange={e => handleInputChange('bio', e.target.value)}
                 placeholder="Tell us about yourself..."
                 rows={4}
                 maxLength={500}
@@ -356,9 +377,9 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
             <div className="flex space-x-2">
               <Input
                 value={newInterest}
-                onChange={(e) => setNewInterest(e.target.value)}
+                onChange={e => setNewInterest(e.target.value)}
                 placeholder="Add an interest..."
-                onKeyPress={(e) => {
+                onKeyPress={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleInterestAdd();
@@ -377,7 +398,11 @@ export default function ProfileEditor({ onSave, onCancel, className }: ProfileEd
             {formData.interests && formData.interests.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {formData.interests.map((interest, index) => (
-                  <Badge key={index} variant="secondary" className="flex items-center space-x-1">
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <span>{interest}</span>
                     <button
                       type="button"

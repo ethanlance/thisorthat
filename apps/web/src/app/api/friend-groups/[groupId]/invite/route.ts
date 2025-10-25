@@ -23,14 +23,14 @@ export async function POST(
 
     // Validate required fields
     if (!email || !email.trim()) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Check if user is member of the group
-    const isMember = await FriendGroupService.isUserGroupMember(groupId, user.id);
+    const isMember = await FriendGroupService.isUserGroupMember(
+      groupId,
+      user.id
+    );
     if (!isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

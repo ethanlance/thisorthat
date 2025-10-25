@@ -45,19 +45,22 @@ export default function OptimizedImage({
   const [isInView, setIsInView] = useState(priority);
   const [hasError, setHasError] = useState(false);
   const [loadStartTime, setLoadStartTime] = useState<number | null>(null);
-  
+
   const { recordImageLoadTime } = usePerformance();
   const imageRef = useRef<HTMLDivElement>(null);
 
   const { observe, unobserve } = useIntersectionObserver(
-    useCallback((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setIsInView(true);
-          unobserve();
-        }
-      });
-    }, [unobserve]),
+    useCallback(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            unobserve();
+          }
+        });
+      },
+      [unobserve]
+    ),
     {
       rootMargin: '50px',
       threshold: 0.1,
@@ -73,12 +76,12 @@ export default function OptimizedImage({
   const handleLoad = useCallback(() => {
     setIsLoaded(true);
     setHasError(false);
-    
+
     if (loadStartTime) {
       const loadTime = Date.now() - loadStartTime;
       recordImageLoadTime(src, loadTime);
     }
-    
+
     onLoad?.();
   }, [loadStartTime, recordImageLoadTime, src, onLoad]);
 
@@ -93,14 +96,18 @@ export default function OptimizedImage({
   }, []);
 
   // Generate responsive sizes if not provided
-  const responsiveSizes = sizes || `
+  const responsiveSizes =
+    sizes ||
+    `
     (max-width: 768px) 100vw,
     (max-width: 1200px) 50vw,
     33vw
   `;
 
   // Generate blur placeholder if not provided
-  const defaultBlurDataURL = blurDataURL || 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
+  const defaultBlurDataURL =
+    blurDataURL ||
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
 
   if (hasError) {
     return (
@@ -125,10 +132,7 @@ export default function OptimizedImage({
     return (
       <div
         ref={imageRef}
-        className={cn(
-          'bg-muted animate-pulse',
-          className
-        )}
+        className={cn('bg-muted animate-pulse', className)}
         style={{ width, height, ...style }}
       >
         <div className="w-full h-full bg-muted-foreground/20 rounded" />
@@ -165,7 +169,7 @@ export default function OptimizedImage({
           objectFit: 'cover',
         }}
       />
-      
+
       {/* Loading placeholder */}
       {!isLoaded && (
         <div className="absolute inset-0 bg-muted animate-pulse">

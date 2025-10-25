@@ -4,17 +4,26 @@ import { PerformanceService } from '@/lib/performance/PerformanceService';
 export function usePerformance() {
   const performanceService = PerformanceService.getInstance();
 
-  const recordMetric = useCallback((name: string, value: number) => {
-    performanceService.recordMetric(name as any, value);
-  }, [performanceService]);
+  const recordMetric = useCallback(
+    (name: string, value: number) => {
+      performanceService.recordMetric(name as any, value);
+    },
+    [performanceService]
+  );
 
-  const recordApiResponseTime = useCallback((url: string, duration: number) => {
-    performanceService.recordApiResponseTime(url, duration);
-  }, [performanceService]);
+  const recordApiResponseTime = useCallback(
+    (url: string, duration: number) => {
+      performanceService.recordApiResponseTime(url, duration);
+    },
+    [performanceService]
+  );
 
-  const recordImageLoadTime = useCallback((src: string, duration: number) => {
-    performanceService.recordImageLoadTime(src, duration);
-  }, [performanceService]);
+  const recordImageLoadTime = useCallback(
+    (src: string, duration: number) => {
+      performanceService.recordImageLoadTime(src, duration);
+    },
+    [performanceService]
+  );
 
   const getPerformanceScore = useCallback(() => {
     return performanceService.getPerformanceScore();
@@ -66,13 +75,13 @@ export function useLazyLoading<T>(
     if (isLoading || !hasMore) return;
 
     setIsLoading(true);
-    
+
     // Simulate loading delay
     setTimeout(() => {
       const startIndex = currentPage * pageSize;
       const endIndex = startIndex + pageSize;
       const newItems = data.slice(startIndex, endIndex);
-      
+
       setItems(prev => [...prev, ...newItems]);
       setCurrentPage(prev => prev + 1);
       setIsLoading(false);
@@ -154,12 +163,15 @@ export function useThrottle<T extends (...args: any[]) => any>(
 ): T {
   const lastRun = useRef(Date.now());
 
-  return useCallback((...args: Parameters<T>) => {
-    if (Date.now() - lastRun.current >= delay) {
-      callback(...args);
-      lastRun.current = Date.now();
-    }
-  }, [callback, delay]) as T;
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (Date.now() - lastRun.current >= delay) {
+        callback(...args);
+        lastRun.current = Date.now();
+      }
+    },
+    [callback, delay]
+  ) as T;
 }
 
 export function usePerformanceMonitoring() {

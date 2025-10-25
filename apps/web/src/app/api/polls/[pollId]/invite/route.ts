@@ -23,10 +23,7 @@ export async function POST(
 
     // Validate required fields
     if (!email || !email.trim()) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Check if user is poll creator

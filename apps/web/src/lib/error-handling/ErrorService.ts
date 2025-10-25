@@ -11,7 +11,13 @@ export interface ErrorContext {
 
 export interface ErrorReport {
   id: string;
-  type: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+  type:
+    | 'network'
+    | 'validation'
+    | 'system'
+    | 'authentication'
+    | 'authorization'
+    | 'unknown';
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   userMessage: string;
@@ -57,7 +63,10 @@ export class ErrorService {
   private initializeErrorHandling() {
     // Global error handlers
     window.addEventListener('error', this.handleGlobalError.bind(this));
-    window.addEventListener('unhandledrejection', this.handleUnhandledRejection.bind(this));
+    window.addEventListener(
+      'unhandledrejection',
+      this.handleUnhandledRejection.bind(this)
+    );
   }
 
   private handleGlobalError(event: ErrorEvent) {
@@ -94,7 +103,9 @@ export class ErrorService {
     });
   }
 
-  public logError(errorData: Omit<ErrorReport, 'id' | 'resolved' | 'createdAt' | 'updatedAt'>): string {
+  public logError(
+    errorData: Omit<ErrorReport, 'id' | 'resolved' | 'createdAt' | 'updatedAt'>
+  ): string {
     const errorReport: ErrorReport = {
       id: this.generateId(),
       ...errorData,
@@ -125,17 +136,23 @@ export class ErrorService {
     }
 
     // Authentication errors
-    if (error.message.includes('401') || error.message.includes('unauthorized')) {
+    if (
+      error.message.includes('401') ||
+      error.message.includes('unauthorized')
+    ) {
       return 'Your session has expired. Please log in again.';
     }
 
     // Authorization errors
     if (error.message.includes('403') || error.message.includes('forbidden')) {
-      return 'You don\'t have permission to perform this action.';
+      return "You don't have permission to perform this action.";
     }
 
     // Validation errors
-    if (error.message.includes('validation') || error.message.includes('invalid')) {
+    if (
+      error.message.includes('validation') ||
+      error.message.includes('invalid')
+    ) {
       return 'Please check your input and try again.';
     }
 
@@ -146,7 +163,7 @@ export class ErrorService {
 
     // Rate limiting
     if (error.message.includes('429') || error.message.includes('rate limit')) {
-      return 'You\'re making requests too quickly. Please wait a moment and try again.';
+      return "You're making requests too quickly. Please wait a moment and try again.";
     }
 
     // Server errors
@@ -158,7 +175,10 @@ export class ErrorService {
     return 'Something went wrong. Please try again.';
   }
 
-  public getErrorRecoveryOptions(error: Error, context?: ErrorContext): string[] {
+  public getErrorRecoveryOptions(
+    error: Error,
+    context?: ErrorContext
+  ): string[] {
     const options: string[] = [];
 
     // Network errors
@@ -169,13 +189,19 @@ export class ErrorService {
     }
 
     // Authentication errors
-    if (error.message.includes('401') || error.message.includes('unauthorized')) {
+    if (
+      error.message.includes('401') ||
+      error.message.includes('unauthorized')
+    ) {
       options.push('Log in again');
       options.push('Clear your browser cache');
     }
 
     // Validation errors
-    if (error.message.includes('validation') || error.message.includes('invalid')) {
+    if (
+      error.message.includes('validation') ||
+      error.message.includes('invalid')
+    ) {
       options.push('Check your input');
       options.push('Try with different values');
     }
@@ -221,7 +247,9 @@ export class ErrorService {
     throw lastError!;
   }
 
-  public async submitUserFeedback(feedback: Omit<UserFeedback, 'id' | 'votes' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  public async submitUserFeedback(
+    feedback: Omit<UserFeedback, 'id' | 'votes' | 'createdAt' | 'updatedAt'>
+  ): Promise<string> {
     const userFeedback: UserFeedback = {
       id: this.generateId(),
       ...feedback,
@@ -279,15 +307,21 @@ export class ErrorService {
     const total = this.errorReports.length;
     const resolved = this.errorReports.filter(r => r.resolved).length;
 
-    const byType = this.errorReports.reduce((acc, report) => {
-      acc[report.type] = (acc[report.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byType = this.errorReports.reduce(
+      (acc, report) => {
+        acc[report.type] = (acc[report.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-    const bySeverity = this.errorReports.reduce((acc, report) => {
-      acc[report.severity] = (acc[report.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const bySeverity = this.errorReports.reduce(
+      (acc, report) => {
+        acc[report.severity] = (acc[report.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return { total, resolved, byType, bySeverity };
   }
@@ -296,7 +330,9 @@ export class ErrorService {
     return Math.random().toString(36).substr(2, 9);
   }
 
-  private async sendToMonitoringService(errorReport: ErrorReport): Promise<void> {
+  private async sendToMonitoringService(
+    errorReport: ErrorReport
+  ): Promise<void> {
     // In a real implementation, this would send to services like Sentry, LogRocket, etc.
     try {
       await fetch('/api/errors', {

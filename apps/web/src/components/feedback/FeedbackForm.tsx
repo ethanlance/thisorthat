@@ -6,8 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -19,7 +24,6 @@ import {
   Loader2,
   CheckCircle,
   AlertTriangle,
-  Upload,
   X,
 } from 'lucide-react';
 import { ErrorService } from '@/lib/error-handling/ErrorService';
@@ -30,7 +34,7 @@ interface FeedbackFormProps {
   className?: string;
 }
 
-export default function FeedbackForm({ onSuccess, onCancel, className }: FeedbackFormProps) {
+function FeedbackForm({ onSuccess, onCancel, className }: FeedbackFormProps) {
   const [formData, setFormData] = useState({
     type: 'general' as 'bug' | 'feature' | 'improvement' | 'general',
     title: '',
@@ -48,10 +52,30 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
   const errorService = ErrorService.getInstance();
 
   const feedbackTypes = [
-    { value: 'bug', label: 'Bug Report', icon: Bug, description: 'Report a problem or error' },
-    { value: 'feature', label: 'Feature Request', icon: Lightbulb, description: 'Suggest a new feature' },
-    { value: 'improvement', label: 'Improvement', icon: Star, description: 'Suggest an improvement' },
-    { value: 'general', label: 'General Feedback', icon: MessageSquare, description: 'General comments or questions' },
+    {
+      value: 'bug',
+      label: 'Bug Report',
+      icon: Bug,
+      description: 'Report a problem or error',
+    },
+    {
+      value: 'feature',
+      label: 'Feature Request',
+      icon: Lightbulb,
+      description: 'Suggest a new feature',
+    },
+    {
+      value: 'improvement',
+      label: 'Improvement',
+      icon: Star,
+      description: 'Suggest an improvement',
+    },
+    {
+      value: 'general',
+      label: 'General Feedback',
+      icon: MessageSquare,
+      description: 'General comments or questions',
+    },
   ];
 
   const categories = [
@@ -115,18 +139,24 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => {
       const maxSize = 10 * 1024 * 1024; // 10MB
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf'];
-      
+      const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'text/plain',
+        'application/pdf',
+      ];
+
       if (file.size > maxSize) {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
         return false;
       }
-      
+
       if (!allowedTypes.includes(file.type)) {
         alert(`File ${file.name} has an unsupported type.`);
         return false;
       }
-      
+
       return true;
     });
 
@@ -182,7 +212,8 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
           <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Feedback Submitted!</h3>
           <p className="text-muted-foreground mb-4">
-            Thank you for your feedback. We'll review it and get back to you if needed.
+            Thank you for your feedback. We&apos;ll review it and get back to
+            you if needed.
           </p>
           <div className="flex space-x-2">
             <Button onClick={() => window.location.reload()}>
@@ -213,7 +244,7 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
           <div className="space-y-3">
             <Label>Feedback Type *</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {feedbackTypes.map((type) => {
+              {feedbackTypes.map(type => {
                 const Icon = type.icon;
                 return (
                   <div
@@ -229,7 +260,9 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
                       <Icon className="h-4 w-4" />
                       <span className="font-medium">{type.label}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">{type.description}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {type.description}
+                    </p>
                   </div>
                 );
               })}
@@ -242,7 +275,7 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
+              onChange={e => handleInputChange('title', e.target.value)}
               placeholder="Brief description of your feedback"
               required
             />
@@ -254,7 +287,7 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={e => handleInputChange('description', e.target.value)}
               placeholder="Please provide detailed information about your feedback..."
               rows={4}
               required
@@ -265,7 +298,10 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="priority">Priority</Label>
-              <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
+              <Select
+                value={formData.priority}
+                onValueChange={value => handleInputChange('priority', value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -280,12 +316,15 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
 
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
-              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+              <Select
+                value={formData.category}
+                onValueChange={value => handleInputChange('category', value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
+                  {categories.map(category => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
@@ -298,10 +337,10 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
           {/* Tags */}
           <div className="space-y-3">
             <Label>Tags</Label>
-            
+
             {/* Common Tags */}
             <div className="flex flex-wrap gap-2">
-              {commonTags.map((tag) => (
+              {commonTags.map(tag => (
                 <Button
                   key={tag}
                   type="button"
@@ -318,16 +357,20 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
             <div className="flex space-x-2">
               <Input
                 value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
+                onChange={e => setNewTag(e.target.value)}
                 placeholder="Add custom tag"
-                onKeyPress={(e) => {
+                onKeyPress={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleTagAdd();
                   }
                 }}
               />
-              <Button type="button" onClick={handleTagAdd} disabled={!newTag.trim()}>
+              <Button
+                type="button"
+                onClick={handleTagAdd}
+                disabled={!newTag.trim()}
+              >
                 Add
               </Button>
             </div>
@@ -335,8 +378,12 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
             {/* Selected Tags */}
             {formData.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {formData.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
+                {formData.tags.map(tag => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <span>{tag}</span>
                     <X
                       className="h-3 w-3 cursor-pointer"
@@ -361,11 +408,14 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
               <p className="text-xs text-muted-foreground">
                 You can attach images, text files, or PDFs (max 10MB each)
               </p>
-              
+
               {attachments.length > 0 && (
                 <div className="space-y-1">
                   {attachments.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 bg-muted rounded"
+                    >
                       <span className="text-sm">{file.name}</span>
                       <Button
                         type="button"
@@ -411,3 +461,6 @@ export default function FeedbackForm({ onSuccess, onCancel, className }: Feedbac
     </Card>
   );
 }
+
+export { FeedbackForm };
+export default FeedbackForm;

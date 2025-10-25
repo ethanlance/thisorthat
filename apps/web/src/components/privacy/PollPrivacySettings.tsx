@@ -5,7 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -59,7 +65,9 @@ export default function PollPrivacySettings({
   disabled = false,
   className,
 }: PollPrivacySettingsProps) {
-  const [privacyLevel, setPrivacyLevel] = useState<'public' | 'private' | 'group'>('public');
+  const [privacyLevel, setPrivacyLevel] = useState<
+    'public' | 'private' | 'group'
+  >('public');
   const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [friendGroups, setFriendGroups] = useState<FriendGroup[]>([]);
   const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
@@ -93,7 +101,14 @@ export default function PollPrivacySettings({
       custom_message: customMessage || undefined,
     };
     onPrivacyChange(settings);
-  }, [privacyLevel, selectedGroup, invitedUsers, customMessage, accessExpires, onPrivacyChange]);
+  }, [
+    privacyLevel,
+    selectedGroup,
+    invitedUsers,
+    customMessage,
+    accessExpires,
+    onPrivacyChange,
+  ]);
 
   const loadFriendGroups = async () => {
     try {
@@ -170,16 +185,23 @@ export default function PollPrivacySettings({
       <CardContent className="space-y-6">
         {/* Privacy Level Selection */}
         <div className="space-y-3">
-          <Label className="text-base font-medium">Who can access this poll?</Label>
+          <Label className="text-base font-medium">
+            Who can access this poll?
+          </Label>
           <RadioGroup
             value={privacyLevel}
-            onValueChange={(value) => setPrivacyLevel(value as 'public' | 'private' | 'group')}
+            onValueChange={value =>
+              setPrivacyLevel(value as 'public' | 'private' | 'group')
+            }
             disabled={disabled}
           >
             <div className="flex items-start space-x-3 p-3 border rounded-lg">
               <RadioGroupItem value="public" id="public" className="mt-1" />
               <div className="flex-1">
-                <Label htmlFor="public" className="flex items-center space-x-2 cursor-pointer">
+                <Label
+                  htmlFor="public"
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
                   {getPrivacyIcon('public')}
                   <span className="font-medium">Public</span>
                 </Label>
@@ -192,7 +214,10 @@ export default function PollPrivacySettings({
             <div className="flex items-start space-x-3 p-3 border rounded-lg">
               <RadioGroupItem value="private" id="private" className="mt-1" />
               <div className="flex-1">
-                <Label htmlFor="private" className="flex items-center space-x-2 cursor-pointer">
+                <Label
+                  htmlFor="private"
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
                   {getPrivacyIcon('private')}
                   <span className="font-medium">Private</span>
                 </Label>
@@ -205,7 +230,10 @@ export default function PollPrivacySettings({
             <div className="flex items-start space-x-3 p-3 border rounded-lg">
               <RadioGroupItem value="group" id="group" className="mt-1" />
               <div className="flex-1">
-                <Label htmlFor="group" className="flex items-center space-x-2 cursor-pointer">
+                <Label
+                  htmlFor="group"
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
                   {getPrivacyIcon('group')}
                   <span className="font-medium">Friend Group</span>
                 </Label>
@@ -246,7 +274,8 @@ export default function PollPrivacySettings({
               <Alert>
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  You don't have any friend groups yet. Create one to share polls with specific groups of friends.
+                  You don&apos;t have any friend groups yet. Create one to share
+                  polls with specific groups of friends.
                 </AlertDescription>
               </Alert>
             )}
@@ -263,7 +292,7 @@ export default function PollPrivacySettings({
                   id="invite-users"
                   placeholder="Enter email or username"
                   value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
+                  onChange={e => setUserInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   disabled={disabled}
                 />
@@ -311,7 +340,7 @@ export default function PollPrivacySettings({
                 id="custom-message"
                 placeholder="Add a personal message to your invitations..."
                 value={customMessage}
-                onChange={(e) => setCustomMessage(e.target.value)}
+                onChange={e => setCustomMessage(e.target.value)}
                 disabled={disabled}
                 rows={3}
                 maxLength={500}
@@ -332,7 +361,7 @@ export default function PollPrivacySettings({
               id="access-expires"
               type="datetime-local"
               value={accessExpires}
-              onChange={(e) => setAccessExpires(e.target.value)}
+              onChange={e => setAccessExpires(e.target.value)}
               disabled={disabled}
             />
           </div>
@@ -349,16 +378,22 @@ export default function PollPrivacySettings({
           </div>
           <div className="text-sm text-muted-foreground">
             {privacyLevel === 'public' && (
-              <p>This poll will be visible to everyone and can be shared publicly.</p>
+              <p>
+                This poll will be visible to everyone and can be shared
+                publicly.
+              </p>
             )}
             {privacyLevel === 'private' && (
               <p>
-                This poll will only be accessible to you and {invitedUsers.length} invited user{invitedUsers.length !== 1 ? 's' : ''}.
+                This poll will only be accessible to you and{' '}
+                {invitedUsers.length} invited user
+                {invitedUsers.length !== 1 ? 's' : ''}.
               </p>
             )}
             {privacyLevel === 'group' && selectedGroup && (
               <p>
-                This poll will be accessible to all members of the selected friend group.
+                This poll will be accessible to all members of the selected
+                friend group.
               </p>
             )}
             {privacyLevel === 'group' && !selectedGroup && (

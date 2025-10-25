@@ -21,7 +21,12 @@ export async function POST(
     const body = await request.json();
     const { interaction_type, reason } = body;
 
-    if (!interaction_type || !['view', 'vote', 'share', 'comment', 'save', 'hide'].includes(interaction_type)) {
+    if (
+      !interaction_type ||
+      !['view', 'vote', 'share', 'comment', 'save', 'hide'].includes(
+        interaction_type
+      )
+    ) {
       return NextResponse.json(
         { error: 'Invalid interaction type' },
         { status: 400 }
@@ -84,10 +89,7 @@ export async function DELETE(
         success = await FeedService.unsavePoll(pollId);
         break;
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
     if (!success) {

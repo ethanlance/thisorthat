@@ -46,9 +46,15 @@ export class TouchGestures {
   private initializeTouchHandlers() {
     if (typeof window === 'undefined') return;
 
-    document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-    document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
-    document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+    document.addEventListener('touchstart', this.handleTouchStart.bind(this), {
+      passive: false,
+    });
+    document.addEventListener('touchmove', this.handleTouchMove.bind(this), {
+      passive: false,
+    });
+    document.addEventListener('touchend', this.handleTouchEnd.bind(this), {
+      passive: false,
+    });
   }
 
   private handleTouchStart(event: TouchEvent) {
@@ -126,7 +132,11 @@ export class TouchGestures {
     }
   }
 
-  private triggerSwipeEvent(direction: 'left' | 'right' | 'up' | 'down', distance: number, velocity: number) {
+  private triggerSwipeEvent(
+    direction: 'left' | 'right' | 'up' | 'down',
+    distance: number,
+    velocity: number
+  ) {
     const swipeEvent = new CustomEvent('swipe', {
       detail: {
         direction,
@@ -170,21 +180,25 @@ export class TouchGestures {
   }
 
   public addSwipeListener(
-    callback: (direction: 'left' | 'right' | 'up' | 'down', distance: number, velocity: number) => void,
+    callback: (
+      direction: 'left' | 'right' | 'up' | 'down',
+      distance: number,
+      velocity: number
+    ) => void,
     options: TouchGestureOptions = {}
   ) {
     const { threshold = 50, velocity = 0.3 } = options;
 
     const listener = (event: CustomEvent) => {
       const { direction, distance, velocity: gestureVelocity } = event.detail;
-      
+
       if (distance >= threshold && gestureVelocity >= velocity) {
         callback(direction, distance, gestureVelocity);
       }
     };
 
     document.addEventListener('swipe', listener as EventListener);
-    
+
     return () => {
       document.removeEventListener('swipe', listener as EventListener);
     };
@@ -200,7 +214,7 @@ export class TouchGestures {
     };
 
     document.addEventListener('tap', listener as EventListener);
-    
+
     return () => {
       document.removeEventListener('tap', listener as EventListener);
     };
@@ -216,7 +230,7 @@ export class TouchGestures {
     };
 
     document.addEventListener('longpress', listener as EventListener);
-    
+
     return () => {
       document.removeEventListener('longpress', listener as EventListener);
     };
@@ -235,7 +249,7 @@ export class TouchGestures {
         const touch2 = event.touches[1];
         initialDistance = Math.sqrt(
           Math.pow(touch2.clientX - touch1.clientX, 2) +
-          Math.pow(touch2.clientY - touch1.clientY, 2)
+            Math.pow(touch2.clientY - touch1.clientY, 2)
         );
         initialScale = 1;
       }
@@ -247,22 +261,24 @@ export class TouchGestures {
         const touch2 = event.touches[1];
         const currentDistance = Math.sqrt(
           Math.pow(touch2.clientX - touch1.clientX, 2) +
-          Math.pow(touch2.clientY - touch1.clientY, 2)
+            Math.pow(touch2.clientY - touch1.clientY, 2)
         );
-        
+
         const scale = currentDistance / initialDistance;
         const center = {
           x: (touch1.clientX + touch2.clientX) / 2,
           y: (touch1.clientY + touch2.clientY) / 2,
         };
-        
+
         callback(scale, center);
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: false,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    
+
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
@@ -289,7 +305,7 @@ export class TouchGestures {
       if (isPulling) {
         currentY = event.touches[0].clientY;
         const pullDistance = currentY - startY;
-        
+
         if (pullDistance > threshold) {
           callback();
           isPulling = false;
@@ -301,10 +317,12 @@ export class TouchGestures {
       isPulling = false;
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: false,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
-    
+
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);

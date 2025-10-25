@@ -6,7 +6,8 @@ type PollInsert = Database['public']['Tables']['polls']['Insert'];
 type PollShare = Database['public']['Tables']['poll_shares']['Row'];
 type PollShareInsert = Database['public']['Tables']['poll_shares']['Insert'];
 type PollInvitation = Database['public']['Tables']['poll_invitations']['Row'];
-type PollInvitationInsert = Database['public']['Tables']['poll_invitations']['Insert'];
+type PollInvitationInsert =
+  Database['public']['Tables']['poll_invitations']['Insert'];
 
 export interface PollPrivacySettings {
   privacy_level: 'public' | 'private' | 'group';
@@ -37,13 +38,18 @@ export class PollPrivacyService {
    * Create poll with privacy settings
    */
   static async createPollWithPrivacy(
-    pollData: Omit<PollInsert, 'privacy_level' | 'friend_group_id' | 'access_expires_at'>,
+    pollData: Omit<
+      PollInsert,
+      'privacy_level' | 'friend_group_id' | 'access_expires_at'
+    >,
     privacySettings: PollPrivacySettings
   ): Promise<Poll | null> {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -68,7 +74,10 @@ export class PollPrivacyService {
       }
 
       // If private poll, create shares for invited users
-      if (privacySettings.privacy_level === 'private' && privacySettings.invited_users?.length) {
+      if (
+        privacySettings.privacy_level === 'private' &&
+        privacySettings.invited_users?.length
+      ) {
         await this.inviteUsersToPoll(
           poll.id,
           privacySettings.invited_users,
@@ -114,11 +123,16 @@ export class PollPrivacyService {
   /**
    * Check if user has access to poll
    */
-  static async userHasPollAccess(pollId: string, userId?: string): Promise<boolean> {
+  static async userHasPollAccess(
+    pollId: string,
+    userId?: string
+  ): Promise<boolean> {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const targetUserId = userId || user?.id;
 
       if (!targetUserId) {
@@ -151,11 +165,13 @@ export class PollPrivacyService {
 
       const { data, error } = await supabase
         .from('poll_shares')
-        .select(`
+        .select(
+          `
           *,
           display_name:profiles(display_name),
           email:profiles(email)
-        `)
+        `
+        )
         .eq('poll_id', pollId)
         .eq('is_active', true)
         .order('shared_at', { ascending: false });
@@ -192,7 +208,9 @@ export class PollPrivacyService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -224,17 +242,21 @@ export class PollPrivacyService {
   /**
    * Get poll invitations
    */
-  static async getPollInvitations(pollId: string): Promise<PollInvitationWithDetails[]> {
+  static async getPollInvitations(
+    pollId: string
+  ): Promise<PollInvitationWithDetails[]> {
     try {
       const supabase = createClient();
 
       const { data, error } = await supabase
         .from('poll_invitations')
-        .select(`
+        .select(
+          `
           *,
           poll_title:polls(option_a_label, option_b_label),
           inviter_name:profiles!poll_invitations_invited_by_fkey(display_name)
-        `)
+        `
+        )
         .eq('poll_id', pollId)
         .order('created_at', { ascending: false });
 
@@ -261,18 +283,22 @@ export class PollPrivacyService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         return [];
       }
 
       const { data, error } = await supabase
         .from('poll_invitations')
-        .select(`
+        .select(
+          `
           *,
           poll_title:polls(option_a_label, option_b_label),
           inviter_name:profiles!poll_invitations_invited_by_fkey(display_name)
-        `)
+        `
+        )
         .eq('invited_user_id', user.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
@@ -303,7 +329,9 @@ export class PollPrivacyService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -339,9 +367,7 @@ export class PollPrivacyService {
             access_level: 'view_vote',
           };
 
-          await supabase
-            .from('poll_shares')
-            .insert(shareData);
+          await supabase.from('poll_shares').insert(shareData);
         }
       }
 
@@ -430,12 +456,8 @@ export class PollPrivacyService {
       const supabase = createClient();
 
       const [pollsResult, invitationsResult] = await Promise.all([
-        supabase
-          .from('polls')
-          .select('privacy_level', { count: 'exact' }),
-        supabase
-          .from('poll_invitations')
-          .select('status', { count: 'exact' }),
+        supabase.from('polls').select('privacy_level', { count: 'exact' }),
+        supabase.from('poll_invitations').select('status', { count: 'exact' }),
       ]);
 
       const polls = pollsResult.data || [];
@@ -447,7 +469,8 @@ export class PollPrivacyService {
         private_polls: polls.filter(p => p.privacy_level === 'private').length,
         group_polls: polls.filter(p => p.privacy_level === 'group').length,
         total_invitations: invitationsResult.count || 0,
-        pending_invitations: invitations.filter(i => i.status === 'pending').length,
+        pending_invitations: invitations.filter(i => i.status === 'pending')
+          .length,
       };
     } catch (error) {
       console.error('Error in getPollPrivacyStats:', error);

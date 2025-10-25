@@ -5,13 +5,13 @@ export interface PerformanceMetrics {
   cls?: number; // Cumulative Layout Shift
   fcp?: number; // First Contentful Paint
   ttfb?: number; // Time to First Byte
-  
+
   // Custom metrics
   pageLoadTime?: number;
   apiResponseTime?: number;
   imageLoadTime?: number;
   bundleSize?: number;
-  
+
   // User experience metrics
   userAgent?: string;
   connectionType?: string;
@@ -66,7 +66,7 @@ export class PerformanceService {
   private observeCoreWebVitals() {
     // Observe LCP
     try {
-      const lcpObserver = new PerformanceObserver((list) => {
+      const lcpObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.recordMetric('lcp', lastEntry.startTime);
@@ -78,9 +78,9 @@ export class PerformanceService {
 
     // Observe FID
     try {
-      const fidObserver = new PerformanceObserver((list) => {
+      const fidObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           this.recordMetric('fid', entry.processingStart - entry.startTime);
         });
       });
@@ -92,7 +92,7 @@ export class PerformanceService {
     // Observe CLS
     try {
       let clsValue = 0;
-      const clsObserver = new PerformanceObserver((list) => {
+      const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
           if (!entry.hadRecentInput) {
@@ -110,11 +110,22 @@ export class PerformanceService {
   private observeCustomMetrics() {
     // Monitor page load time
     window.addEventListener('load', () => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       if (navigation) {
-        this.recordMetric('pageLoadTime', navigation.loadEventEnd - navigation.fetchStart);
-        this.recordMetric('ttfb', navigation.responseStart - navigation.fetchStart);
-        this.recordMetric('fcp', navigation.domContentLoadedEventEnd - navigation.fetchStart);
+        this.recordMetric(
+          'pageLoadTime',
+          navigation.loadEventEnd - navigation.fetchStart
+        );
+        this.recordMetric(
+          'ttfb',
+          navigation.responseStart - navigation.fetchStart
+        );
+        this.recordMetric(
+          'fcp',
+          navigation.domContentLoadedEventEnd - navigation.fetchStart
+        );
       }
     });
 
@@ -125,15 +136,15 @@ export class PerformanceService {
   private measureBundleSize() {
     const scripts = document.querySelectorAll('script[src]');
     let totalSize = 0;
-    
-    scripts.forEach((script) => {
+
+    scripts.forEach(script => {
       const src = (script as HTMLScriptElement).src;
       if (src && !src.includes('chrome-extension')) {
         // Estimate bundle size (in a real implementation, you'd measure actual size)
         totalSize += 50 * 1024; // Estimate 50KB per script
       }
     });
-    
+
     this.recordMetric('bundleSize', totalSize);
   }
 
@@ -152,7 +163,7 @@ export class PerformanceService {
 
   public recordApiResponseTime(url: string, duration: number) {
     this.recordMetric('apiResponseTime', duration);
-    
+
     // Log slow API calls
     if (duration > this.budget.apiResponseTime) {
       console.warn(`Slow API call: ${url} took ${duration}ms`);
@@ -161,9 +172,10 @@ export class PerformanceService {
 
   public recordImageLoadTime(src: string, duration: number) {
     this.recordMetric('imageLoadTime', duration);
-    
+
     // Log slow image loads
-    if (duration > 1000) { // 1 second threshold
+    if (duration > 1000) {
+      // 1 second threshold
       console.warn(`Slow image load: ${src} took ${duration}ms`);
     }
   }
@@ -180,11 +192,16 @@ export class PerformanceService {
     return 'desktop';
   }
 
-  private checkPerformanceBudget(metric: keyof PerformanceMetrics, value: number) {
+  private checkPerformanceBudget(
+    metric: keyof PerformanceMetrics,
+    value: number
+  ) {
     const budget = this.budget[metric];
     if (budget && value > budget) {
-      console.warn(`Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`);
-      
+      console.warn(
+        `Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`
+      );
+
       // Send to monitoring service
       this.sendToMonitoringService({
         type: 'performance_budget_exceeded',
@@ -209,7 +226,7 @@ export class PerformanceService {
     if (!latest) return 0;
 
     let score = 100;
-    
+
     // Deduct points for each metric that exceeds budget
     if (latest.lcp && latest.lcp > this.budget.lcp) {
       score -= Math.min(30, (latest.lcp - this.budget.lcp) / 100);
@@ -224,7 +241,10 @@ export class PerformanceService {
       score -= Math.min(15, (latest.fcp - this.budget.fcp) / 100);
     }
     if (latest.pageLoadTime && latest.pageLoadTime > this.budget.pageLoadTime) {
-      score -= Math.min(15, (latest.pageLoadTime - this.budget.pageLoadTime) / 100);
+      score -= Math.min(
+        15,
+        (latest.pageLoadTime - this.budget.pageLoadTime) / 100
+      );
     }
 
     return Math.max(0, Math.round(score));
@@ -242,22 +262,40 @@ export class PerformanceService {
 
     if (latest) {
       if (latest.lcp && latest.lcp > this.budget.lcp) {
-        recommendations.push('Optimize Largest Contentful Paint - consider image optimization and critical resource prioritization');
+        recommendations.push(
+          'Optimize Largest Contentful Paint - consider image optimization and critical resource prioritization'
+        );
       }
       if (latest.fid && latest.fid > this.budget.fid) {
-        recommendations.push('Reduce First Input Delay - minimize JavaScript execution time');
+        recommendations.push(
+          'Reduce First Input Delay - minimize JavaScript execution time'
+        );
       }
       if (latest.cls && latest.cls > this.budget.cls) {
-        recommendations.push('Reduce Cumulative Layout Shift - ensure proper image dimensions and avoid layout shifts');
+        recommendations.push(
+          'Reduce Cumulative Layout Shift - ensure proper image dimensions and avoid layout shifts'
+        );
       }
       if (latest.fcp && latest.fcp > this.budget.fcp) {
-        recommendations.push('Optimize First Contentful Paint - inline critical CSS and optimize resource loading');
+        recommendations.push(
+          'Optimize First Contentful Paint - inline critical CSS and optimize resource loading'
+        );
       }
-      if (latest.pageLoadTime && latest.pageLoadTime > this.budget.pageLoadTime) {
-        recommendations.push('Improve page load time - implement code splitting and optimize bundle size');
+      if (
+        latest.pageLoadTime &&
+        latest.pageLoadTime > this.budget.pageLoadTime
+      ) {
+        recommendations.push(
+          'Improve page load time - implement code splitting and optimize bundle size'
+        );
       }
-      if (latest.apiResponseTime && latest.apiResponseTime > this.budget.apiResponseTime) {
-        recommendations.push('Optimize API response times - implement caching and database query optimization');
+      if (
+        latest.apiResponseTime &&
+        latest.apiResponseTime > this.budget.apiResponseTime
+      ) {
+        recommendations.push(
+          'Optimize API response times - implement caching and database query optimization'
+        );
       }
     }
 
@@ -279,7 +317,10 @@ export class PerformanceService {
         body: JSON.stringify(data),
       });
     } catch (error) {
-      console.error('Failed to send performance data to monitoring service:', error);
+      console.error(
+        'Failed to send performance data to monitoring service:',
+        error
+      );
     }
   }
 

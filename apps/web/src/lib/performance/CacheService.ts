@@ -56,7 +56,7 @@ export class CacheService {
 
   public get<T>(key: string): T | null {
     const item = this.cache.get(key);
-    
+
     if (!item) {
       return null;
     }
@@ -240,7 +240,7 @@ export class ApiCacheService {
     try {
       const data = await fetcher();
       const duration = Date.now() - startTime;
-      
+
       // Record performance metric
       if (this.performanceService) {
         this.performanceService.recordApiResponseTime(key, duration);
@@ -248,7 +248,7 @@ export class ApiCacheService {
 
       // Cache the result
       this.cache.set(key, data, ttl);
-      
+
       return data;
     } catch (error) {
       console.error('API cache fetch error:', error);
@@ -299,11 +299,13 @@ export class BrowserCacheService {
 
   public static get<T>(key: string): T | null {
     try {
-      const item = localStorage.getItem(`${BrowserCacheService.CACHE_PREFIX}${key}`);
+      const item = localStorage.getItem(
+        `${BrowserCacheService.CACHE_PREFIX}${key}`
+      );
       if (!item) return null;
 
       const parsed = JSON.parse(item);
-      
+
       // Check version
       if (parsed.version !== BrowserCacheService.CACHE_VERSION) {
         BrowserCacheService.delete(key);

@@ -34,7 +34,12 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
     { id: 'home', label: 'Home', icon: Home, path: '/' },
     { id: 'discover', label: 'Discover', icon: Search, path: '/discover' },
     { id: 'create', label: 'Create', icon: Plus, path: '/poll/create' },
-    { id: 'notifications', label: 'Notifications', icon: Bell, path: '/notifications' },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      path: '/notifications',
+    },
     { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
   ];
 
@@ -48,7 +53,8 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
 
   useEffect(() => {
     // Update active tab based on current path
-    const currentTab = navigationItems.find(item => item.path === pathname)?.id || 'home';
+    const currentTab =
+      navigationItems.find(item => item.path === pathname)?.id || 'home';
     setActiveTab(currentTab);
 
     // Update navigation history
@@ -84,7 +90,7 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
     };
   }, []);
 
-  const handleTabClick = (item: typeof navigationItems[0]) => {
+  const handleTabClick = (item: (typeof navigationItems)[0]) => {
     setActiveTab(item.id);
     router.push(item.path);
   };
@@ -113,16 +119,18 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
   return (
     <>
       {/* Bottom Navigation */}
-      <div className={cn(
-        'fixed bottom-0 left-0 right-0 bg-background border-t border-border',
-        'flex items-center justify-around px-2 py-1',
-        'safe-area-pb',
-        className
-      )}>
-        {navigationItems.map((item) => {
+      <div
+        className={cn(
+          'fixed bottom-0 left-0 right-0 bg-background border-t border-border',
+          'flex items-center justify-around px-2 py-1',
+          'safe-area-pb',
+          className
+        )}
+      >
+        {navigationItems.map(item => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
-          
+
           return (
             <Button
               key={item.id}
@@ -144,13 +152,14 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
           );
         })}
       </div>
-
       {/* Top Navigation Bar */}
-      <div className={cn(
-        'fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border',
-        'flex items-center justify-between px-4 py-3',
-        'safe-area-pt z-50'
-      )}>
+      <div
+        className={cn(
+          'fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border',
+          'flex items-center justify-between px-4 py-3',
+          'safe-area-pt z-50'
+        )}
+      >
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -174,7 +183,8 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
 
         <div className="flex-1 text-center">
           <h1 className="text-lg font-semibold truncate">
-            {navigationItems.find(item => item.id === activeTab)?.label || 'ThisOrThat'}
+            {navigationItems.find(item => item.id === activeTab)?.label ||
+              'ThisOrThat'}
           </h1>
         </div>
 
@@ -185,11 +195,14 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
             onClick={toggleMenu}
             className="touch-manipulation"
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
-
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/50 z-50" onClick={toggleMenu}>
@@ -208,7 +221,7 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
               </div>
 
               <nav className="space-y-2">
-                {menuItems.map((item) => (
+                {menuItems.map(item => (
                   <Button
                     key={item.path}
                     variant="ghost"
@@ -230,7 +243,6 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
           </div>
         </div>
       )}
-
       {/* Spacer for fixed navigation */}
       <div className="h-16" /> {/* Bottom navigation height */}
       <div className="h-16" /> {/* Top navigation height */}

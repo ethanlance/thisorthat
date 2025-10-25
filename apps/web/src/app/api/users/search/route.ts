@@ -20,10 +20,17 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0');
 
     if (!query || query.trim().length < 2) {
-      return NextResponse.json({ error: 'Search query must be at least 2 characters' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Search query must be at least 2 characters' },
+        { status: 400 }
+      );
     }
 
-    const results = await ProfileService.searchUsers(query.trim(), limit, offset);
+    const results = await ProfileService.searchUsers(
+      query.trim(),
+      limit,
+      offset
+    );
 
     return NextResponse.json({ users: results });
   } catch (error) {

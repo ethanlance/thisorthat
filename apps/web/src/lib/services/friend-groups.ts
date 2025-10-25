@@ -2,11 +2,14 @@ import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
 type FriendGroup = Database['public']['Tables']['friend_groups']['Row'];
-type FriendGroupInsert = Database['public']['Tables']['friend_groups']['Insert'];
+type FriendGroupInsert =
+  Database['public']['Tables']['friend_groups']['Insert'];
 type GroupMember = Database['public']['Tables']['group_members']['Row'];
-type GroupMemberInsert = Database['public']['Tables']['group_members']['Insert'];
+type GroupMemberInsert =
+  Database['public']['Tables']['group_members']['Insert'];
 type GroupInvitation = Database['public']['Tables']['group_invitations']['Row'];
-type GroupInvitationInsert = Database['public']['Tables']['group_invitations']['Insert'];
+type GroupInvitationInsert =
+  Database['public']['Tables']['group_invitations']['Insert'];
 
 export interface FriendGroupWithMembers extends FriendGroup {
   member_count: number;
@@ -48,16 +51,21 @@ export class FriendGroupService {
   /**
    * Get public friend groups
    */
-  static async getPublicFriendGroups(limit: number = 20, offset: number = 0): Promise<FriendGroupWithMembers[]> {
+  static async getPublicFriendGroups(
+    limit: number = 20,
+    offset: number = 0
+  ): Promise<FriendGroupWithMembers[]> {
     try {
       const supabase = createClient();
 
       const { data, error } = await supabase
         .from('friend_groups')
-        .select(`
+        .select(
+          `
           *,
           member_count:group_members(count)
-        `)
+        `
+        )
         .eq('is_public', true)
         .order('created_at', { ascending: false })
         .range(offset, offset + limit - 1);
@@ -85,7 +93,9 @@ export class FriendGroupService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -172,7 +182,9 @@ export class FriendGroupService {
   /**
    * Get group members
    */
-  static async getGroupMembers(groupId: string): Promise<GroupMemberWithProfile[]> {
+  static async getGroupMembers(
+    groupId: string
+  ): Promise<GroupMemberWithProfile[]> {
     try {
       const supabase = createClient();
 
@@ -211,9 +223,7 @@ export class FriendGroupService {
         invited_by: invitedBy || null,
       };
 
-      const { error } = await supabase
-        .from('group_members')
-        .insert(memberData);
+      const { error } = await supabase.from('group_members').insert(memberData);
 
       if (error) {
         console.error('Error adding group member:', error);
@@ -230,7 +240,10 @@ export class FriendGroupService {
   /**
    * Remove member from group
    */
-  static async removeGroupMember(groupId: string, userId: string): Promise<boolean> {
+  static async removeGroupMember(
+    groupId: string,
+    userId: string
+  ): Promise<boolean> {
     try {
       const supabase = createClient();
 
@@ -292,7 +305,9 @@ export class FriendGroupService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -306,7 +321,12 @@ export class FriendGroupService {
 
       if (userData) {
         // User exists, add them directly
-        return await this.addGroupMember(groupId, userData.id, 'member', user.id);
+        return await this.addGroupMember(
+          groupId,
+          userData.id,
+          'member',
+          user.id
+        );
       } else {
         // User doesn't exist, create invitation
         const invitationData: GroupInvitationInsert = {
@@ -336,17 +356,21 @@ export class FriendGroupService {
   /**
    * Get user's group invitations
    */
-  static async getUserGroupInvitations(): Promise<GroupInvitationWithDetails[]> {
+  static async getUserGroupInvitations(): Promise<
+    GroupInvitationWithDetails[]
+  > {
     try {
       const supabase = createClient();
 
       const { data, error } = await supabase
         .from('group_invitations')
-        .select(`
+        .select(
+          `
           *,
           group_name:friend_groups(name),
           inviter_name:profiles!group_invitations_invited_by_fkey(display_name)
-        `)
+        `
+        )
         .eq('invited_user_id', (await supabase.auth.getUser()).data.user?.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
@@ -373,7 +397,9 @@ export class FriendGroupService {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -421,11 +447,16 @@ export class FriendGroupService {
   /**
    * Check if user is member of group
    */
-  static async isUserGroupMember(groupId: string, userId?: string): Promise<boolean> {
+  static async isUserGroupMember(
+    groupId: string,
+    userId?: string
+  ): Promise<boolean> {
     try {
       const supabase = createClient();
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const targetUserId = userId || user?.id;
 
       if (!targetUserId) {
@@ -475,7 +506,8 @@ export class FriendGroupService {
       return {
         member_count: memberResult.count || 0,
         poll_count: pollResult.count || 0,
-        active_polls: (pollResult.data || []).filter(p => p.status === 'active').length,
+        active_polls: (pollResult.data || []).filter(p => p.status === 'active')
+          .length,
       };
     } catch (error) {
       console.error('Error in getGroupStats:', error);

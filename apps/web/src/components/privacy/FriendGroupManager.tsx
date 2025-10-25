@@ -57,7 +57,9 @@ interface FriendGroupManagerProps {
   className?: string;
 }
 
-export default function FriendGroupManager({ className }: FriendGroupManagerProps) {
+export default function FriendGroupManager({
+  className,
+}: FriendGroupManagerProps) {
   const [groups, setGroups] = useState<FriendGroup[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<FriendGroup | null>(null);
   const [members, setMembers] = useState<GroupMember[]>([]);
@@ -183,7 +185,9 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
       await loadGroupMembers(groupId);
     } catch (err) {
       console.error('Error inviting user:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send invitation');
+      setError(
+        err instanceof Error ? err.message : 'Failed to send invitation'
+      );
     }
   };
 
@@ -191,9 +195,12 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
     try {
       setError(null);
 
-      const response = await fetch(`/api/friend-groups/${groupId}/members/${userId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/friend-groups/${groupId}/members/${userId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -209,7 +216,11 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
   };
 
   const handleDeleteGroup = async (groupId: string) => {
-    if (confirm('Are you sure you want to delete this group? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this group? This action cannot be undone.'
+      )
+    ) {
       // Implementation for deleting group
       console.log('Delete group:', groupId);
     }
@@ -257,7 +268,7 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
                 <Input
                   id="group-name"
                   value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
+                  onChange={e => setGroupName(e.target.value)}
                   placeholder="e.g., College Friends, Work Team"
                   required
                 />
@@ -267,7 +278,7 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
                 <Textarea
                   id="group-description"
                   value={groupDescription}
-                  onChange={(e) => setGroupDescription(e.target.value)}
+                  onChange={e => setGroupDescription(e.target.value)}
                   placeholder="Describe your group..."
                   rows={3}
                 />
@@ -306,7 +317,10 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
       {/* Groups List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {groups.map(group => (
-          <Card key={group.id} className="cursor-pointer hover:shadow-md transition-shadow">
+          <Card
+            key={group.id}
+            className="cursor-pointer hover:shadow-md transition-shadow"
+          >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-2">
@@ -333,14 +347,17 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
                 </div>
               </div>
               {group.description && (
-                <p className="text-sm text-muted-foreground">{group.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {group.description}
+                </p>
               )}
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Badge variant="outline">
-                    {group.member_count} member{group.member_count !== 1 ? 's' : ''}
+                    {group.member_count} member
+                    {group.member_count !== 1 ? 's' : ''}
                   </Badge>
                   <Badge variant={group.is_public ? 'default' : 'secondary'}>
                     {group.is_public ? 'Public' : 'Private'}
@@ -362,7 +379,8 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
             <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">No Friend Groups Yet</h3>
             <p className="text-muted-foreground mb-4">
-              Create your first friend group to start sharing private polls with specific friends.
+              Create your first friend group to start sharing private polls with
+              specific friends.
             </p>
             <Button onClick={() => setIsCreatingGroup(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -393,10 +411,12 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
                 <Input
                   placeholder="Enter email address"
                   value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onChange={e => setInviteEmail(e.target.value)}
                 />
                 <Button
-                  onClick={() => selectedGroup && handleInviteUser(selectedGroup.id)}
+                  onClick={() =>
+                    selectedGroup && handleInviteUser(selectedGroup.id)
+                  }
                   disabled={!inviteEmail.trim()}
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
@@ -406,7 +426,7 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
               <Textarea
                 placeholder="Optional message for the invitation..."
                 value={inviteMessage}
-                onChange={(e) => setInviteMessage(e.target.value)}
+                onChange={e => setInviteMessage(e.target.value)}
                 rows={2}
               />
             </div>
@@ -430,18 +450,27 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
                       </div>
                       <div>
                         <p className="font-medium">{member.display_name}</p>
-                        <p className="text-sm text-muted-foreground">{member.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {member.email}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={member.role === 'admin' ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          member.role === 'admin' ? 'default' : 'secondary'
+                        }
+                      >
                         {member.role}
                       </Badge>
                       {member.role !== 'admin' && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => selectedGroup && handleRemoveMember(selectedGroup.id, member.user_id)}
+                          onClick={() =>
+                            selectedGroup &&
+                            handleRemoveMember(selectedGroup.id, member.user_id)
+                          }
                         >
                           <UserMinus className="h-4 w-4" />
                         </Button>
@@ -456,14 +485,14 @@ export default function FriendGroupManager({ className }: FriendGroupManagerProp
             <div className="flex justify-between">
               <Button
                 variant="destructive"
-                onClick={() => selectedGroup && handleDeleteGroup(selectedGroup.id)}
+                onClick={() =>
+                  selectedGroup && handleDeleteGroup(selectedGroup.id)
+                }
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Group
               </Button>
-              <Button onClick={() => setIsManagingMembers(false)}>
-                Done
-              </Button>
+              <Button onClick={() => setIsManagingMembers(false)}>Done</Button>
             </div>
           </div>
         </DialogContent>

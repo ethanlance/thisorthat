@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -162,9 +168,7 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                 <Database className="h-5 w-5" />
                 Offline Drafts
               </CardTitle>
-              <CardDescription>
-                Create and manage polls offline
-              </CardDescription>
+              <CardDescription>Create and manage polls offline</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               {syncStatus.pendingDrafts > 0 && (
@@ -197,7 +201,9 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                 <Input
                   id="title"
                   value={editingDraft.title}
-                  onChange={(e) => setEditingDraft({ ...editingDraft, title: e.target.value })}
+                  onChange={e =>
+                    setEditingDraft({ ...editingDraft, title: e.target.value })
+                  }
                   placeholder="What's your poll about?"
                 />
               </div>
@@ -206,7 +212,12 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                 <Input
                   id="description"
                   value={editingDraft.description || ''}
-                  onChange={(e) => setEditingDraft({ ...editingDraft, description: e.target.value })}
+                  onChange={e =>
+                    setEditingDraft({
+                      ...editingDraft,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Add more context..."
                 />
               </div>
@@ -218,7 +229,12 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                 <Input
                   id="option_a"
                   value={editingDraft.option_a}
-                  onChange={(e) => setEditingDraft({ ...editingDraft, option_a: e.target.value })}
+                  onChange={e =>
+                    setEditingDraft({
+                      ...editingDraft,
+                      option_a: e.target.value,
+                    })
+                  }
                   placeholder="First option"
                 />
               </div>
@@ -227,7 +243,12 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                 <Input
                   id="option_b"
                   value={editingDraft.option_b}
-                  onChange={(e) => setEditingDraft({ ...editingDraft, option_b: e.target.value })}
+                  onChange={e =>
+                    setEditingDraft({
+                      ...editingDraft,
+                      option_b: e.target.value,
+                    })
+                  }
                   placeholder="Second option"
                 />
               </div>
@@ -237,13 +258,22 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
               <Switch
                 id="is_public"
                 checked={editingDraft.is_public}
-                onCheckedChange={(checked) => setEditingDraft({ ...editingDraft, is_public: checked })}
+                onCheckedChange={checked =>
+                  setEditingDraft({ ...editingDraft, is_public: checked })
+                }
               />
               <Label htmlFor="is_public">Make this poll public</Label>
             </div>
 
             <div className="flex items-center gap-2">
-              <Button onClick={handleSaveDraft} disabled={!editingDraft.title || !editingDraft.option_a || !editingDraft.option_b}>
+              <Button
+                onClick={handleSaveDraft}
+                disabled={
+                  !editingDraft.title ||
+                  !editingDraft.option_a ||
+                  !editingDraft.option_b
+                }
+              >
                 <Save className="h-4 w-4 mr-2" />
                 Save Draft
               </Button>
@@ -274,24 +304,32 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
         </Card>
       ) : (
         <div className="space-y-4">
-          {drafts.map((draft) => (
+          {drafts.map(draft => (
             <Card key={draft.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <CardTitle className="text-lg">{draft.title || 'Untitled Poll'}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {draft.title || 'Untitled Poll'}
+                    </CardTitle>
                     {draft.description && (
                       <CardDescription>{draft.description}</CardDescription>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
                     {draft.synced ? (
-                      <Badge variant="default" className="flex items-center gap-1">
+                      <Badge
+                        variant="default"
+                        className="flex items-center gap-1"
+                      >
                         <CheckCircle className="h-3 w-3" />
                         Synced
                       </Badge>
                     ) : (
-                      <Badge variant="outline" className="flex items-center gap-1">
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
                         <Clock className="h-3 w-3" />
                         Pending
                       </Badge>
@@ -304,11 +342,15 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-3 bg-muted rounded-lg">
                       <div className="font-medium text-sm">Option A</div>
-                      <div className="text-sm text-muted-foreground">{draft.option_a}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {draft.option_a}
+                      </div>
                     </div>
                     <div className="p-3 bg-muted rounded-lg">
                       <div className="font-medium text-sm">Option B</div>
-                      <div className="text-sm text-muted-foreground">{draft.option_b}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {draft.option_b}
+                      </div>
                     </div>
                   </div>
 
@@ -348,7 +390,7 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {syncStatus.pendingDrafts} drafts waiting to sync. 
+            {syncStatus.pendingDrafts} drafts waiting to sync.
             {!syncStatus.syncInProgress && (
               <Button
                 variant="link"

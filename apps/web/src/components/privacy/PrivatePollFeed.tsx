@@ -58,7 +58,9 @@ interface PrivatePollFeedProps {
 
 export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
   const [polls, setPolls] = useState<PrivatePoll[]>([]);
-  const [groupInvitations, setGroupInvitations] = useState<GroupInvitation[]>([]);
+  const [groupInvitations, setGroupInvitations] = useState<GroupInvitation[]>(
+    []
+  );
   const [pollInvitations, setPollInvitations] = useState<PollInvitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -237,19 +239,27 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
             <Card>
               <CardContent className="p-8 text-center">
                 <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No Private Polls Yet</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  No Private Polls Yet
+                </h3>
                 <p className="text-muted-foreground">
-                  You don't have access to any private polls yet. Create some friend groups or wait for invitations.
+                  You don&apos;t have access to any private polls yet. Create
+                  some friend groups or wait for invitations.
                 </p>
               </CardContent>
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {polls.map(poll => (
-                <Card key={poll.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={poll.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <CardTitle className="text-lg line-clamp-2">{poll.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-2">
+                        {poll.title}
+                      </CardTitle>
                       <div className="flex items-center space-x-1">
                         {getPrivacyIcon(poll.privacy_level)}
                         {getAccessLevelIcon(poll.access_level)}
@@ -268,9 +278,7 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                           {poll.privacy_level}
                         </Badge>
                         {poll.group_name && (
-                          <Badge variant="outline">
-                            {poll.group_name}
-                          </Badge>
+                          <Badge variant="outline">{poll.group_name}</Badge>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -298,9 +306,11 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
             <Card>
               <CardContent className="p-8 text-center">
                 <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No Group Invitations</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  No Group Invitations
+                </h3>
                 <p className="text-muted-foreground">
-                  You don't have any pending group invitations.
+                  You don&apos;t have any pending group invitations.
                 </p>
               </CardContent>
             </Card>
@@ -313,7 +323,9 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Users className="h-5 w-5 text-primary" />
-                          <h3 className="font-semibold">{invitation.group_name}</h3>
+                          <h3 className="font-semibold">
+                            {invitation.group_name}
+                          </h3>
                           <Badge variant="outline">Group Invitation</Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -330,13 +342,23 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleRespondToGroupInvitation(invitation.id, 'declined')}
+                          onClick={() =>
+                            handleRespondToGroupInvitation(
+                              invitation.id,
+                              'declined'
+                            )
+                          }
                         >
                           Decline
                         </Button>
                         <Button
                           size="sm"
-                          onClick={() => handleRespondToGroupInvitation(invitation.id, 'accepted')}
+                          onClick={() =>
+                            handleRespondToGroupInvitation(
+                              invitation.id,
+                              'accepted'
+                            )
+                          }
                         >
                           <UserPlus className="h-4 w-4 mr-2" />
                           Join Group
@@ -356,9 +378,11 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
             <Card>
               <CardContent className="p-8 text-center">
                 <Vote className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">No Poll Invitations</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  No Poll Invitations
+                </h3>
                 <p className="text-muted-foreground">
-                  You don't have any pending poll invitations.
+                  You don&apos;t have any pending poll invitations.
                 </p>
               </CardContent>
             </Card>
@@ -371,7 +395,9 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                       <div className="space-y-2">
                         <div className="flex items-center space-x-2">
                           <Vote className="h-5 w-5 text-primary" />
-                          <h3 className="font-semibold">{invitation.poll_title}</h3>
+                          <h3 className="font-semibold">
+                            {invitation.poll_title}
+                          </h3>
                           <Badge variant="outline">Poll Invitation</Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -388,13 +414,23 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleRespondToPollInvitation(invitation.id, 'declined')}
+                          onClick={() =>
+                            handleRespondToPollInvitation(
+                              invitation.id,
+                              'declined'
+                            )
+                          }
                         >
                           Decline
                         </Button>
                         <Button
                           size="sm"
-                          onClick={() => handleRespondToPollInvitation(invitation.id, 'accepted')}
+                          onClick={() =>
+                            handleRespondToPollInvitation(
+                              invitation.id,
+                              'accepted'
+                            )
+                          }
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Accept
