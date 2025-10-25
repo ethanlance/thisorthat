@@ -1,28 +1,19 @@
 import { Suspense } from 'react';
 import UserProfile from '@/components/profile/UserProfile';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
-import { notFound } from 'next/navigation';
 
-interface UserPageProps {
-  params: Promise<{
+interface UserProfilePageProps {
+  params: {
     userId: string;
-  }>;
+  };
 }
 
-export default async function UserPage({ params }: UserPageProps) {
-  const { userId } = await params;
-
-  if (!userId) {
-    notFound();
-  }
-
+export default function UserProfilePage({ params }: UserProfilePageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <Suspense fallback={<LoadingSpinner />}>
-          <UserProfile userId={userId} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<LoadingSpinner text="Loading user profile..." />}>
+        <UserProfile userId={params.userId} />
+      </Suspense>
     </div>
   );
 }

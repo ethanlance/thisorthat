@@ -972,6 +972,427 @@ export interface Database {
         created_at?: string;
       };
     };
+    poll_categories: {
+      Row: {
+        id: string;
+        name: string;
+        description: string | null;
+        color: string;
+        icon: string | null;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        name: string;
+        description?: string | null;
+        color?: string;
+        icon?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        name?: string;
+        description?: string | null;
+        color?: string;
+        icon?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    poll_tags: {
+      Row: {
+        id: string;
+        name: string;
+        description: string | null;
+        usage_count: number;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        name: string;
+        description?: string | null;
+        usage_count?: number;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        name?: string;
+        description?: string | null;
+        usage_count?: number;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    poll_categorizations: {
+      Row: {
+        id: string;
+        poll_id: string;
+        category_id: string;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        category_id: string;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        category_id?: string;
+        created_at?: string;
+      };
+    };
+    poll_taggings: {
+      Row: {
+        id: string;
+        poll_id: string;
+        tag_id: string;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        tag_id: string;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        tag_id?: string;
+        created_at?: string;
+      };
+    };
+    user_feed_preferences: {
+      Row: {
+        id: string;
+        user_id: string;
+        preferred_categories: string[];
+        preferred_tags: string[];
+        excluded_categories: string[];
+        excluded_tags: string[];
+        feed_algorithm: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        show_following_only: boolean;
+        show_public_only: boolean;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        preferred_categories?: string[];
+        preferred_tags?: string[];
+        excluded_categories?: string[];
+        excluded_tags?: string[];
+        feed_algorithm?: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        show_following_only?: boolean;
+        show_public_only?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        preferred_categories?: string[];
+        preferred_tags?: string[];
+        excluded_categories?: string[];
+        excluded_tags?: string[];
+        feed_algorithm?: 'chronological' | 'popular' | 'trending' | 'personalized' | 'mixed';
+        show_following_only?: boolean;
+        show_public_only?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    poll_metrics: {
+      Row: {
+        id: string;
+        poll_id: string;
+        view_count: number;
+        vote_count: number;
+        share_count: number;
+        comment_count: number;
+        engagement_score: number;
+        trending_score: number;
+        popularity_score: number;
+        last_calculated_at: string;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        view_count?: number;
+        vote_count?: number;
+        share_count?: number;
+        comment_count?: number;
+        engagement_score?: number;
+        trending_score?: number;
+        popularity_score?: number;
+        last_calculated_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        view_count?: number;
+        vote_count?: number;
+        share_count?: number;
+        comment_count?: number;
+        engagement_score?: number;
+        trending_score?: number;
+        popularity_score?: number;
+        last_calculated_at?: string;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    user_poll_interactions: {
+      Row: {
+        id: string;
+        user_id: string;
+        poll_id: string;
+        interaction_type: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        poll_id: string;
+        interaction_type: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        poll_id?: string;
+        interaction_type?: 'view' | 'vote' | 'share' | 'comment' | 'save' | 'hide';
+        created_at?: string;
+      };
+    };
+    saved_polls: {
+      Row: {
+        id: string;
+        user_id: string;
+        poll_id: string;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        poll_id: string;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        poll_id?: string;
+        created_at?: string;
+      };
+    };
+    hidden_polls: {
+      Row: {
+        id: string;
+        user_id: string;
+        poll_id: string;
+        reason: string | null;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        poll_id: string;
+        reason?: string | null;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        poll_id?: string;
+        reason?: string | null;
+        created_at?: string;
+      };
+    };
+    feed_cache: {
+      Row: {
+        id: string;
+        user_id: string;
+        feed_type: 'personalized' | 'trending' | 'popular' | 'following';
+        poll_ids: string[];
+        algorithm_version: string;
+        cached_at: string;
+        expires_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        feed_type: 'personalized' | 'trending' | 'popular' | 'following';
+        poll_ids: string[];
+        algorithm_version?: string;
+        cached_at?: string;
+        expires_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        feed_type?: 'personalized' | 'trending' | 'popular' | 'following';
+        poll_ids?: string[];
+        algorithm_version?: string;
+        cached_at?: string;
+        expires_at?: string;
+      };
+    };
+    error_reports: {
+      Row: {
+        id: string;
+        type: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        severity: 'low' | 'medium' | 'high' | 'critical';
+        message: string;
+        user_message: string;
+        context: Record<string, unknown> | null;
+        stack: string | null;
+        user_id: string | null;
+        resolved: boolean;
+        resolved_at: string | null;
+        resolved_by: string | null;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        type: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        severity: 'low' | 'medium' | 'high' | 'critical';
+        message: string;
+        user_message: string;
+        context?: Record<string, unknown> | null;
+        stack?: string | null;
+        user_id?: string | null;
+        resolved?: boolean;
+        resolved_at?: string | null;
+        resolved_by?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        type?: 'network' | 'validation' | 'system' | 'authentication' | 'authorization' | 'unknown';
+        severity?: 'low' | 'medium' | 'high' | 'critical';
+        message?: string;
+        user_message?: string;
+        context?: Record<string, unknown> | null;
+        stack?: string | null;
+        user_id?: string | null;
+        resolved?: boolean;
+        resolved_at?: string | null;
+        resolved_by?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    user_feedback: {
+      Row: {
+        id: string;
+        user_id: string;
+        type: 'bug' | 'feature' | 'improvement' | 'general';
+        title: string;
+        description: string;
+        priority: 'low' | 'medium' | 'high' | 'urgent';
+        status: 'open' | 'in_progress' | 'resolved' | 'closed' | 'duplicate';
+        category: string;
+        tags: string[];
+        attachments: string[];
+        votes: number;
+        assigned_to: string | null;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        type: 'bug' | 'feature' | 'improvement' | 'general';
+        title: string;
+        description: string;
+        priority: 'low' | 'medium' | 'high' | 'urgent';
+        status?: 'open' | 'in_progress' | 'resolved' | 'closed' | 'duplicate';
+        category?: string;
+        tags?: string[];
+        attachments?: string[];
+        votes?: number;
+        assigned_to?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        type?: 'bug' | 'feature' | 'improvement' | 'general';
+        title?: string;
+        description?: string;
+        priority?: 'low' | 'medium' | 'high' | 'urgent';
+        status?: 'open' | 'in_progress' | 'resolved' | 'closed' | 'duplicate';
+        category?: string;
+        tags?: string[];
+        attachments?: string[];
+        votes?: number;
+        assigned_to?: string | null;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    feedback_votes: {
+      Row: {
+        id: string;
+        feedback_id: string;
+        user_id: string;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        feedback_id: string;
+        user_id: string;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        feedback_id?: string;
+        user_id?: string;
+        created_at?: string;
+      };
+    };
+    feedback_comments: {
+      Row: {
+        id: string;
+        feedback_id: string;
+        user_id: string;
+        comment: string;
+        is_internal: boolean;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        feedback_id: string;
+        user_id: string;
+        comment: string;
+        is_internal?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        feedback_id?: string;
+        user_id?: string;
+        comment?: string;
+        is_internal?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
     Enums: Record<string, never>;
   };
 }

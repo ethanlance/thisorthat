@@ -1,511 +1,512 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import {
-  DiscoveryService,
-  PollFeedItem,
-  SearchFilters,
-} from '@/lib/services/discovery';
-import PollCard from '@/components/poll/PollCard';
-import LoadingSpinner from '@/components/layout/LoadingSpinner';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Search,
   Filter,
-  X,
+  SortAsc,
   TrendingUp,
-  Users,
   Clock,
   Star,
+  Loader2,
+  AlertTriangle,
+  X,
+  Check,
 } from 'lucide-react';
+import { FeedService, SearchPoll, SearchFilters } from '@/lib/services/feed';
+import { useDebounce } from '@/lib/hooks/useDebounce';
 
 interface PollSearchProps {
+  onPollSelect?: (poll: SearchPoll) => void;
   className?: string;
 }
 
-export default function PollSearch({ className = '' }: PollSearchProps) {
-  const { user } = useAuth();
-  const [polls, setPolls] = useState<PollFeedItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+export default function PollSearch({ onPollSelect, className }: PollSearchProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [polls, setPolls] = useState<SearchPoll[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [categories, setCategories] = useState<
-    Array<{ id: string; name: string; color: string }>
-  >([]);
-  const [tags, setTags] = useState<Array<{ id: string; name: string }>>([]);
-
-  const [filters, setFilters] = useState<SearchFilters>({
-    query: '',
-    categories: [],
-    tags: [],
-    dateRange: 'all',
-    sortBy: 'relevance',
-    minEngagement: 0,
-    maxAge: 30,
-  });
-
+  const [categories, setCategories] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<Array<{id: string, name: string}>>([]);
+  const [availableTags, setAvailableTags] = useState<Array<{id: string, name: string}>>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<'relevance' | 'trending' | 'popular' | 'newest'>('relevance');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Load categories and tags
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const limit = 20;
+
+  // Load available categories and tags
   useEffect(() => {
-    const loadMetadata = async () => {
+    const loadCategoriesAndTags = async () => {
       try {
         const [categoriesData, tagsData] = await Promise.all([
-          DiscoveryService.getCategories(),
-          DiscoveryService.getTags(),
+          FeedService.getPollCategories(),
+          FeedService.getPollTags(),
         ]);
-        setCategories(categoriesData);
-        setTags(tagsData);
+
+        setAvailableCategories(categoriesData.map(cat => ({ id: cat.id, name: cat.name })));
+        setAvailableTags(tagsData.map(tag => ({ id: tag.id, name: tag.name })));
       } catch (err) {
-        console.error('Error loading metadata:', err);
+        console.error('Error loading categories and tags:', err);
       }
     };
 
-    loadMetadata();
+    loadCategoriesAndTags();
   }, []);
 
-  const searchPolls = useCallback(
-    async (reset = false) => {
-      if (!user) return;
+  const searchPolls = useCallback(async (reset = false) => {
+    if (!debouncedSearchTerm.trim() || debouncedSearchTerm.length < 2) {
+      setPolls([]);
+      setError(null);
+      return;
+    }
 
-      try {
-        setIsLoading(true);
-        if (reset) {
-          setOffset(0);
-          setPolls([]);
-        }
+    try {
+      setLoading(true);
+      setError(null);
 
-        const currentOffset = reset ? 0 : offset;
-        const newPolls = await DiscoveryService.searchPolls(
-          filters,
-          20,
-          currentOffset
-        );
+      const currentOffset = reset ? 0 : offset;
+      const filters: SearchFilters = {
+        categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+        tags: selectedTags.length > 0 ? selectedTags : undefined,
+        sort_by: sortBy,
+      };
 
-        if (reset) {
-          setPolls(newPolls);
-        } else {
-          setPolls(prev => [...prev, ...newPolls]);
-        }
+      const results = await FeedService.searchPolls(
+        debouncedSearchTerm,
+        filters,
+        limit,
+        currentOffset
+      );
 
-        setHasMore(newPolls.length === 20);
-        setOffset(currentOffset + newPolls.length);
-        setError(null);
-      } catch (err) {
-        console.error('Error searching polls:', err);
-        setError('Failed to search polls');
-      } finally {
-        setIsLoading(false);
+      if (reset) {
+        setPolls(results);
+        setOffset(results.length);
+      } else {
+        setPolls(prev => [...prev, ...results]);
+        setOffset(prev => prev + results.length);
       }
-    },
-    [user, filters, offset]
-  );
+
+      setHasMore(results.length === limit);
+    } catch (err) {
+      console.error('Error searching polls:', err);
+      setError('Failed to search polls');
+    } finally {
+      setLoading(false);
+    }
+  }, [debouncedSearchTerm, selectedCategories, selectedTags, sortBy, offset, limit]);
 
   const handleSearch = useCallback(() => {
+    setOffset(0);
     searchPolls(true);
   }, [searchPolls]);
 
-  const handleFilterChange = useCallback(
-    (key: keyof SearchFilters, value: unknown) => {
-      setFilters(prev => ({ ...prev, [key]: value }));
-    },
-    []
-  );
-
-  const handleCategoryToggle = useCallback((categoryName: string) => {
-    setFilters(prev => ({
-      ...prev,
-      categories: prev.categories?.includes(categoryName)
-        ? prev.categories.filter(c => c !== categoryName)
-        : [...(prev.categories || []), categoryName],
-    }));
-  }, []);
-
-  const handleTagToggle = useCallback((tagName: string) => {
-    setFilters(prev => ({
-      ...prev,
-      tags: prev.tags?.includes(tagName)
-        ? prev.tags.filter(t => t !== tagName)
-        : [...(prev.tags || []), tagName],
-    }));
-  }, []);
-
-  const clearFilters = useCallback(() => {
-    setFilters({
-      query: '',
-      categories: [],
-      tags: [],
-      dateRange: 'all',
-      sortBy: 'relevance',
-      minEngagement: 0,
-      maxAge: 30,
-    });
-  }, []);
-
   const handleLoadMore = useCallback(() => {
-    if (!isLoading && hasMore) {
+    if (!loading && hasMore) {
       searchPolls(false);
     }
-  }, [isLoading, hasMore, searchPolls]);
+  }, [searchPolls, loading, hasMore]);
 
-  const handlePollInteraction = useCallback(
-    async (pollId: string, interactionType: string) => {
-      if (!user) return;
-
-      try {
-        await DiscoveryService.trackInteraction(
-          user.id,
-          pollId,
-          interactionType as
-            | 'view'
-            | 'vote'
-            | 'comment'
-            | 'share'
-            | 'save'
-            | 'hide'
-            | 'report',
-          { timestamp: new Date().toISOString() }
-        );
-      } catch (err) {
-        console.error('Error tracking interaction:', err);
-      }
-    },
-    [user]
-  );
-
-  if (!user) {
-    return (
-      <div className={`text-center py-8 ${className}`}>
-        <p className="text-muted-foreground">Please log in to search polls</p>
-      </div>
+  const handleCategoryToggle = (categoryId: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId) 
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
     );
-  }
+  };
+
+  const handleTagToggle = (tagId: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedCategories([]);
+    setSelectedTags([]);
+    setSortBy('relevance');
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${Math.floor(diffInHours)}h ago`;
+    } else if (diffInHours < 168) {
+      return `${Math.floor(diffInHours / 24)}d ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
+
+  const getSortIcon = (sortType: string) => {
+    switch (sortType) {
+      case 'trending':
+        return <TrendingUp className="h-4 w-4" />;
+      case 'popular':
+        return <Star className="h-4 w-4" />;
+      case 'newest':
+        return <Clock className="h-4 w-4" />;
+      default:
+        return <SortAsc className="h-4 w-4" />;
+    }
+  };
+
+  useEffect(() => {
+    if (debouncedSearchTerm.length >= 2) {
+      handleSearch();
+    } else {
+      setPolls([]);
+      setError(null);
+    }
+  }, [debouncedSearchTerm, selectedCategories, selectedTags, sortBy]);
 
   return (
-    <div className={className}>
+    <div className={`space-y-6 ${className}`}>
       {/* Search Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-4 flex items-center">
-          <Search className="h-6 w-6 mr-2" />
-          Search Polls
-        </h2>
-
-        {/* Search Bar */}
-        <div className="flex space-x-2 mb-4">
-          <Input
-            placeholder="Search polls by title or description..."
-            value={filters.query || ''}
-            onChange={e => handleFilterChange('query', e.target.value)}
-            onKeyPress={e => e.key === 'Enter' && handleSearch()}
-            className="flex-1"
-          />
-          <Button onClick={handleSearch} disabled={isLoading}>
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
-        </div>
-
-        {/* Advanced Filters */}
-        {showFilters && (
-          <div className="bg-muted/50 p-4 rounded-lg space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Advanced Filters</h3>
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                <X className="h-4 w-4 mr-1" />
-                Clear All
-              </Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Sort By */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Sort By
-                </label>
-                <Select
-                  value={filters.sortBy || 'relevance'}
-                  onValueChange={value => handleFilterChange('sortBy', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="popularity">Popularity</SelectItem>
-                    <SelectItem value="trending">Trending</SelectItem>
-                    <SelectItem value="recent">Recent</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Date Range */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Date Range
-                </label>
-                <Select
-                  value={filters.dateRange || 'all'}
-                  onValueChange={value =>
-                    handleFilterChange('dateRange', value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Time</SelectItem>
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                    <SelectItem value="month">This Month</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Min Engagement */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Min Engagement
-                </label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  value={filters.minEngagement || 0}
-                  onChange={e =>
-                    handleFilterChange(
-                      'minEngagement',
-                      parseFloat(e.target.value) || 0
-                    )
-                  }
-                  placeholder="0.0"
-                />
-              </div>
-
-              {/* Max Age */}
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Max Age (days)
-                </label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={filters.maxAge || 30}
-                  onChange={e =>
-                    handleFilterChange('maxAge', parseInt(e.target.value) || 30)
-                  }
-                  placeholder="30"
-                />
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">
-                Categories
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {categories.map(category => (
-                  <Badge
-                    key={category.id}
-                    variant={
-                      filters.categories?.includes(category.name)
-                        ? 'default'
-                        : 'outline'
-                    }
-                    className="cursor-pointer"
-                    onClick={() => handleCategoryToggle(category.name)}
-                  >
-                    {category.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Tags */}
-            <div>
-              <label className="text-sm font-medium mb-2 block">Tags</label>
-              <div className="flex flex-wrap gap-2">
-                {tags.slice(0, 10).map(tag => (
-                  <Badge
-                    key={tag.id}
-                    variant={
-                      filters.tags?.includes(tag.name) ? 'default' : 'outline'
-                    }
-                    className="cursor-pointer"
-                    onClick={() => handleTagToggle(tag.name)}
-                  >
-                    #{tag.name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Active Filters */}
-        {(filters.categories?.length || filters.tags?.length) && (
-          <div className="mt-4">
-            <div className="flex flex-wrap gap-2">
-              {filters.categories?.map(category => (
-                <Badge
-                  key={category}
-                  variant="secondary"
-                  className="cursor-pointer"
-                >
-                  {category}
-                  <X
-                    className="h-3 w-3 ml-1"
-                    onClick={() => handleCategoryToggle(category)}
-                  />
-                </Badge>
-              ))}
-              {filters.tags?.map(tag => (
-                <Badge key={tag} variant="secondary" className="cursor-pointer">
-                  #{tag}
-                  <X
-                    className="h-3 w-3 ml-1"
-                    onClick={() => handleTagToggle(tag)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Search Results */}
-      {isLoading && polls.length === 0 ? (
-        <div className="flex items-center justify-center py-8">
-          <LoadingSpinner text="Searching polls..." />
-        </div>
-      ) : polls.length === 0 && !isLoading ? (
-        <div className="text-center py-8">
-          <Search className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <p className="text-muted-foreground mb-4">
-            No polls found matching your criteria
-          </p>
-          <Button onClick={clearFilters} variant="outline">
-            Clear Filters
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {polls.map(poll => (
-            <div key={poll.poll_id} className="relative">
-              <PollCard
-                poll={{
-                  id: poll.poll_id,
-                  creator_id: poll.user_id,
-                  option_a_image_url: poll.option_a_image_url || '',
-                  option_a_label: poll.option_a_label,
-                  option_b_image_url: poll.option_b_image_url || '',
-                  option_b_label: poll.option_b_label,
-                  description: poll.poll_description,
-                  expires_at: poll.expires_at || '',
-                  is_public: true,
-                  status: 'active' as const,
-                  privacy_level: 'public' as const,
-                  friend_group_id: null,
-                  access_expires_at: null,
-                  created_at: poll.created_at,
-                  updated_at: poll.created_at,
-                  vote_counts: {
-                    option_a: Math.floor(poll.vote_count * 0.6), // Mock data
-                    option_b: Math.floor(poll.vote_count * 0.4), // Mock data
-                  },
-                  user_vote: null,
-                  share_count: 0,
-                  last_activity: poll.created_at,
-                }}
-                onView={() => handlePollInteraction(poll.poll_id, 'view')}
-                onShare={() => handlePollInteraction(poll.poll_id, 'share')}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Search className="h-5 w-5" />
+            <span>Search Polls</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search Input */}
+          <div className="flex space-x-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search polls by keywords, topics, or tags..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
               />
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+          </div>
 
-              {/* Search result metadata */}
-              <div className="mt-2 flex items-center space-x-4 text-sm text-muted-foreground">
-                {poll.categories.length > 0 && (
-                  <div className="flex items-center space-x-1">
-                    <span>Categories:</span>
-                    <div className="flex space-x-1">
-                      {poll.categories.slice(0, 2).map(category => (
-                        <span
-                          key={category}
-                          className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs"
-                        >
-                          {category}
-                        </span>
-                      ))}
+          {/* Filters Panel */}
+          {showFilters && (
+            <div className="border rounded-lg p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">Filters</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                >
+                  Clear All
+                </Button>
+              </div>
+
+              {/* Sort By */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Sort by</label>
+                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">
+                      <div className="flex items-center space-x-2">
+                        <SortAsc className="h-4 w-4" />
+                        <span>Relevance</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="trending">
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="h-4 w-4" />
+                        <span>Trending</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="popular">
+                      <div className="flex items-center space-x-2">
+                        <Star className="h-4 w-4" />
+                        <span>Popular</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="newest">
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4" />
+                        <span>Newest</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Categories */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Categories</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {availableCategories.map((category) => (
+                    <div key={category.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`category-${category.id}`}
+                        checked={selectedCategories.includes(category.id)}
+                        onCheckedChange={() => handleCategoryToggle(category.id)}
+                      />
+                      <label
+                        htmlFor={`category-${category.id}`}
+                        className="text-sm cursor-pointer"
+                      >
+                        {category.name}
+                      </label>
                     </div>
-                  </div>
-                )}
-                {poll.tags.length > 0 && (
-                  <div className="flex items-center space-x-1">
-                    <span>Tags:</span>
-                    <div className="flex space-x-1">
-                      {poll.tags.slice(0, 3).map(tag => (
-                        <span
-                          key={tag}
-                          className="px-2 py-1 bg-secondary text-secondary-foreground rounded-full text-xs"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>{poll.trending_score.toFixed(1)}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Star className="h-3 w-3" />
-                    <span>{poll.popularity_score.toFixed(1)}</span>
-                  </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Tags</label>
+                <div className="flex flex-wrap gap-2">
+                  {availableTags.slice(0, 10).map((tag) => (
+                    <Button
+                      key={tag.id}
+                      variant={selectedTags.includes(tag.id) ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => handleTagToggle(tag.id)}
+                    >
+                      {selectedTags.includes(tag.id) && <Check className="h-3 w-3 mr-1" />}
+                      {tag.name}
+                    </Button>
+                  ))}
                 </div>
               </div>
             </div>
-          ))}
+          )}
 
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="flex justify-center pt-6">
-              <Button
-                onClick={handleLoadMore}
-                disabled={isLoading}
-                variant="outline"
-                size="lg"
-              >
-                {isLoading ? (
-                  <>
-                    <LoadingSpinner className="h-4 w-4 mr-2" />
-                    Loading...
-                  </>
-                ) : (
-                  'Load More'
-                )}
-              </Button>
+          {/* Active Filters */}
+          {(selectedCategories.length > 0 || selectedTags.length > 0) && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+              {selectedCategories.map((categoryId) => {
+                const category = availableCategories.find(c => c.id === categoryId);
+                return (
+                  <Badge key={categoryId} variant="secondary" className="flex items-center space-x-1">
+                    <span>{category?.name}</span>
+                    <X 
+                      className="h-3 w-3 cursor-pointer" 
+                      onClick={() => handleCategoryToggle(categoryId)}
+                    />
+                  </Badge>
+                );
+              })}
+              {selectedTags.map((tagId) => {
+                const tag = availableTags.find(t => t.id === tagId);
+                return (
+                  <Badge key={tagId} variant="secondary" className="flex items-center space-x-1">
+                    <span>{tag?.name}</span>
+                    <X 
+                      className="h-3 w-3 cursor-pointer" 
+                      onClick={() => handleTagToggle(tagId)}
+                    />
+                  </Badge>
+                );
+              })}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Error Display */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span className="ml-2">Searching polls...</span>
         </div>
+      )}
+
+      {/* Search Results */}
+      {!loading && debouncedSearchTerm.length >= 2 && (
+        <div className="space-y-4">
+          {polls.length === 0 ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="text-lg font-semibold mb-2">No polls found</h3>
+                <p className="text-muted-foreground">
+                  Try adjusting your search terms or filters.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">
+                  Found {polls.length} poll{polls.length !== 1 ? 's' : ''}
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-muted-foreground">Sorted by:</span>
+                  <Badge variant="outline" className="flex items-center space-x-1">
+                    {getSortIcon(sortBy)}
+                    <span className="capitalize">{sortBy}</span>
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {polls.map((poll) => (
+                  <Card key={poll.poll_id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Badge variant="outline">
+                              {formatDate(poll.created_at)}
+                            </Badge>
+                            {poll.trending_score > 0 && (
+                              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+                                <TrendingUp className="h-3 w-3 mr-1" />
+                                Trending
+                              </Badge>
+                            )}
+                            {poll.engagement_score > 100 && (
+                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                <Star className="h-3 w-3 mr-1" />
+                                Popular
+                              </Badge>
+                            )}
+                          </div>
+
+                          {poll.description && (
+                            <p className="text-muted-foreground mb-4">{poll.description}</p>
+                          )}
+
+                          {/* Poll Options */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div className="space-y-2">
+                              <div className="text-sm font-medium text-muted-foreground">Option A</div>
+                              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                                <img
+                                  src={poll.option_a_image_url}
+                                  alt={poll.option_a_label || 'Option A'}
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              </div>
+                              {poll.option_a_label && (
+                                <p className="text-sm font-medium">{poll.option_a_label}</p>
+                              )}
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="text-sm font-medium text-muted-foreground">Option B</div>
+                              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                                <img
+                                  src={poll.option_b_image_url}
+                                  alt={poll.option_b_label || 'Option B'}
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              </div>
+                              {poll.option_b_label && (
+                                <p className="text-sm font-medium">{poll.option_b_label}</p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Categories and Tags */}
+                          {(poll.categories.length > 0 || poll.tags.length > 0) && (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {poll.categories.map((category, idx) => (
+                                <Badge key={idx} variant="outline">
+                                  {category}
+                                </Badge>
+                              ))}
+                              {poll.tags.map((tag, idx) => (
+                                <Badge key={idx} variant="secondary">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Relevance Score */}
+                          <div className="text-sm text-muted-foreground">
+                            Relevance: {Math.round(poll.relevance_score * 100)}%
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-col space-y-2 ml-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onPollSelect?.(poll)}
+                          >
+                            View Poll
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="flex justify-center pt-4">
+                  <Button
+                    onClick={handleLoadMore}
+                    disabled={loading}
+                    variant="outline"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    ) : null}
+                    Load More
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && debouncedSearchTerm.length < 2 && (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">Search for Polls</h3>
+            <p className="text-muted-foreground">
+              Enter keywords to find polls that match your interests.
+            </p>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

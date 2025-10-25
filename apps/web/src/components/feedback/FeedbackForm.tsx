@@ -1,194 +1,198 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { ErrorHandlingService } from '@/lib/services/error-handling';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import {
-  Send,
-  CheckCircle,
-  AlertCircle,
   Bug,
   Lightbulb,
   MessageSquare,
+  Star,
+  Send,
+  Loader2,
+  CheckCircle,
+  AlertTriangle,
   Upload,
   X,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-export type FeedbackType =
-  | 'bug_report'
-  | 'feature_request'
-  | 'general_feedback';
-export type FeedbackPriority = 'low' | 'medium' | 'high' | 'urgent';
+import { ErrorService } from '@/lib/error-handling/ErrorService';
 
 interface FeedbackFormProps {
-  initialType?: FeedbackType;
-  initialSubject?: string;
-  initialDescription?: string;
-  onSuccess?: () => void;
+  onSuccess?: (feedbackId: string) => void;
   onCancel?: () => void;
   className?: string;
-  compact?: boolean;
 }
 
-const feedbackTypeConfig = {
-  bug_report: {
-    icon: Bug,
-    label: 'Bug Report',
-    description: "Something isn't working as expected",
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
-  },
-  feature_request: {
-    icon: Lightbulb,
-    label: 'Feature Request',
-    description: 'Suggest a new feature or improvement',
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-  },
-  general_feedback: {
-    icon: MessageSquare,
-    label: 'General Feedback',
-    description: 'Share your thoughts or suggestions',
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-  },
-};
-
-const priorityConfig = {
-  low: { label: 'Low', color: 'text-gray-600' },
-  medium: { label: 'Medium', color: 'text-yellow-600' },
-  high: { label: 'High', color: 'text-orange-600' },
-  critical: { label: 'Critical', color: 'text-red-600' },
-};
-
-export function FeedbackForm({
-  initialType = 'general_feedback',
-  initialSubject = '',
-  initialDescription = '',
-  onSuccess,
-  onCancel,
-  className,
-  compact = false,
-}: FeedbackFormProps) {
-  const { user } = useAuth();
+export default function FeedbackForm({ onSuccess, onCancel, className }: FeedbackFormProps) {
   const [formData, setFormData] = useState({
-    type: initialType,
-    subject: initialSubject,
-    description: initialDescription,
-    priority: 'medium' as FeedbackPriority,
-    includeSystemInfo: true,
-    includeUserAgent: true,
-    includeUrl: true,
+    type: 'general' as 'bug' | 'feature' | 'improvement' | 'general',
+    title: '',
+    description: '',
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
+    category: '',
+    tags: [] as string[],
   });
-
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [newTag, setNewTag] = useState('');
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setSubmitStatus('idle');
-    setErrorMessage('');
+  const errorService = ErrorService.getInstance();
+
+  const feedbackTypes = [
+    { value: 'bug', label: 'Bug Report', icon: Bug, description: 'Report a problem or error' },
+    { value: 'feature', label: 'Feature Request', icon: Lightbulb, description: 'Suggest a new feature' },
+    { value: 'improvement', label: 'Improvement', icon: Star, description: 'Suggest an improvement' },
+    { value: 'general', label: 'General Feedback', icon: MessageSquare, description: 'General comments or questions' },
+  ];
+
+  const categories = [
+    'User Interface',
+    'Performance',
+    'Functionality',
+    'Mobile Experience',
+    'Accessibility',
+    'Content',
+    'Navigation',
+    'Search',
+    'Other',
+  ];
+
+  const commonTags = [
+    'urgent',
+    'mobile',
+    'desktop',
+    'slow',
+    'broken',
+    'confusing',
+    'missing',
+    'duplicate',
+    'enhancement',
+  ];
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleTagAdd = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()],
+      }));
+      setNewTag('');
+    }
+  };
+
+  const handleTagRemove = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove),
+    }));
+  };
+
+  const handleCommonTagToggle = (tag: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tag)
+        ? prev.tags.filter(t => t !== tag)
+        : [...prev.tags, tag],
+    }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'text/plain', 'application/pdf'];
+      
+      if (file.size > maxSize) {
+        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+        return false;
+      }
+      
+      if (!allowedTypes.includes(file.type)) {
+        alert(`File ${file.name} has an unsupported type.`);
+        return false;
+      }
+      
+      return true;
+    });
+
+    setAttachments(prev => [...prev, ...validFiles]);
+  };
+
+  const handleFileRemove = (index: number) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.subject.trim() || !formData.description.trim()) {
-      setErrorMessage('Please fill in all required fields.');
+    if (!formData.title.trim() || !formData.description.trim()) {
+      setError('Please fill in all required fields.');
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setError(null);
 
     try {
-      const metadata: Record<string, unknown> = {};
-
-      if (formData.includeSystemInfo) {
-        metadata.browser = navigator.userAgent;
-        metadata.screen = {
-          width: window.screen.width,
-          height: window.screen.height,
-        };
-        metadata.viewport = {
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-      }
-
-      if (formData.includeUrl) {
-        metadata.url = window.location.href;
-        metadata.pathname = window.location.pathname;
-      }
-
-      const success = await ErrorHandlingService.submitFeedback({
-        feedback_type: formData.type,
-        title: formData.subject.trim(),
+      const feedbackId = await errorService.submitUserFeedback({
+        userId: 'anonymous', // Would get from auth context
+        type: formData.type,
+        title: formData.title.trim(),
         description: formData.description.trim(),
         priority: formData.priority,
         status: 'open',
-        additional_data: metadata,
-        user_id: user?.id,
+        category: formData.category || 'General',
+        tags: formData.tags,
+        attachments: [], // Would upload files and get URLs
       });
 
-      if (success) {
-        setSubmitStatus('success');
-        if (onSuccess) {
-          setTimeout(onSuccess, 1500);
-        }
-      } else {
-        setSubmitStatus('error');
-        setErrorMessage('Failed to submit feedback. Please try again.');
+      setSuccess(true);
+      if (onSuccess) {
+        onSuccess(feedbackId);
       }
-    } catch (error) {
-      setSubmitStatus('error');
-      setErrorMessage('An unexpected error occurred. Please try again.');
-      console.error('Feedback submission error:', error);
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+      setError('Failed to submit feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const currentTypeConfig = feedbackTypeConfig[formData.type];
+  const selectedType = feedbackTypes.find(t => t.value === formData.type);
 
-  if (submitStatus === 'success') {
+  if (success) {
     return (
-      <Card className={cn('w-full', className)}>
-        <CardContent className="pt-6">
-          <div className="text-center space-y-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">
-                Thank you for your feedback!
-              </h3>
-              <p className="text-muted-foreground">
-                We&apos;ve received your{' '}
-                {feedbackTypeConfig[formData.type].label.toLowerCase()} and will
-                review it soon.
-              </p>
-            </div>
+      <Card className={className}>
+        <CardContent className="p-8 text-center">
+          <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Feedback Submitted!</h3>
+          <p className="text-muted-foreground mb-4">
+            Thank you for your feedback. We'll review it and get back to you if needed.
+          </p>
+          <div className="flex space-x-2">
+            <Button onClick={() => window.location.reload()}>
+              Submit Another
+            </Button>
+            {onCancel && (
+              <Button variant="outline" onClick={onCancel}>
+                Close
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -196,66 +200,49 @@ export function FeedbackForm({
   }
 
   return (
-    <Card className={cn('w-full', className)}>
+    <Card className={className}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <currentTypeConfig.icon
-            className={cn('h-5 w-5', currentTypeConfig.color)}
-          />
-          {compact ? 'Feedback' : 'Share Your Feedback'}
+        <CardTitle className="flex items-center space-x-2">
+          <MessageSquare className="h-5 w-5" />
+          <span>Submit Feedback</span>
         </CardTitle>
-        {!compact && (
-          <p className="text-sm text-muted-foreground">
-            {currentTypeConfig.description}
-          </p>
-        )}
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Feedback Type Selection */}
-          {!compact && (
-            <div className="space-y-3">
-              <Label>What type of feedback is this?</Label>
-              <RadioGroup
-                value={formData.type}
-                onValueChange={value => handleInputChange('type', value)}
-                className="grid grid-cols-1 gap-3"
-              >
-                {Object.entries(feedbackTypeConfig).map(([type, config]) => (
-                  <div key={type} className="flex items-center space-x-3">
-                    <RadioGroupItem value={type} id={type} />
-                    <Label
-                      htmlFor={type}
-                      className={cn(
-                        'flex items-center gap-2 cursor-pointer flex-1 p-3 rounded-lg border',
-                        formData.type === type
-                          ? config.bgColor
-                          : 'hover:bg-muted/50'
-                      )}
-                    >
-                      <config.icon className={cn('h-4 w-4', config.color)} />
-                      <div>
-                        <div className="font-medium">{config.label}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {config.description}
-                        </div>
-                      </div>
-                    </Label>
+          {/* Feedback Type */}
+          <div className="space-y-3">
+            <Label>Feedback Type *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {feedbackTypes.map((type) => {
+                const Icon = type.icon;
+                return (
+                  <div
+                    key={type.value}
+                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                      formData.type === type.value
+                        ? 'border-primary bg-primary/5'
+                        : 'border-muted hover:border-primary/50'
+                    }`}
+                    onClick={() => handleInputChange('type', type.value)}
+                  >
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Icon className="h-4 w-4" />
+                      <span className="font-medium">{type.label}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{type.description}</p>
                   </div>
-                ))}
-              </RadioGroup>
+                );
+              })}
             </div>
-          )}
+          </div>
 
-          {/* Subject */}
+          {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="subject">
-              Subject <span className="text-destructive">*</span>
-            </Label>
+            <Label htmlFor="title">Title *</Label>
             <Input
-              id="subject"
-              value={formData.subject}
-              onChange={e => handleInputChange('subject', e.target.value)}
+              id="title"
+              value={formData.title}
+              onChange={(e) => handleInputChange('title', e.target.value)}
               placeholder="Brief description of your feedback"
               required
             />
@@ -263,152 +250,164 @@ export function FeedbackForm({
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">
-              Description <span className="text-destructive">*</span>
-            </Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea
               id="description"
               value={formData.description}
-              onChange={e => handleInputChange('description', e.target.value)}
-              placeholder="Please provide as much detail as possible..."
-              rows={compact ? 4 : 6}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              placeholder="Please provide detailed information about your feedback..."
+              rows={4}
               required
             />
           </div>
 
-          {/* Priority (only for bug reports) */}
-          {formData.type === 'bug_report' && (
+          {/* Priority and Category */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Priority</Label>
-              <Select
-                value={formData.priority}
-                onValueChange={value => handleInputChange('priority', value)}
-              >
+              <Label htmlFor="priority">Priority</Label>
+              <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(priorityConfig).map(([priority, config]) => (
-                    <SelectItem key={priority} value={priority}>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className={config.color}>
-                          {config.label}
-                        </Badge>
-                      </div>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          )}
+          </div>
 
-          {/* System Information Options */}
-          {!compact && (
-            <div className="space-y-3">
-              <Label>Include additional information to help us debug?</Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="includeSystemInfo"
-                    checked={formData.includeSystemInfo}
-                    onCheckedChange={checked =>
-                      handleInputChange('includeSystemInfo', checked as boolean)
-                    }
-                  />
-                  <Label htmlFor="includeSystemInfo" className="text-sm">
-                    Browser and system information
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="includeUrl"
-                    checked={formData.includeUrl}
-                    onCheckedChange={checked =>
-                      handleInputChange('includeUrl', checked as boolean)
-                    }
-                  />
-                  <Label htmlFor="includeUrl" className="text-sm">
-                    Current page URL
-                  </Label>
-                </div>
-              </div>
+          {/* Tags */}
+          <div className="space-y-3">
+            <Label>Tags</Label>
+            
+            {/* Common Tags */}
+            <div className="flex flex-wrap gap-2">
+              {commonTags.map((tag) => (
+                <Button
+                  key={tag}
+                  type="button"
+                  variant={formData.tags.includes(tag) ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleCommonTagToggle(tag)}
+                >
+                  {tag}
+                </Button>
+              ))}
             </div>
-          )}
 
-          {/* Error Message */}
-          {submitStatus === 'error' && (
+            {/* Custom Tags */}
+            <div className="flex space-x-2">
+              <Input
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="Add custom tag"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleTagAdd();
+                  }
+                }}
+              />
+              <Button type="button" onClick={handleTagAdd} disabled={!newTag.trim()}>
+                Add
+              </Button>
+            </div>
+
+            {/* Selected Tags */}
+            {formData.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {formData.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="flex items-center space-x-1">
+                    <span>{tag}</span>
+                    <X
+                      className="h-3 w-3 cursor-pointer"
+                      onClick={() => handleTagRemove(tag)}
+                    />
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* File Attachments */}
+          <div className="space-y-2">
+            <Label>Attachments (Optional)</Label>
+            <div className="space-y-2">
+              <Input
+                type="file"
+                multiple
+                onChange={handleFileUpload}
+                accept="image/*,.txt,.pdf"
+              />
+              <p className="text-xs text-muted-foreground">
+                You can attach images, text files, or PDFs (max 10MB each)
+              </p>
+              
+              {attachments.length > 0 && (
+                <div className="space-y-1">
+                  {attachments.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                      <span className="text-sm">{file.name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleFileRemove(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Error Display */}
+          {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{errorMessage}</AlertDescription>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           {/* Submit Buttons */}
-          <div className="flex gap-3">
-            <Button
-              type="submit"
-              disabled={
-                isSubmitting ||
-                !formData.subject.trim() ||
-                !formData.description.trim()
-              }
-              className="flex-1"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Submit Feedback
-                </>
-              )}
-            </Button>
+          <div className="flex justify-end space-x-2">
             {onCancel && (
               <Button type="button" variant="outline" onClick={onCancel}>
                 Cancel
               </Button>
             )}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Send className="h-4 w-4 mr-2" />
+              )}
+              {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+            </Button>
           </div>
         </form>
       </CardContent>
     </Card>
-  );
-}
-
-// Compact feedback button for quick access
-export function FeedbackButton({
-  type = 'general_feedback',
-  className,
-}: {
-  type?: FeedbackType;
-  className?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (isOpen) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-        <div className="w-full max-w-2xl">
-          <FeedbackForm
-            initialType={type}
-            onSuccess={() => setIsOpen(false)}
-            onCancel={() => setIsOpen(false)}
-            compact
-          />
-        </div>
-      </div>
-    );
-  }
-
-  const typeConfig = feedbackTypeConfig[type];
-
-  return (
-    <Button onClick={() => setIsOpen(true)} className={cn('gap-2', className)}>
-      <typeConfig.icon className="h-4 w-4" />
-      {typeConfig.label}
-    </Button>
   );
 }

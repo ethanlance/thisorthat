@@ -1,216 +1,310 @@
--- Error Handling & User Feedback Database Schema
--- Supports comprehensive error tracking, user feedback, and system monitoring
+-- Migration: Error Handling & User Feedback System
+-- Description: Add comprehensive error handling and user feedback functionality
 
 -- Create error_reports table for tracking application errors
-CREATE TABLE IF NOT EXISTS error_reports (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  error_type TEXT NOT NULL CHECK (error_type IN ('network', 'validation', 'authentication', 'authorization', 'system', 'unknown')),
-  error_message TEXT NOT NULL,
-  error_stack TEXT,
-  error_code TEXT,
-  context JSONB DEFAULT '{}',
-  severity TEXT NOT NULL CHECK (severity IN ('low', 'medium', 'high', 'critical')),
-  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'investigating', 'resolved', 'closed')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.error_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    type TEXT NOT NULL CHECK (type IN ('network', 'validation', 'system', 'authentication', 'authorization', 'unknown')),
+    severity TEXT NOT NULL CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+    message TEXT NOT NULL,
+    user_message TEXT NOT NULL,
+    context JSONB,
+    stack TEXT,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    resolved BOOLEAN DEFAULT FALSE,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    resolved_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Create user_feedback table for user feedback and bug reports
-CREATE TABLE IF NOT EXISTS user_feedback (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  feedback_type TEXT NOT NULL CHECK (feedback_type IN ('bug_report', 'feature_request', 'general_feedback', 'error_report')),
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  category TEXT,
-  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
-  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'under_review', 'in_progress', 'resolved', 'closed')),
-  attachments TEXT[] DEFAULT '{}',
-  additional_data JSONB DEFAULT '{}',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+CREATE TABLE IF NOT EXISTS public.user_feedback (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    type TEXT NOT NULL CHECK (type IN ('bug', 'feature', 'improvement', 'general')),
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    priority TEXT NOT NULL CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
+    status TEXT NOT NULL CHECK (status IN ('open', 'in_progress', 'resolved', 'closed', 'duplicate')) DEFAULT 'open',
+    category TEXT DEFAULT 'General',
+    tags TEXT[] DEFAULT '{}',
+    attachments TEXT[] DEFAULT '{}',
+    votes INTEGER DEFAULT 0,
+    assigned_to UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create feedback_responses table for managing feedback responses
-CREATE TABLE IF NOT EXISTS feedback_responses (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  feedback_id UUID REFERENCES user_feedback(id) ON DELETE CASCADE NOT NULL,
-  responder_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  response_type TEXT NOT NULL CHECK (response_type IN ('admin_response', 'status_update', 'resolution')),
-  content TEXT NOT NULL,
-  is_internal BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Create feedback_votes table for voting on feedback
+CREATE TABLE IF NOT EXISTS public.feedback_votes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    feedback_id UUID REFERENCES public.user_feedback(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(feedback_id, user_id)
 );
 
--- Create error_patterns table for identifying common error patterns
-CREATE TABLE IF NOT EXISTS error_patterns (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  pattern_name TEXT NOT NULL,
-  error_signature TEXT NOT NULL,
-  error_type TEXT NOT NULL,
-  severity TEXT NOT NULL,
-  auto_resolution TEXT,
-  is_active BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Create feedback_comments table for feedback discussions
+CREATE TABLE IF NOT EXISTS public.feedback_comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    feedback_id UUID REFERENCES public.user_feedback(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    comment TEXT NOT NULL,
+    is_internal BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create system_health_metrics table for monitoring system health
-CREATE TABLE IF NOT EXISTS system_health_metrics (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  metric_name TEXT NOT NULL,
-  metric_value REAL NOT NULL,
-  metric_unit TEXT,
-  category TEXT NOT NULL,
-  timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  metadata JSONB DEFAULT '{}'
-);
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_error_reports_type ON public.error_reports(type);
+CREATE INDEX IF NOT EXISTS idx_error_reports_severity ON public.error_reports(severity);
+CREATE INDEX IF NOT EXISTS idx_error_reports_resolved ON public.error_reports(resolved);
+CREATE INDEX IF NOT EXISTS idx_error_reports_created_at ON public.error_reports(created_at);
+CREATE INDEX IF NOT EXISTS idx_error_reports_user_id ON public.error_reports(user_id);
 
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_error_reports_type ON error_reports(error_type);
-CREATE INDEX IF NOT EXISTS idx_error_reports_severity ON error_reports(severity);
-CREATE INDEX IF NOT EXISTS idx_error_reports_status ON error_reports(status);
-CREATE INDEX IF NOT EXISTS idx_error_reports_created_at ON error_reports(created_at);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_user_id ON public.user_feedback(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_type ON public.user_feedback(type);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_status ON public.user_feedback(status);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_priority ON public.user_feedback(priority);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_votes ON public.user_feedback(votes DESC);
+CREATE INDEX IF NOT EXISTS idx_user_feedback_created_at ON public.user_feedback(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_user_feedback_user_id ON user_feedback(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_feedback_type ON user_feedback(feedback_type);
-CREATE INDEX IF NOT EXISTS idx_user_feedback_status ON user_feedback(status);
-CREATE INDEX IF NOT EXISTS idx_user_feedback_priority ON user_feedback(priority);
-CREATE INDEX IF NOT EXISTS idx_user_feedback_created_at ON user_feedback(created_at);
+CREATE INDEX IF NOT EXISTS idx_feedback_votes_feedback_id ON public.feedback_votes(feedback_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_votes_user_id ON public.feedback_votes(user_id);
 
-CREATE INDEX IF NOT EXISTS idx_feedback_responses_feedback_id ON feedback_responses(feedback_id);
-CREATE INDEX IF NOT EXISTS idx_feedback_responses_responder_id ON feedback_responses(responder_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_comments_feedback_id ON public.feedback_comments(feedback_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_comments_user_id ON public.feedback_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_feedback_comments_created_at ON public.feedback_comments(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_system_health_metrics_name ON system_health_metrics(metric_name);
-CREATE INDEX IF NOT EXISTS idx_system_health_metrics_category ON system_health_metrics(category);
-CREATE INDEX IF NOT EXISTS idx_system_health_metrics_timestamp ON system_health_metrics(timestamp);
+-- Enable RLS on new tables
+ALTER TABLE public.error_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_feedback ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.feedback_votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.feedback_comments ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for error_reports
-ALTER TABLE error_reports ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Enable read access for service role" ON error_reports FOR SELECT USING (auth.role() = 'service_role');
-CREATE POLICY "Enable insert for service role" ON error_reports FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Enable update for service role" ON error_reports FOR UPDATE USING (auth.role() = 'service_role');
+CREATE POLICY "Users can view their own error reports" ON public.error_reports
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "System can insert error reports" ON public.error_reports
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Admins can view all error reports" ON public.error_reports
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM auth.users 
+            WHERE auth.users.id = auth.uid() 
+            AND auth.users.raw_user_meta_data->>'role' = 'admin'
+        )
+    );
 
 -- RLS Policies for user_feedback
-ALTER TABLE user_feedback ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Enable read access for own feedback" ON user_feedback FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Enable insert for authenticated users" ON user_feedback FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-CREATE POLICY "Enable update for own feedback" ON user_feedback FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Enable read access for service role" ON user_feedback FOR SELECT USING (auth.role() = 'service_role');
-CREATE POLICY "Enable update for service role" ON user_feedback FOR UPDATE USING (auth.role() = 'service_role');
+CREATE POLICY "Users can view their own feedback" ON public.user_feedback
+    FOR SELECT USING (auth.uid() = user_id);
 
--- RLS Policies for feedback_responses
-ALTER TABLE feedback_responses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Enable read access for feedback owner" ON feedback_responses FOR SELECT USING (
-  EXISTS (
-    SELECT 1 FROM user_feedback 
-    WHERE user_feedback.id = feedback_responses.feedback_id 
-    AND user_feedback.user_id = auth.uid()
-  )
-);
-CREATE POLICY "Enable insert for service role" ON feedback_responses FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Enable read access for service role" ON feedback_responses FOR SELECT USING (auth.role() = 'service_role');
+CREATE POLICY "Users can insert their own feedback" ON public.user_feedback
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- RLS Policies for error_patterns
-ALTER TABLE error_patterns ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Enable read access for service role" ON error_patterns FOR SELECT USING (auth.role() = 'service_role');
-CREATE POLICY "Enable insert for service role" ON error_patterns FOR INSERT WITH CHECK (auth.role() = 'service_role');
-CREATE POLICY "Enable update for service role" ON error_patterns FOR UPDATE USING (auth.role() = 'service_role');
+CREATE POLICY "Users can update their own feedback" ON public.user_feedback
+    FOR UPDATE USING (auth.uid() = user_id);
 
--- RLS Policies for system_health_metrics
-ALTER TABLE system_health_metrics ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Enable read access for service role" ON system_health_metrics FOR SELECT USING (auth.role() = 'service_role');
-CREATE POLICY "Enable insert for service role" ON system_health_metrics FOR INSERT WITH CHECK (auth.role() = 'service_role');
+CREATE POLICY "Anyone can view public feedback" ON public.user_feedback
+    FOR SELECT USING (true);
 
--- Create function to update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+-- RLS Policies for feedback_votes
+CREATE POLICY "Users can view feedback votes" ON public.feedback_votes
+    FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert their own votes" ON public.feedback_votes
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own votes" ON public.feedback_votes
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- RLS Policies for feedback_comments
+CREATE POLICY "Users can view feedback comments" ON public.feedback_comments
+    FOR SELECT USING (true);
+
+CREATE POLICY "Users can insert their own comments" ON public.feedback_comments
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own comments" ON public.feedback_comments
+    FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own comments" ON public.feedback_comments
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Function to update feedback vote count
+CREATE OR REPLACE FUNCTION update_feedback_votes()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Create triggers for updated_at
-CREATE TRIGGER update_error_reports_updated_at BEFORE UPDATE ON error_reports FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_user_feedback_updated_at BEFORE UPDATE ON user_feedback FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_error_patterns_updated_at BEFORE UPDATE ON error_patterns FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Create function to get error statistics
-CREATE OR REPLACE FUNCTION get_error_stats(timeframe_hours INTEGER DEFAULT 24)
-RETURNS TABLE (
-  total_errors BIGINT,
-  errors_by_type JSONB,
-  errors_by_severity JSONB,
-  recent_errors JSONB
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT 
-    COUNT(*) as total_errors,
-    jsonb_object_agg(error_type, type_count) as errors_by_type,
-    jsonb_object_agg(severity, severity_count) as errors_by_severity,
-    jsonb_agg(
-      jsonb_build_object(
-        'id', id,
-        'error_type', error_type,
-        'error_message', error_message,
-        'severity', severity,
-        'created_at', created_at
-      ) ORDER BY created_at DESC
-    ) as recent_errors
-  FROM (
-    SELECT 
-      id,
-      error_type,
-      error_message,
-      severity,
-      created_at,
-      COUNT(*) OVER (PARTITION BY error_type) as type_count,
-      COUNT(*) OVER (PARTITION BY severity) as severity_count
-    FROM error_reports 
-    WHERE created_at >= NOW() - INTERVAL '1 hour' * timeframe_hours
-  ) stats;
+    IF TG_OP = 'INSERT' THEN
+        UPDATE public.user_feedback 
+        SET votes = votes + 1 
+        WHERE id = NEW.feedback_id;
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        UPDATE public.user_feedback 
+        SET votes = votes - 1 
+        WHERE id = OLD.feedback_id;
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
--- Create function to get user feedback summary
-CREATE OR REPLACE FUNCTION get_user_feedback_summary(user_id_param UUID)
+-- Trigger to automatically update vote count
+CREATE TRIGGER update_feedback_votes_trigger
+    AFTER INSERT OR DELETE ON public.feedback_votes
+    FOR EACH ROW
+    EXECUTE FUNCTION update_feedback_votes();
+
+-- Function to get error statistics
+CREATE OR REPLACE FUNCTION get_error_stats()
 RETURNS TABLE (
-  total_feedback BIGINT,
-  feedback_by_type JSONB,
-  feedback_by_status JSONB,
-  recent_feedback JSONB
+    total_errors BIGINT,
+    resolved_errors BIGINT,
+    critical_errors BIGINT,
+    errors_by_type JSONB,
+    errors_by_severity JSONB,
+    recent_errors BIGINT
 ) AS $$
 BEGIN
-  RETURN QUERY
-  SELECT 
-    COUNT(*) as total_feedback,
-    jsonb_object_agg(feedback_type, type_count) as feedback_by_type,
-    jsonb_object_agg(status, status_count) as feedback_by_status,
-    jsonb_agg(
-      jsonb_build_object(
-        'id', id,
-        'feedback_type', feedback_type,
-        'title', title,
-        'status', status,
-        'priority', priority,
-        'created_at', created_at
-      ) ORDER BY created_at DESC
-    ) as recent_feedback
-  FROM (
+    RETURN QUERY
     SELECT 
-      id,
-      feedback_type,
-      title,
-      status,
-      priority,
-      created_at,
-      COUNT(*) OVER (PARTITION BY feedback_type) as type_count,
-      COUNT(*) OVER (PARTITION BY status) as status_count
-    FROM user_feedback 
-    WHERE user_id = user_id_param
-  ) stats;
+        COUNT(*) as total_errors,
+        COUNT(*) FILTER (WHERE resolved = true) as resolved_errors,
+        COUNT(*) FILTER (WHERE severity = 'critical') as critical_errors,
+        jsonb_object_agg(type, type_count) as errors_by_type,
+        jsonb_object_agg(severity, severity_count) as errors_by_severity,
+        COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '24 hours') as recent_errors
+    FROM (
+        SELECT 
+            type,
+            severity,
+            COUNT(*) as type_count,
+            COUNT(*) as severity_count
+        FROM public.error_reports
+        GROUP BY type, severity
+    ) stats;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Function to get feedback statistics
+CREATE OR REPLACE FUNCTION get_feedback_stats()
+RETURNS TABLE (
+    total_feedback BIGINT,
+    open_feedback BIGINT,
+    high_priority_feedback BIGINT,
+    feedback_by_type JSONB,
+    feedback_by_status JSONB,
+    recent_feedback BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        COUNT(*) as total_feedback,
+        COUNT(*) FILTER (WHERE status = 'open') as open_feedback,
+        COUNT(*) FILTER (WHERE priority IN ('high', 'urgent')) as high_priority_feedback,
+        jsonb_object_agg(type, type_count) as feedback_by_type,
+        jsonb_object_agg(status, status_count) as feedback_by_status,
+        COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days') as recent_feedback
+    FROM (
+        SELECT 
+            type,
+            status,
+            COUNT(*) as type_count,
+            COUNT(*) as status_count
+        FROM public.user_feedback
+        GROUP BY type, status
+    ) stats;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to search feedback
+CREATE OR REPLACE FUNCTION search_feedback(
+    p_search_term TEXT,
+    p_type TEXT DEFAULT NULL,
+    p_status TEXT DEFAULT NULL,
+    p_priority TEXT DEFAULT NULL,
+    p_limit INTEGER DEFAULT 20,
+    p_offset INTEGER DEFAULT 0
+)
+RETURNS TABLE (
+    id UUID,
+    user_id UUID,
+    type TEXT,
+    title TEXT,
+    description TEXT,
+    priority TEXT,
+    status TEXT,
+    category TEXT,
+    tags TEXT[],
+    votes INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        f.id,
+        f.user_id,
+        f.type,
+        f.title,
+        f.description,
+        f.priority,
+        f.status,
+        f.category,
+        f.tags,
+        f.votes,
+        f.created_at,
+        f.updated_at
+    FROM public.user_feedback f
+    WHERE 
+        (p_search_term IS NULL OR (
+            f.title ILIKE '%' || p_search_term || '%'
+            OR f.description ILIKE '%' || p_search_term || '%'
+            OR EXISTS (
+                SELECT 1 FROM unnest(f.tags) tag
+                WHERE tag ILIKE '%' || p_search_term || '%'
+            )
+        ))
+        AND (p_type IS NULL OR f.type = p_type)
+        AND (p_status IS NULL OR f.status = p_status)
+        AND (p_priority IS NULL OR f.priority = p_priority)
+    ORDER BY f.votes DESC, f.created_at DESC
+    LIMIT p_limit
+    OFFSET p_offset;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to get trending feedback
+CREATE OR REPLACE FUNCTION get_trending_feedback(
+    p_limit INTEGER DEFAULT 10
+)
+RETURNS TABLE (
+    id UUID,
+    title TEXT,
+    description TEXT,
+    type TEXT,
+    priority TEXT,
+    votes INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        f.id,
+        f.title,
+        f.description,
+        f.type,
+        f.priority,
+        f.votes,
+        f.created_at
+    FROM public.user_feedback f
+    WHERE f.status = 'open'
+    ORDER BY f.votes DESC, f.created_at DESC
+    LIMIT p_limit;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

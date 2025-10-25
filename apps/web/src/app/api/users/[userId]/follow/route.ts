@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProfileService } from '@/lib/services/profile';
 import { createClient } from '@/lib/supabase/server';
+import { ProfileService } from '@/lib/services/profile';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
     const supabase = await createClient();
@@ -17,14 +17,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = await params;
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
-    }
+    const { userId } = params;
 
     if (user.id === userId) {
       return NextResponse.json(
@@ -33,7 +26,7 @@ export async function POST(
       );
     }
 
-    const success = await ProfileService.followUser(user.id, userId);
+    const success = await ProfileService.followUser(userId);
 
     if (!success) {
       return NextResponse.json(
@@ -44,7 +37,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error following user:', error);
+    console.error('Error in follow user API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -54,7 +47,7 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
     const supabase = await createClient();
@@ -67,16 +60,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = await params;
+    const { userId } = params;
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
-    }
-
-    const success = await ProfileService.unfollowUser(user.id, userId);
+    const success = await ProfileService.unfollowUser(userId);
 
     if (!success) {
       return NextResponse.json(
@@ -87,7 +73,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error unfollowing user:', error);
+    console.error('Error in unfollow user API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

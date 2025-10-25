@@ -1,252 +1,434 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { ProfileData, ProfileService } from '@/lib/services/profile';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { X, Plus } from 'lucide-react';
-import { toast } from 'sonner';
-import AvatarUpload from './AvatarUpload';
+  User,
+  Mail,
+  Camera,
+  Save,
+  Loader2,
+  AlertTriangle,
+  CheckCircle,
+  Globe,
+  Users,
+  Lock,
+  Star,
+  X,
+} from 'lucide-react';
+import { ProfileService, UserProfileData, ProfileUpdateData } from '@/lib/services/profile';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileEditorProps {
-  onSave?: () => void;
+  onSave?: (profile: UserProfileData) => void;
+  onCancel?: () => void;
+  className?: string;
 }
 
-export default function ProfileEditor({ onSave }: ProfileEditorProps) {
-  const { user } = useAuth();
-  const [, setProfile] = useState<ProfileData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+export default function ProfileEditor({ onSave, onCancel, className }: ProfileEditorProps) {
+  const { user: currentUser } = useAuth();
+  const [profile, setProfile] = useState<UserProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   // Form state
-  const [displayName, setDisplayName] = useState('');
-  const [bio, setBio] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [interests, setInterests] = useState<string[]>([]);
+  const [formData, setFormData] = useState<ProfileUpdateData>({});
   const [newInterest, setNewInterest] = useState('');
-  const [privacyLevel, setPrivacyLevel] = useState<
-    'public' | 'friends' | 'private'
-  >('public');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user?.id) {
-      loadProfile();
-    }
-  }, [user?.id]);
+    loadProfile();
+  }, []);
 
   const loadProfile = async () => {
-    if (!user?.id) return;
-
     try {
-      setIsLoading(true);
-      const profileData = await ProfileService.getUserProfile(user.id);
-      if (profileData) {
+      setLoading(true);
+      setError(null);
+
+      const profileData = await ProfileService.getCurrentUserProfile();
+
+      if (!profileData) {
         setProfile(profileData);
-        setDisplayName(profileData.display_name || '');
-        setBio(profileData.bio || '');
-        setAvatarUrl(profileData.avatar_url || '');
-        setInterests(profileData.interests || []);
-        setPrivacyLevel(profileData.privacy_level);
+        setFormData({
+          display_name: profileData.display_name || '',
+          bio: profileData.bio || '',
+          avatar_url: profileData.avatar_url || '',
+          interests: profileData.interests || [],
+          privacy_level: profileData.privacy_level,
+        });
+        setAvatarPreview(profileData.avatar_url || null);
       }
-    } catch (error) {
-      console.error('Error loading profile:', error);
-      toast.error('Failed to load profile');
+    } catch (err) {
+      console.error('Error loading profile:', err);
+      setError('Failed to load profile');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleSave = async () => {
-    if (!user?.id) return;
+  const handleInputChange = (field: keyof ProfileUpdateData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleInterestAdd = () => {
+    if (!newInterest.trim()) return;
+
+    const interest = newInterest.trim();
+    if (formData.interests?.includes(interest)) return;
+
+    setFormData(prev => ({
+      ...prev,
+      interests: [...(prev.interests || []), interest],
+    }));
+    setNewInterest('');
+  };
+
+  const handleInterestRemove = (interestToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      interests: prev.interests?.filter(interest => interest !== interestToRemove) || [],
+    }));
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const preview = URL.createObjectURL(file);
+      setAvatarPreview(preview);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!profile) return;
 
     try {
-      setIsSaving(true);
+      setSaving(true);
+      setError(null);
+      setSuccess(null);
 
-      const success = await ProfileService.updateProfile(user.id, {
-        display_name: displayName.trim() || undefined,
-        bio: bio.trim() || undefined,
-        avatar_url: avatarUrl.trim() || undefined,
-        interests: interests.length > 0 ? interests : undefined,
-        privacy_level: privacyLevel,
-      });
+      // Upload avatar if changed
+      let avatarUrl = formData.avatar_url;
+      if (avatarFile) {
+        const uploadedUrl = await ProfileService.uploadAvatar(avatarFile);
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl;
+        }
+      }
+
+      // Update profile
+      const updateData: ProfileUpdateData = {
+        ...formData,
+        avatar_url: avatarUrl,
+      };
+
+      const success = await ProfileService.updateProfile(updateData);
 
       if (success) {
-        toast.success('Profile updated successfully');
+        setSuccess('Profile updated successfully!');
+        // Reload profile to get updated data
         await loadProfile();
-        onSave?.();
+        if (onSave) {
+          const updatedProfile = await ProfileService.getCurrentUserProfile();
+          if (updatedProfile) {
+            onSave(updatedProfile);
+          }
+        }
       } else {
-        toast.error('Failed to update profile');
+        setError('Failed to update profile');
       }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      toast.error('Failed to update profile');
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      setError('Failed to update profile');
     } finally {
-      setIsSaving(false);
+      setSaving(false);
     }
   };
 
-  const addInterest = () => {
-    const interest = newInterest.trim();
-    if (interest && !interests.includes(interest)) {
-      setInterests([...interests, interest]);
-      setNewInterest('');
+  const getPrivacyIcon = (level: string) => {
+    switch (level) {
+      case 'public':
+        return <Globe className="h-4 w-4" />;
+      case 'friends':
+        return <Users className="h-4 w-4" />;
+      case 'private':
+        return <Lock className="h-4 w-4" />;
+      default:
+        return <Globe className="h-4 w-4" />;
     }
   };
 
-  const removeInterest = (interestToRemove: string) => {
-    setInterests(interests.filter(interest => interest !== interestToRemove));
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addInterest();
-    }
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="h-8 w-32 bg-muted rounded animate-pulse" />
-        <div className="space-y-4">
-          <div className="h-10 w-full bg-muted rounded animate-pulse" />
-          <div className="h-20 w-full bg-muted rounded animate-pulse" />
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span className="ml-2">Loading profile...</span>
       </div>
     );
   }
 
+  if (!profile) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>Profile not found</AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Edit Profile</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Avatar */}
-          <div className="space-y-2">
-            <Label>Profile Picture</Label>
-            <AvatarUpload
-              currentAvatarUrl={avatarUrl}
-              onAvatarChange={newUrl => setAvatarUrl(newUrl || '')}
-              disabled={isSaving}
-            />
-          </div>
+    <div className={`space-y-6 ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Edit Profile</h1>
+          <p className="text-muted-foreground">
+            Customize your profile information and preferences
+          </p>
+        </div>
+      </div>
 
-          {/* Display Name */}
-          <div className="space-y-2">
-            <Label htmlFor="display-name">Display Name</Label>
-            <Input
-              id="display-name"
-              value={displayName}
-              onChange={e => setDisplayName(e.target.value)}
-              placeholder="Enter your display name"
-              maxLength={50}
-            />
-            <p className="text-sm text-muted-foreground">
-              {displayName.length}/50 characters
-            </p>
-          </div>
+      {/* Success/Error Messages */}
+      {success && (
+        <Alert>
+          <CheckCircle className="h-4 w-4" />
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
 
-          {/* Bio */}
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              value={bio}
-              onChange={e => setBio(e.target.value)}
-              placeholder="Tell us about yourself..."
-              maxLength={500}
-              rows={4}
-            />
-            <p className="text-sm text-muted-foreground">
-              {bio.length}/500 characters
-            </p>
-          </div>
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-          {/* Interests */}
-          <div className="space-y-2">
-            <Label>Interests</Label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {interests.map((interest, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  {interest}
-                  <button
-                    onClick={() => removeInterest(interest)}
-                    className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Avatar Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Camera className="h-5 w-5" />
+              <span>Profile Picture</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={avatarPreview || undefined} />
+                <AvatarFallback className="text-xl">
+                  {formData.display_name ? getInitials(formData.display_name) : 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <Label htmlFor="avatar" className="cursor-pointer">
+                  <Button type="button" variant="outline" asChild>
+                    <span>
+                      <Camera className="h-4 w-4 mr-2" />
+                      Change Avatar
+                    </span>
+                  </Button>
+                </Label>
+                <Input
+                  id="avatar"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
+                <p className="text-sm text-muted-foreground mt-2">
+                  Upload a profile picture (JPG, PNG, max 5MB)
+                </p>
+              </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Basic Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <User className="h-5 w-5" />
+              <span>Basic Information</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="display_name">Display Name *</Label>
+                <Input
+                  id="display_name"
+                  value={formData.display_name || ''}
+                  onChange={(e) => handleInputChange('display_name', e.target.value)}
+                  placeholder="Enter your display name"
+                  maxLength={50}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  {(formData.display_name || '').length}/50 characters
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="privacy_level">Privacy Level</Label>
+                <Select
+                  value={formData.privacy_level || 'public'}
+                  onValueChange={(value) => handleInputChange('privacy_level', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="h-4 w-4" />
+                        <span>Public</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="friends">
+                      <div className="flex items-center space-x-2">
+                        <Users className="h-4 w-4" />
+                        <span>Friends Only</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="private">
+                      <div className="flex items-center space-x-2">
+                        <Lock className="h-4 w-4" />
+                        <span>Private</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea
+                id="bio"
+                value={formData.bio || ''}
+                onChange={(e) => handleInputChange('bio', e.target.value)}
+                placeholder="Tell us about yourself..."
+                rows={4}
+                maxLength={500}
+              />
+              <p className="text-xs text-muted-foreground">
+                {(formData.bio || '').length}/500 characters
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Interests */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Star className="h-5 w-5" />
+              <span>Interests</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="flex space-x-2">
               <Input
                 value={newInterest}
-                onChange={e => setNewInterest(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onChange={(e) => setNewInterest(e.target.value)}
                 placeholder="Add an interest..."
-                maxLength={30}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInterestAdd();
+                  }
+                }}
               />
-              <Button onClick={addInterest} variant="outline" size="icon">
-                <Plus className="h-4 w-4" />
+              <Button
+                type="button"
+                onClick={handleInterestAdd}
+                disabled={!newInterest.trim()}
+              >
+                Add
               </Button>
             </div>
-          </div>
 
-          {/* Privacy Level */}
-          <div className="space-y-2">
-            <Label htmlFor="privacy-level">Privacy Level</Label>
-            <Select
-              value={privacyLevel}
-              onValueChange={(value: 'public' | 'friends' | 'private') =>
-                setPrivacyLevel(value)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">
-                  Public - Anyone can see your profile
-                </SelectItem>
-                <SelectItem value="friends">
-                  Friends - Only people you follow can see your profile
-                </SelectItem>
-                <SelectItem value="private">
-                  Private - Only you can see your profile
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            {formData.interests && formData.interests.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {formData.interests.map((interest, index) => (
+                  <Badge key={index} variant="secondary" className="flex items-center space-x-1">
+                    <span>{interest}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleInterestRemove(interest)}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-          {/* Save Button */}
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => window.location.reload()}>
+        {/* Account Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Mail className="h-5 w-5" />
+              <span>Account Information</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input value={profile.email} disabled />
+              <p className="text-xs text-muted-foreground">
+                Contact support to change your email address
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-4">
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? 'Saving...' : 'Save Changes'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+          <Button type="submit" disabled={saving}>
+            {saving ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

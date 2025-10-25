@@ -1,20 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProfileService } from '@/lib/services/profile';
 import { createClient } from '@/lib/supabase/server';
+import { ProfileService } from '@/lib/services/profile';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
-    const { userId } = await params;
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { userId } = params;
 
     const profile = await ProfileService.getUserProfile(userId);
 
@@ -23,23 +26,23 @@ export async function GET(
     }
 
     // Check privacy settings
-    if (profile.privacy_level === 'private') {
-      const supabase = await createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (profile.privacy_level === 'private' && profile.id !== user.id) {
+      return NextResponse.json({ error: 'Profile is private' }, { status: 403 });
+    }
 
-      if (!user || user.id !== userId) {
-        return NextResponse.json(
-          { error: 'Profile is private' },
-          { status: 403 }
-        );
+    if (profile.privacy_level === 'friends' && profile.id !== user.id) {
+      // Check if users are friends (following each other)
+      const isFollowing = await ProfileService.isFollowing(user.id, profile.id);
+      const isFollowedBy = await ProfileService.isFollowing(profile.id, user.id);
+      
+      if (!isFollowing || !isFollowedBy) {
+        return NextResponse.json({ error: 'Profile is friends only' }, { status: 403 });
       }
     }
 
-    return NextResponse.json(profile);
+    return NextResponse.json({ profile });
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.error('Error in user profile GET API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

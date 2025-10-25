@@ -51,7 +51,7 @@ export default function MobileNav() {
           />
 
           {/* Menu panel */}
-          <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-background border-l shadow-lg">
+          <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-background border-l shadow-lg backdrop-blur supports-backdrop-filter:bg-background/95">
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b">

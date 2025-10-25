@@ -5,13 +5,16 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import BottomActionBar from '@/components/layout/BottomActionBar';
 
 // Revalidate page every hour to show fresh polls
 export const revalidate = 3600;
 
 function HomePollSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-6">
         <Skeleton className="h-8 w-64 mx-auto" />
         <div className="grid grid-cols-2 gap-4">
@@ -30,7 +33,7 @@ async function FeaturedPoll() {
 
     if (!poll) {
       return (
-        <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4">
           <div className="max-w-md w-full space-y-4 text-center">
             <Alert>
               <AlertDescription>
@@ -49,7 +52,7 @@ async function FeaturedPoll() {
   } catch (error) {
     console.error('Error loading featured poll:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-4 text-center">
           <Alert variant="destructive">
             <AlertDescription>
@@ -67,8 +70,26 @@ async function FeaturedPoll() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<HomePollSkeleton />}>
-      <FeaturedPoll />
-    </Suspense>
+    <div className="min-h-screen flex flex-col">
+      {/* Skip link for keyboard navigation */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
+      <Header />
+      <main
+        id="main-content"
+        className="flex-1 container mx-auto px-4 py-6 md:py-8 pb-20 md:pb-8"
+        tabIndex={-1}
+      >
+        <div className="max-w-4xl mx-auto">
+          <Suspense fallback={<HomePollSkeleton />}>
+            <FeaturedPoll />
+          </Suspense>
+        </div>
+      </main>
+      <Footer />
+      <BottomActionBar />
+    </div>
   );
 }

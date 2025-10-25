@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { DiscoveryService, SearchFilters } from '@/lib/services/discovery';
+import { FeedService } from '@/lib/services/feed';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,41 +15,38 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
+    const query = searchParams.get('q');
+    const categories = searchParams.get('categories')?.split(',') || [];
+    const tags = searchParams.get('tags')?.split(',') || [];
+    const sortBy = searchParams.get('sort_by') || 'relevance';
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    const filters: SearchFilters = {
-      query: searchParams.get('q') || undefined,
-      categories: searchParams.get('categories')?.split(',').filter(Boolean),
-      tags: searchParams.get('tags')?.split(',').filter(Boolean),
-      dateRange:
-        (searchParams.get('dateRange') as
-          | 'today'
-          | 'week'
-          | 'month'
-          | 'all'
-          | undefined) || undefined,
-      sortBy:
-        (searchParams.get('sortBy') as
-          | 'relevance'
-          | 'popularity'
-          | 'recent'
-          | undefined) || 'relevance',
-      minEngagement: searchParams.get('minEngagement')
-        ? parseFloat(searchParams.get('minEngagement')!)
-        : undefined,
-      maxAge: searchParams.get('maxAge')
-        ? parseInt(searchParams.get('maxAge')!)
-        : undefined,
+    if (!query || query.trim().length < 2) {
+      return NextResponse.json(
+        { error: 'Search query must be at least 2 characters' },
+        { status: 400 }
+      );
+    }
+
+    const filters = {
+      categories: categories.length > 0 ? categories : undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      sort_by: sortBy as 'relevance' | 'trending' | 'popular' | 'newest',
     };
 
-    const polls = await DiscoveryService.searchPolls(filters, limit, offset);
+    const polls = await FeedService.searchPolls(
+      query.trim(),
+      filters,
+      limit,
+      offset
+    );
 
-    return NextResponse.json({ polls, filters });
+    return NextResponse.json({ polls });
   } catch (error) {
-    console.error('Error searching polls:', error);
+    console.error('Error in polls search API:', error);
     return NextResponse.json(
-      { error: 'Failed to search polls' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
