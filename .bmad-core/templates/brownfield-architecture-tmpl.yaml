@@ -123,7 +123,8 @@ sections:
       - id: existing-stack
         title: Existing Technology Stack
         type: table
-        columns: [Category, Current Technology, Version, Usage in Enhancement, Notes]
+        columns:
+          [Category, Current Technology, Version, Usage in Enhancement, Notes]
         instruction: Document the current stack that must be maintained or integrated with
       - id: new-tech-additions
         title: New Technology Additions

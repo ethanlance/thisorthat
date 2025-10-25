@@ -7,6 +7,7 @@ This document provides detailed wireframe specifications for all screens in the 
 **Target Platforms:** Web and Mobile Web (responsive design)
 
 **Design Principles:**
+
 - Mobile-first approach (Tailwind responsive design)
 - Gamer aesthetic with playful, quirky design
 - Simple, intuitive interactions
@@ -20,11 +21,13 @@ This document provides detailed wireframe specifications for all screens in the 
 ## Screen Inventory
 
 ### Public Screens (No Auth Required)
+
 1. Landing Page
 2. Poll View (Public Link)
 3. Login Page
 
 ### Authenticated Screens
+
 4. Home Feed
 5. Create Poll
 6. Poll Detail (Authenticated)
@@ -45,7 +48,7 @@ graph TD
     E -->|Share Link| F[Poll View]
     F -->|Vote| G[Results Display]
     G -->|Add Comment| H[Comment Added]
-    
+
     style A fill:#e1f5ff
     style C fill:#e1f5ff
     style D fill:#fff4e1
@@ -64,7 +67,7 @@ graph TD
     D -->|Success| E
     C -->|Cancel| B
     D -->|Cancel| B
-    
+
     style B fill:#fff4e1
     style E fill:#e1f5ff
 ```
@@ -81,7 +84,7 @@ graph TD
     E -->|Real-time Update| F[See Results]
     F -->|Add Comment| G[Login Required]
     G -->|Login| H[Add Comment]
-    
+
     style B fill:#e1ffe1
     style E fill:#e1ffe1
     style F fill:#e1ffe1
@@ -139,42 +142,50 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Logo (left) - "ThisOrThat" with playful font
 - Sign In button (right) - Primary CTA button
 
 **Hero Section:**
+
 - Large headline: "Stop Overthinking, Start Deciding"
 - Subheadline: "Get instant feedback from your friends on any decision"
 - Two CTAs: "Get Started" (primary), "Learn More" (secondary)
 - Background: Subtle gradient with playful geometric shapes
 
 **How It Works:**
+
 - Three-column layout (mobile: stacked)
 - Each step has an icon, title, and brief description
 - Icons: Camera (Create), Link (Share), Checkmark (Vote)
 
 **Example Poll Preview:**
+
 - Animated demonstration of a poll
 - Shows two options side-by-side
 - Simulates voting and results updating
 - Builds excitement and understanding
 
 **Features Section:**
+
 - Grid of key features with icons
 - Each feature: icon, title, 1-sentence description
 - Emphasizes friend groups, time pressure, real-time updates
 
 **Footer CTA:**
+
 - Email capture for waitlist
 - Social proof (if available): "Join 1,000+ early adopters"
 
 **Interactions:**
+
 - Smooth scroll to sections
 - Animated example poll
 - Hover effects on buttons
 - Responsive layout (mobile-first)
 
 **Mobile Considerations:**
+
 - Stack all sections vertically
 - Full-width CTAs
 - Simplified navigation (hamburger menu)
@@ -223,16 +234,19 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Back button (returns to previous page)
 - Minimal, clean design
 
 **Content Area:**
+
 - Centered card layout
 - Logo/mascot character at top
 - Welcome headline
 - Brief value proposition
 
 **OAuth Buttons:**
+
 - Large, prominent buttons
 - Google button: Blue with Google logo
 - Facebook button: Blue with Facebook logo
@@ -240,21 +254,25 @@ graph TD
 - Clear provider branding
 
 **Guest Option:**
+
 - Secondary action
 - Explains limitations (can vote but not create polls)
 - Styled as text link, not button
 
 **Legal:**
+
 - Small text at bottom
 - Links to Terms and Privacy Policy
 
 **Interactions:**
+
 - Click OAuth button → Redirect to provider
 - After auth → Redirect to Home Feed or return URL
 - Loading state during OAuth flow
 - Error handling for failed auth
 
 **Mobile Considerations:**
+
 - Full-screen layout
 - Large touch targets for buttons
 - Simplified copy
@@ -305,12 +323,14 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Hamburger menu (left) - Opens navigation drawer
 - Logo/title (center)
 - Create poll button "+" (right, prominent)
 - Profile avatar (right)
 
 **Filter Tabs:**
+
 - Active: Polls still accepting votes
 - Closed: Polls that have ended
 - My Polls: Polls user created
@@ -318,6 +338,7 @@ graph TD
 - Horizontal scroll on mobile
 
 **Poll Cards:**
+
 - Two-column grid (desktop), single column (mobile)
 - Each card shows:
   - Two option images side-by-side
@@ -329,15 +350,18 @@ graph TD
 - Click anywhere on card → Poll Detail
 
 **Empty State:**
+
 - "No polls yet! Create your first poll"
 - Large illustration
 - CTA button to create poll
 
 **Loading State:**
+
 - Skeleton cards while loading
 - Smooth fade-in when loaded
 
 **Interactions:**
+
 - Pull to refresh (mobile)
 - Infinite scroll or "Load More" button
 - Click card → Navigate to Poll Detail
@@ -345,6 +369,7 @@ graph TD
 - Tab switching updates content
 
 **Mobile Considerations:**
+
 - Single column layout
 - Larger touch targets
 - Swipe gestures for navigation
@@ -413,11 +438,13 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Cancel button (left) - Confirms before discarding
 - Title: "Create Poll"
 - Done/Next button (right) - Validates before proceeding
 
 **Option Upload Section:**
+
 - Two large upload areas (Option A & B)
 - Visual hierarchy: Images are the focus
 - Upload states:
@@ -428,6 +455,7 @@ graph TD
 - Character limit indicator
 
 **Image Upload Interaction:**
+
 - Click to open file picker
 - Drag & drop support (desktop)
 - Camera access on mobile
@@ -437,6 +465,7 @@ graph TD
 - Accepted formats: JPG, PNG, WebP
 
 **Details Section:**
+
 - Collapsible/expandable (optional)
 - Description textarea (500 char limit)
 - Character counter
@@ -444,24 +473,28 @@ graph TD
 - Helper text explaining privacy
 
 **Validation:**
+
 - Both images required
 - Labels optional but recommended
 - Real-time validation feedback
 - Error messages inline
 
 **Create Button:**
+
 - Large, prominent CTA
 - Disabled until valid
 - Loading state during creation
 - Success animation
 
 **Interactions:**
+
 - Auto-save draft (localStorage)
 - Confirm before cancel if changes made
 - Smooth transitions between steps
 - Success → Redirect to poll detail
 
 **Mobile Considerations:**
+
 - Full-screen layout
 - Large upload targets
 - Native camera integration
@@ -558,17 +591,20 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Back button (left)
 - Title: "Poll"
 - Menu button (right) - Share, Report, Delete (if owner)
 
 **Poll Info:**
+
 - Creator name with avatar
 - Time remaining (with urgency indicator)
 - Poll description/question
 - Status badge (Active/Closed)
 
 **Poll Options (Before Vote):**
+
 - Two-column layout (equal width)
 - Large, high-quality images
 - Option labels below images
@@ -577,6 +613,7 @@ graph TD
 - Tap to zoom images (mobile)
 
 **Poll Options (After Vote):**
+
 - User's choice highlighted
 - Visual indicator (checkmark, border)
 - Progress bars showing percentages
@@ -585,11 +622,13 @@ graph TD
 - Option to change vote
 
 **Vote Counts:**
+
 - Total votes displayed
 - Real-time updates
 - Smooth animations when counts change
 
 **Comments Section:**
+
 - Scrollable list of comments
 - Each comment shows:
   - User avatar
@@ -602,12 +641,14 @@ graph TD
 - Real-time updates
 
 **Menu Options:**
+
 - Share poll (copy link, social media)
 - Report poll (if inappropriate)
 - Delete poll (if creator)
 - Edit poll (if creator, before votes)
 
 **Interactions:**
+
 - Click vote button → Optimistic update → Server confirmation
 - Real-time vote updates via Supabase Realtime
 - Click image → Full-screen view
@@ -616,6 +657,7 @@ graph TD
 - Share sheet integration (mobile)
 
 **States:**
+
 - Loading: Skeleton UI
 - Voted: Show results with user's choice
 - Not voted: Show vote buttons
@@ -623,6 +665,7 @@ graph TD
 - Error: Show error message with retry
 
 **Mobile Considerations:**
+
 - Stack options vertically for better image viewing
 - Full-width vote buttons
 - Bottom sheet for comments
@@ -678,27 +721,32 @@ graph TD
 **Differences from Authenticated View:**
 
 **Header:**
+
 - Logo instead of back button
 - Prominent "Sign In" button
 - No menu options
 
 **Voting:**
+
 - Can vote anonymously
 - Vote stored via cookie/localStorage
 - Results shown after voting
 - Cannot change vote without signing in
 
 **Comments:**
+
 - Cannot view comments (or limited view)
 - CTA to sign in to comment
 - Shows comment count only
 
 **Footer CTA:**
+
 - Encourages sign-up
 - "Create your own polls"
 - Link to landing page
 
 **Interactions:**
+
 - Vote works without auth
 - Cookie-based vote tracking
 - Prompt to sign in for full features
@@ -752,17 +800,20 @@ graph TD
 **Components:**
 
 **Header:**
+
 - Back button
 - Title: "Profile"
 - Settings icon (right)
 
 **Profile Info:**
+
 - Large avatar (editable)
 - Username
 - Email address
 - Edit profile button
 
 **Stats:**
+
 - Three-column grid
 - Polls created
 - Total votes received
@@ -770,17 +821,20 @@ graph TD
 - Animated counters
 
 **Tabs:**
+
 - My Polls: Polls user created
 - Voted On: Polls user voted on
 - Saved: Bookmarked polls (future)
 
 **Poll List:**
+
 - Same card design as Home Feed
 - Shows poll status (Active/Closed)
 - Stats: comments, views
 - Click → Poll Detail
 
 **Settings (Separate Page/Modal):**
+
 - Account settings
 - Notification preferences
 - Privacy settings
@@ -788,12 +842,14 @@ graph TD
 - Sign out
 
 **Interactions:**
+
 - Edit avatar → Upload new image
 - Click stats → Filtered view
 - Tab switching
 - Pull to refresh
 
 **Mobile Considerations:**
+
 - Simplified stats layout
 - Bottom navigation
 - Swipe between tabs
@@ -807,6 +863,7 @@ graph TD
 #### Button Styles
 
 **Primary Button:**
+
 - Background: Bright, energetic color (e.g., #FF6B6B)
 - Text: White, bold
 - Border radius: 12px
@@ -815,12 +872,14 @@ graph TD
 - Active: Scale down slightly
 
 **Secondary Button:**
+
 - Background: Transparent
 - Border: 2px solid primary color
 - Text: Primary color
 - Same dimensions as primary
 
 **Ghost Button:**
+
 - Background: Transparent
 - No border
 - Text: Gray
@@ -869,11 +928,13 @@ graph TD
 ### Colors (Tailwind Palette)
 
 **Primary Palette:**
+
 - Primary: #FF6B6B (Coral Red - energetic, playful) - `bg-primary-500`
 - Secondary: #4ECDC4 (Turquoise - friendly, modern) - `bg-secondary-500`
 - Accent: #FFE66D (Yellow - attention, urgency) - `bg-accent-500`
 
 **Neutral Palette:**
+
 - Background: #FFFFFF - `bg-white`
 - Surface: #F7F7F7 - `bg-gray-50`
 - Border: #E0E0E0 - `border-gray-300`
@@ -881,12 +942,14 @@ graph TD
 - Text Secondary: #718096 - `text-gray-600`
 
 **Status Colors:**
+
 - Success: #48BB78 - `bg-green-500`
 - Warning: #ECC94B - `bg-yellow-400`
 - Error: #F56565 - `bg-red-500`
 - Info: #4299E1 - `bg-blue-500`
 
 **Tailwind Config Example:**
+
 ```js
 colors: {
   primary: {
@@ -904,10 +967,12 @@ colors: {
 ### Typography
 
 **Font Family (Tailwind):**
+
 - Primary: Inter or similar modern sans-serif - `font-sans`
 - Headings: Poppins or similar playful font - `font-display`
 
 **Font Sizes (Tailwind Classes):**
+
 - H1: 32px (mobile: 24px) - `text-3xl md:text-4xl`
 - H2: 24px (mobile: 20px) - `text-xl md:text-2xl`
 - H3: 20px (mobile: 18px) - `text-lg md:text-xl`
@@ -916,6 +981,7 @@ colors: {
 - Tiny: 12px - `text-xs`
 
 **Font Weights (Tailwind Classes):**
+
 - Regular: 400 - `font-normal`
 - Medium: 500 - `font-medium`
 - Semibold: 600 - `font-semibold`
@@ -926,6 +992,7 @@ colors: {
 **Base Unit:** 4px (Tailwind default)
 
 **Scale (Tailwind Classes):**
+
 - xs: 4px - `p-1` / `m-1`
 - sm: 8px - `p-2` / `m-2`
 - md: 16px - `p-4` / `m-4`
@@ -952,32 +1019,36 @@ colors: {
 ## Responsive Breakpoints (Tailwind)
 
 **Mobile:** 0 - 640px (default, no prefix)
+
 - Single column layouts
 - Bottom navigation
 - Full-width components
 - Larger touch targets (min 44px)
 
 **Tablet:** 641px - 1024px (`md:` prefix)
+
 - Two-column layouts where appropriate
 - Side navigation
 - Optimized for touch and mouse
 
 **Desktop:** 1025px+ (`lg:` prefix)
+
 - Multi-column layouts
 - Hover states
 - Keyboard shortcuts
 - Max content width: 1200px (`max-w-7xl`)
 
 **Tailwind Examples:**
+
 ```html
 <!-- Mobile: full width, Desktop: max width -->
 <div class="w-full lg:max-w-7xl">
-
-<!-- Mobile: single column, Tablet: 2 columns, Desktop: 3 columns -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-
-<!-- Mobile: stack, Desktop: flex row -->
-<div class="flex flex-col lg:flex-row">
+  <!-- Mobile: single column, Tablet: 2 columns, Desktop: 3 columns -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Mobile: stack, Desktop: flex row -->
+    <div class="flex flex-col lg:flex-row"></div>
+  </div>
+</div>
 ```
 
 ---
@@ -987,16 +1058,19 @@ colors: {
 ### Loading States
 
 **Skeleton Screens:**
+
 - Use for initial page loads
 - Animate shimmer effect
 - Match layout of actual content
 
 **Spinners:**
+
 - Use for button actions
 - Small, inline spinners
 - Replace button text during loading
 
 **Progress Bars:**
+
 - Use for file uploads
 - Show percentage
 - Smooth animation
@@ -1004,47 +1078,56 @@ colors: {
 ### Empty States
 
 **No Polls:**
+
 - Large illustration
 - Encouraging message
 - Clear CTA to create first poll
 
 **No Comments:**
+
 - Simple message
 - "Be the first to comment"
 
 **No Results:**
+
 - "No polls found"
 - Suggest creating one or adjusting filters
 
 ### Error States
 
 **Network Error:**
+
 - Friendly message
 - Retry button
 - Offline indicator
 
 **Not Found:**
+
 - 404 page with illustration
 - Link back to home
 - Search functionality
 
 **Permission Denied:**
+
 - Clear explanation
 - Action to resolve (e.g., sign in)
 
 ### Success States
 
 **Poll Created:**
+
 - Success animation
 - Share options immediately
 - View poll button
 
 **Vote Recorded:**
+
 - Immediate visual feedback
 - Confetti or celebration animation
 - Show results
 
 **Comment Added:**
+
 - Smooth append to list
 - Highlight new comment briefly
 
@@ -1055,23 +1138,27 @@ colors: {
 ### WCAG 2.1 AA Compliance
 
 **Color Contrast:**
+
 - Text: Minimum 4.5:1 ratio
 - Large text: Minimum 3:1 ratio
 - Interactive elements: Clear focus states
 
 **Keyboard Navigation:**
+
 - All interactive elements focusable
 - Logical tab order
 - Visible focus indicators
 - Keyboard shortcuts for common actions
 
 **Screen Readers:**
+
 - Semantic HTML
 - ARIA labels where needed
 - Alt text for images
 - Skip navigation links
 
 **Touch Targets:**
+
 - Minimum 44x44px
 - Adequate spacing between targets
 - Clear active states

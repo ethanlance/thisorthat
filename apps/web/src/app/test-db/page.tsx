@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { PollsService } from '@/lib/services/polls';
+import { CommentService } from '@/lib/services/comments';
 
 interface Poll {
   id: string;
@@ -24,6 +25,8 @@ export default function TestDatabasePage() {
     useState<string>('Testing...');
   const [polls, setPolls] = useState<Poll[]>([]);
   const [loading, setLoading] = useState(true);
+  const [commentsTest, setCommentsTest] = useState<string>('Not tested');
+  const [testPollId, setTestPollId] = useState<string>('');
 
   useEffect(() => {
     testConnection();
@@ -44,6 +47,11 @@ export default function TestDatabasePage() {
         // Test fetching polls
         const publicPolls = await PollsService.getPublicPolls();
         setPolls(publicPolls);
+        
+        // Set the first poll as test poll for comments
+        if (publicPolls.length > 0) {
+          setTestPollId(publicPolls[0].id);
+        }
       }
     } catch (err) {
       setConnectionStatus(
@@ -85,6 +93,21 @@ export default function TestDatabasePage() {
     }
   };
 
+  const testCommentsRPC = async () => {
+    if (!testPollId) {
+      setCommentsTest('❌ No poll ID available for testing');
+      return;
+    }
+
+    try {
+      setCommentsTest('Testing...');
+      const comments = await CommentService.getPollComments(testPollId, 10, 0);
+      setCommentsTest(`✅ Comments RPC working! Found ${comments.length} comments`);
+    } catch (err) {
+      setCommentsTest(`❌ Comments RPC failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-8 space-y-8">
       <h1 className="text-3xl font-bold">Database Connection Test</h1>
@@ -97,13 +120,33 @@ export default function TestDatabasePage() {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Database Operations Test</h2>
 
-        <button
-          onClick={testCreatePoll}
-          disabled={loading}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
-        >
-          {loading ? 'Testing...' : 'Create Test Poll'}
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={testCreatePoll}
+            disabled={loading}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
+          >
+            {loading ? 'Testing...' : 'Create Test Poll'}
+          </button>
+
+          <button
+            onClick={testCommentsRPC}
+            disabled={loading || !testPollId}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            Test Comments RPC
+          </button>
+        </div>
+
+        <div className="bg-muted p-4 rounded-lg">
+          <h3 className="text-lg font-semibold mb-2">Comments RPC Test</h3>
+          <p className="text-sm">{commentsTest}</p>
+          {testPollId && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Testing with poll ID: {testPollId}
+            </p>
+          )}
+        </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">

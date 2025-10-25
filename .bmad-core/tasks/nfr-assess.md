@@ -94,16 +94,16 @@ nfr_validation:
   _assessed: [security, performance, reliability, maintainability]
   security:
     status: CONCERNS
-    notes: 'No rate limiting on auth endpoints'
+    notes: "No rate limiting on auth endpoints"
   performance:
     status: PASS
-    notes: 'Response times < 200ms verified'
+    notes: "Response times < 200ms verified"
   reliability:
     status: PASS
-    notes: 'Error handling and retries implemented'
+    notes: "Error handling and retries implemented"
   maintainability:
     status: CONCERNS
-    notes: 'Test coverage at 65%, target is 80%'
+    notes: "Test coverage at 65%, target is 80%"
 ```
 
 ## Deterministic Status Rules
@@ -333,10 +333,10 @@ performance_deep_dive:
     p99: 350ms
   database:
     slow_queries: 2
-    missing_indexes: ['users.email', 'orders.user_id']
+    missing_indexes: ["users.email", "orders.user_id"]
   caching:
     hit_rate: 0%
-    recommendation: 'Add Redis for session data'
+    recommendation: "Add Redis for session data"
   load_test:
     max_rps: 150
     breaking_point: 200 rps

@@ -15,8 +15,10 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import ImageUpload from '@/components/upload/ImageUpload';
+import PollPrivacySettings, { PollPrivacySettings as PrivacySettings } from '@/components/privacy/PollPrivacySettings';
 import { uploadPollImage } from '@/lib/storage/image-upload';
 import { PollsService } from '@/lib/services/polls';
+import { PollPrivacyService } from '@/lib/services/poll-privacy';
 import {
   PollFormData,
   validatePollForm,
@@ -44,6 +46,10 @@ export default function PollCreationForm({
     optionALabel: '',
     optionBLabel: '',
     description: '',
+  });
+
+  const [privacySettings, setPrivacySettings] = useState<PrivacySettings>({
+    privacy_level: 'public',
   });
 
   const [, setUploadStatus] = useState({
@@ -135,19 +141,10 @@ export default function PollCreationForm({
     setFieldErrors({});
 
     try {
-      // Create poll record first
-      const pollData = await PollsService.createPoll({
-        creatorId: user.id,
-        optionALabel: formData.optionALabel || undefined,
-        optionBLabel: formData.optionBLabel || undefined,
-        description: formData.description || undefined,
-        isPublic: true,
-      });
-
-      // Upload images
+      // Upload images first
       const [optionAResult, optionBResult] = await Promise.all([
-        uploadPollImage(formData.optionAImage!, pollData.id, 'a'),
-        uploadPollImage(formData.optionBImage!, pollData.id, 'b'),
+        uploadPollImage(formData.optionAImage!, 'temp-id', 'a'),
+        uploadPollImage(formData.optionBImage!, 'temp-id', 'b'),
       ]);
 
       if (
@@ -159,12 +156,23 @@ export default function PollCreationForm({
         throw new Error('Failed to upload images');
       }
 
-      // Update poll with image URLs
-      await PollsService.updatePollWithImages(
-        pollData.id,
-        optionAResult.url,
-        optionBResult.url
+      // Create poll with privacy settings
+      const pollData = await PollPrivacyService.createPollWithPrivacy(
+        {
+          creator_id: user.id,
+          option_a_image_url: optionAResult.url,
+          option_b_image_url: optionBResult.url,
+          option_a_label: formData.optionALabel || null,
+          option_b_label: formData.optionBLabel || null,
+          description: formData.description || null,
+          is_public: privacySettings.privacy_level === 'public',
+        },
+        privacySettings
       );
+
+      if (!pollData) {
+        throw new Error('Failed to create poll');
+      }
 
       // Success callback or redirect
       if (onSuccess) {
@@ -297,6 +305,13 @@ export default function PollCreationForm({
             <FormError>{fieldErrors.description}</FormError>
           )}
         </FormField>
+
+        {/* Privacy Settings */}
+        <PollPrivacySettings
+          onPrivacyChange={setPrivacySettings}
+          initialSettings={privacySettings}
+          disabled={isSubmitting}
+        />
 
         {/* Error Display */}
         {error && <Alert variant="destructive">{error}</Alert>}

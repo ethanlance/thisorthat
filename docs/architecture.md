@@ -14,9 +14,9 @@ We will use Next.js 14+ with the App Router as our foundation, deployed on Verce
 
 ### Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-27 | 1.0 | Initial architecture document | ThisOrThat Team |
+| Date       | Version | Description                   | Author          |
+| ---------- | ------- | ----------------------------- | --------------- |
+| 2025-01-27 | 1.0     | Initial architecture document | ThisOrThat Team |
 
 ## High Level Architecture
 
@@ -29,16 +29,19 @@ ThisOrThat is built as a modern Jamstack application using Next.js 14+ with the 
 **Platform:** Vercel + Supabase
 
 **Key Services:**
+
 - **Vercel**: Frontend hosting, serverless API routes, edge functions, automatic deployments
 - **Supabase**: PostgreSQL database, authentication (Google/Facebook OAuth), real-time subscriptions, storage for poll images, row-level security
 - **Vercel Edge Network**: Global CDN for static assets and image optimization
 - **Supabase Storage**: Image uploads and serving with automatic optimization
 
-**Deployment Host and Regions:** 
+**Deployment Host and Regions:**
+
 - Vercel: Global edge network with automatic region selection
 - Supabase: US-West (primary), with potential for multi-region expansion
 
 **Rationale:**
+
 - Vercel + Supabase is the optimal choice for rapid MVP development with built-in scaling
 - Zero DevOps overhead - focus on product development
 - Built-in authentication and real-time capabilities perfect for polling
@@ -53,6 +56,7 @@ ThisOrThat is built as a modern Jamstack application using Next.js 14+ with the 
 **Monorepo Tool:** npm workspaces (built into npm 7+)
 
 **Package Organization:**
+
 ```
 thisorthat/
 ├── apps/
@@ -64,6 +68,7 @@ thisorthat/
 ```
 
 **Rationale:**
+
 - Simple monorepo structure using npm workspaces (no additional tooling needed)
 - Next.js App Router colocates frontend and API routes naturally
 - Shared package for TypeScript types used across frontend and backend
@@ -81,7 +86,7 @@ graph TB
     DB[(PostgreSQL)]
     Storage[Supabase Storage]
     Auth[Supabase Auth]
-    
+
     User -->|HTTPS| Vercel
     Vercel -->|Serves| NextJS
     NextJS -->|API Calls| API
@@ -91,7 +96,7 @@ graph TB
     Supabase -->|Manages| DB
     Supabase -->|Manages| Storage
     Supabase -->|Manages| Auth
-    
+
     NextJS -.->|Real-time Subscriptions| Supabase
 ```
 
@@ -109,30 +114,30 @@ graph TB
 
 ### Technology Stack Table
 
-| Category | Technology | Version | Purpose | Rationale |
-|----------|-----------|---------|---------|-----------|
-| Frontend Language | TypeScript | 5.3+ | Type-safe development | Industry standard, catches errors at compile time, excellent IDE support |
-| Frontend Framework | Next.js | 14+ (App Router) | React framework with SSR/SSG | Best-in-class React framework, built-in routing, API routes, image optimization |
-| UI Component Library | Shadcn/ui | Latest | Accessible component library | Customizable, accessible, built on Radix UI, Tailwind-based |
-| State Management | React Context + Hooks | Built-in | Client-side state | Sufficient for MVP, no additional dependencies needed |
-| Backend Language | TypeScript | 5.3+ | Type-safe API development | Same language as frontend, shared types |
-| Backend Framework | Next.js API Routes | 14+ | Serverless API endpoints | Colocated with frontend, automatic deployment, TypeScript support |
-| API Style | REST | N/A | HTTP API endpoints | Simple, well-understood, sufficient for MVP |
-| Database | PostgreSQL (Supabase) | 15+ | Relational database | ACID compliance, JSON support, excellent for structured data |
-| Cache | Vercel Edge Cache | Built-in | CDN caching | Automatic, no configuration needed |
-| File Storage | Supabase Storage | Latest | Image uploads | Built-in with Supabase, automatic optimization, CDN delivery |
-| Authentication | Supabase Auth | Latest | User authentication | OAuth providers, JWT tokens, email verification |
-| Frontend Testing | Vitest + React Testing Library | Latest | Component testing | Fast, modern, great TypeScript support |
-| Backend Testing | Vitest | Latest | API route testing | Same test runner as frontend, consistency |
-| E2E Testing | Playwright | Latest | End-to-end testing | Cross-browser, reliable, great for critical user flows |
-| Build Tool | Next.js | 14+ | Application bundler | Built-in, optimized for production |
-| Bundler | Turbopack | Built-in Next.js | Fast bundling | Next.js default, faster than Webpack |
-| IaC Tool | Vercel CLI + Supabase CLI | Latest | Infrastructure management | Declarative configuration, version controlled |
-| CI/CD | GitHub Actions + Vercel | Latest | Automated deployment | Free for public repos, integrates with Vercel |
-| Monitoring | Vercel Analytics | Built-in | Performance monitoring | Real user metrics, Core Web Vitals |
-| Logging | Vercel Logs + Supabase Logs | Built-in | Application logging | Centralized logging, searchable |
-| CSS Framework | Tailwind CSS | 3.4+ | Utility-first CSS framework | Rapid styling, consistent design system, small bundle size, perfect for Next.js |
-| CSS Components | Shadcn/ui | Latest | Pre-built components | Built on Tailwind + Radix UI, fully customizable, copy-paste approach |
+| Category             | Technology                     | Version          | Purpose                      | Rationale                                                                       |
+| -------------------- | ------------------------------ | ---------------- | ---------------------------- | ------------------------------------------------------------------------------- |
+| Frontend Language    | TypeScript                     | 5.3+             | Type-safe development        | Industry standard, catches errors at compile time, excellent IDE support        |
+| Frontend Framework   | Next.js                        | 14+ (App Router) | React framework with SSR/SSG | Best-in-class React framework, built-in routing, API routes, image optimization |
+| UI Component Library | Shadcn/ui                      | Latest           | Accessible component library | Customizable, accessible, built on Radix UI, Tailwind-based                     |
+| State Management     | React Context + Hooks          | Built-in         | Client-side state            | Sufficient for MVP, no additional dependencies needed                           |
+| Backend Language     | TypeScript                     | 5.3+             | Type-safe API development    | Same language as frontend, shared types                                         |
+| Backend Framework    | Next.js API Routes             | 14+              | Serverless API endpoints     | Colocated with frontend, automatic deployment, TypeScript support               |
+| API Style            | REST                           | N/A              | HTTP API endpoints           | Simple, well-understood, sufficient for MVP                                     |
+| Database             | PostgreSQL (Supabase)          | 15+              | Relational database          | ACID compliance, JSON support, excellent for structured data                    |
+| Cache                | Vercel Edge Cache              | Built-in         | CDN caching                  | Automatic, no configuration needed                                              |
+| File Storage         | Supabase Storage               | Latest           | Image uploads                | Built-in with Supabase, automatic optimization, CDN delivery                    |
+| Authentication       | Supabase Auth                  | Latest           | User authentication          | OAuth providers, JWT tokens, email verification                                 |
+| Frontend Testing     | Vitest + React Testing Library | Latest           | Component testing            | Fast, modern, great TypeScript support                                          |
+| Backend Testing      | Vitest                         | Latest           | API route testing            | Same test runner as frontend, consistency                                       |
+| E2E Testing          | Playwright                     | Latest           | End-to-end testing           | Cross-browser, reliable, great for critical user flows                          |
+| Build Tool           | Next.js                        | 14+              | Application bundler          | Built-in, optimized for production                                              |
+| Bundler              | Turbopack                      | Built-in Next.js | Fast bundling                | Next.js default, faster than Webpack                                            |
+| IaC Tool             | Vercel CLI + Supabase CLI      | Latest           | Infrastructure management    | Declarative configuration, version controlled                                   |
+| CI/CD                | GitHub Actions + Vercel        | Latest           | Automated deployment         | Free for public repos, integrates with Vercel                                   |
+| Monitoring           | Vercel Analytics               | Built-in         | Performance monitoring       | Real user metrics, Core Web Vitals                                              |
+| Logging              | Vercel Logs + Supabase Logs    | Built-in         | Application logging          | Centralized logging, searchable                                                 |
+| CSS Framework        | Tailwind CSS                   | 3.4+             | Utility-first CSS framework  | Rapid styling, consistent design system, small bundle size, perfect for Next.js |
+| CSS Components       | Shadcn/ui                      | Latest           | Pre-built components         | Built on Tailwind + Radix UI, fully customizable, copy-paste approach           |
 
 ## Data Models
 
@@ -141,6 +146,7 @@ graph TB
 **Purpose:** Represents a user account in the system
 
 **Key Attributes:**
+
 - id: UUID - Unique identifier (from Supabase Auth)
 - email: string - User email address
 - display_name: string - User's display name
@@ -149,6 +155,7 @@ graph TB
 - updated_at: timestamp - Last profile update
 
 **TypeScript Interface:**
+
 ```typescript
 interface User {
   id: string;
@@ -161,6 +168,7 @@ interface User {
 ```
 
 **Relationships:**
+
 - One user can create many Polls
 - One user can create many Votes
 - One user can create many Comments
@@ -170,6 +178,7 @@ interface User {
 **Purpose:** Represents a This or That poll with two options
 
 **Key Attributes:**
+
 - id: UUID - Unique identifier
 - creator_id: UUID - Foreign key to User
 - option_a_image_url: string - URL to first option image
@@ -184,8 +193,9 @@ interface User {
 - updated_at: timestamp - Last poll update
 
 **TypeScript Interface:**
+
 ```typescript
-type PollStatus = 'active' | 'closed' | 'deleted';
+type PollStatus = "active" | "closed" | "deleted";
 
 interface Poll {
   id: string;
@@ -204,6 +214,7 @@ interface Poll {
 ```
 
 **Relationships:**
+
 - Many-to-one with User (creator)
 - One-to-many with Vote
 - One-to-many with Comment
@@ -214,6 +225,7 @@ interface Poll {
 **Purpose:** Represents a user's vote on a poll
 
 **Key Attributes:**
+
 - id: UUID - Unique identifier
 - poll_id: UUID - Foreign key to Poll
 - user_id: UUID | null - Foreign key to User (null for anonymous votes)
@@ -221,8 +233,9 @@ interface Poll {
 - created_at: timestamp - Vote timestamp
 
 **TypeScript Interface:**
+
 ```typescript
-type VoteChoice = 'option_a' | 'option_b';
+type VoteChoice = "option_a" | "option_b";
 
 interface Vote {
   id: string;
@@ -234,10 +247,12 @@ interface Vote {
 ```
 
 **Relationships:**
+
 - Many-to-one with Poll
 - Many-to-one with User (optional)
 
 **Constraints:**
+
 - Unique constraint on (poll_id, user_id) - one vote per user per poll
 - Unique constraint on (poll_id, anonymous_id) for anonymous voters
 
@@ -246,6 +261,7 @@ interface Vote {
 **Purpose:** Represents a comment on a poll
 
 **Key Attributes:**
+
 - id: UUID - Unique identifier
 - poll_id: UUID - Foreign key to Poll
 - user_id: UUID - Foreign key to User
@@ -255,6 +271,7 @@ interface Vote {
 - updated_at: timestamp - Last edit date
 
 **TypeScript Interface:**
+
 ```typescript
 interface Comment {
   id: string;
@@ -268,6 +285,7 @@ interface Comment {
 ```
 
 **Relationships:**
+
 - Many-to-one with Poll
 - Many-to-one with User
 - Self-referential for replies (parent_id)
@@ -277,6 +295,7 @@ interface Comment {
 **Purpose:** Tracks which users have access to private polls (friend groups)
 
 **Key Attributes:**
+
 - id: UUID - Unique identifier
 - poll_id: UUID - Foreign key to Poll
 - user_id: UUID - Foreign key to User
@@ -284,6 +303,7 @@ interface Comment {
 - created_at: timestamp - When access was granted
 
 **TypeScript Interface:**
+
 ```typescript
 interface PollShare {
   id: string;
@@ -295,6 +315,7 @@ interface PollShare {
 ```
 
 **Relationships:**
+
 - Many-to-one with Poll
 - Many-to-one with User (recipient)
 - Many-to-one with User (sharer)
@@ -337,7 +358,7 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: List of polls
           content:
             application/json:
@@ -347,7 +368,7 @@ paths:
                   polls:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Poll'
+                      $ref: "#/components/schemas/Poll"
                   total:
                     type: integer
     post:
@@ -381,12 +402,12 @@ paths:
                   type: boolean
                   default: false
       responses:
-        '201':
+        "201":
           description: Poll created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Poll'
+                $ref: "#/components/schemas/Poll"
 
   /polls/{pollId}:
     get:
@@ -399,13 +420,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Poll details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PollWithResults'
-        '404':
+                $ref: "#/components/schemas/PollWithResults"
+        "404":
           description: Poll not found
 
   /polls/{pollId}/vote:
@@ -431,12 +452,12 @@ paths:
                   type: string
                   enum: [option_a, option_b]
       responses:
-        '201':
+        "201":
           description: Vote recorded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Vote'
+                $ref: "#/components/schemas/Vote"
 
   /polls/{pollId}/comments:
     get:
@@ -449,14 +470,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: List of comments
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Comment'
+                  $ref: "#/components/schemas/Comment"
     post:
       summary: Add comment
       description: Add a comment to a poll
@@ -483,12 +504,12 @@ paths:
                 parent_id:
                   type: string
       responses:
-        '201':
+        "201":
           description: Comment created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: "#/components/schemas/Comment"
 
 components:
   securitySchemes:
@@ -527,7 +548,7 @@ components:
           format: date-time
     PollWithResults:
       allOf:
-        - $ref: '#/components/schemas/Poll'
+        - $ref: "#/components/schemas/Poll"
         - type: object
           properties:
             vote_counts:
@@ -586,9 +607,11 @@ components:
 ### Frontend Components
 
 #### PollCreator
+
 **Responsibility:** Handle poll creation flow including image upload and form validation
 
 **Key Interfaces:**
+
 - `createPoll(formData: FormData): Promise<Poll>` - Submit new poll
 - `uploadImage(file: File): Promise<string>` - Upload image to storage
 
@@ -597,9 +620,11 @@ components:
 **Technology Stack:** React Server Component for initial render, Client Component for interactivity, Tailwind CSS for styling, Supabase Storage SDK
 
 #### PollViewer
+
 **Responsibility:** Display poll with real-time voting results
 
 **Key Interfaces:**
+
 - `subscribeToPollUpdates(pollId: string): Subscription` - Real-time vote updates
 - `submitVote(pollId: string, choice: VoteChoice): Promise<void>` - Submit vote
 
@@ -608,9 +633,11 @@ components:
 **Technology Stack:** React Client Component with Tailwind CSS styling, Supabase Realtime subscriptions
 
 #### CommentSection
+
 **Responsibility:** Display and manage poll comments
 
 **Key Interfaces:**
+
 - `loadComments(pollId: string): Promise<Comment[]>` - Fetch comments
 - `addComment(pollId: string, content: string): Promise<Comment>` - Add new comment
 
@@ -621,9 +648,11 @@ components:
 ### Backend Services
 
 #### PollService
+
 **Responsibility:** Business logic for poll creation, retrieval, and management
 
 **Key Interfaces:**
+
 - `createPoll(userId: string, pollData: CreatePollInput): Promise<Poll>` - Create new poll
 - `getPoll(pollId: string, userId?: string): Promise<PollWithResults>` - Get poll with results
 - `closePoll(pollId: string): Promise<void>` - Close expired poll
@@ -633,9 +662,11 @@ components:
 **Technology Stack:** TypeScript service layer, Supabase JS Client
 
 #### VoteService
+
 **Responsibility:** Handle vote submission and counting
 
 **Key Interfaces:**
+
 - `submitVote(pollId: string, userId: string | null, choice: VoteChoice): Promise<Vote>` - Record vote
 - `getVoteCounts(pollId: string): Promise<VoteCounts>` - Get vote totals
 - `getUserVote(pollId: string, userId: string): Promise<Vote | null>` - Check if user voted
@@ -645,9 +676,11 @@ components:
 **Technology Stack:** TypeScript service layer with RLS policies
 
 #### AuthService
+
 **Responsibility:** Handle authentication and authorization
 
 **Key Interfaces:**
+
 - `signIn(provider: 'google' | 'facebook'): Promise<Session>` - OAuth sign in
 - `signOut(): Promise<void>` - Sign out user
 - `getSession(): Promise<Session | null>` - Get current session
@@ -666,41 +699,41 @@ graph TB
         CS[CommentSection]
         Auth[AuthProvider]
     end
-    
+
     subgraph "API Routes"
         PollAPI[/api/polls]
         VoteAPI[/api/polls/vote]
         CommentAPI[/api/polls/comments]
     end
-    
+
     subgraph "Backend Services"
         PS[PollService]
         VS[VoteService]
         AS[AuthService]
     end
-    
+
     subgraph Supabase
         DB[(PostgreSQL)]
         Storage[Storage]
         AuthSvc[Auth]
         Realtime[Realtime]
     end
-    
+
     PC --> PollAPI
     PV --> VoteAPI
     PV -.->|Subscribe| Realtime
     CS --> CommentAPI
     Auth --> AS
-    
+
     PollAPI --> PS
     VoteAPI --> VS
     CommentAPI --> PS
-    
+
     PS --> DB
     PS --> Storage
     VS --> DB
     AS --> AuthSvc
-    
+
     Realtime -.-> DB
 ```
 
@@ -709,6 +742,7 @@ graph TB
 No external APIs are required for the MVP. All functionality is provided by Vercel and Supabase built-in services.
 
 Future integrations may include:
+
 - Google Lens API for product identification (post-MVP)
 - Sports data APIs for live events (post-MVP)
 - Social media APIs for sharing (post-MVP)
@@ -724,7 +758,7 @@ sequenceDiagram
     participant API as /api/polls
     participant Storage as Supabase Storage
     participant DB as PostgreSQL
-    
+
     User->>UI: Upload images & fill form
     UI->>UI: Validate inputs
     UI->>Storage: Upload option_a_image
@@ -748,7 +782,7 @@ sequenceDiagram
     participant API as /api/polls/{id}/vote
     participant DB as PostgreSQL
     participant RT as Realtime
-    
+
     User->>UI: Click vote option
     UI->>UI: Optimistic update
     UI->>API: POST /api/polls/{id}/vote
@@ -774,7 +808,7 @@ sequenceDiagram
     participant API as /api/polls/{id}
     participant DB as PostgreSQL
     participant RT as Realtime
-    
+
     User->>UI: Navigate to poll URL
     UI->>API: GET /api/polls/{id}
     API->>DB: Query poll + votes
@@ -782,7 +816,7 @@ sequenceDiagram
     API-->>UI: Return poll with results
     UI->>RT: Subscribe to poll updates
     UI->>User: Display poll
-    
+
     loop Real-time updates
         DB->>RT: Vote added
         RT->>UI: Broadcast update
@@ -1107,11 +1141,11 @@ export function PollCard({ poll, showResults = false }: PollCardProps) {
             )}
           </div>
         </div>
-        
+
         {poll.description && (
           <p className="text-sm text-gray-600 mb-2">{poll.description}</p>
         )}
-        
+
         <div className="flex justify-between items-center text-sm text-gray-500">
           <span>{poll.status === 'active' ? `Closes ${timeLeft}` : 'Closed'}</span>
           {showResults && (
@@ -1237,9 +1271,9 @@ app/
 ```typescript
 // middleware.ts - Next.js middleware for auth protection
 
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
@@ -1250,20 +1284,20 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Protect routes that require authentication
-  if (!session && req.nextUrl.pathname.startsWith('/poll/create')) {
-    return NextResponse.redirect(new URL('/login', req.url));
+  if (!session && req.nextUrl.pathname.startsWith("/poll/create")) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Redirect authenticated users away from auth pages
-  if (session && req.nextUrl.pathname.startsWith('/login')) {
-    return NextResponse.redirect(new URL('/', req.url));
+  if (session && req.nextUrl.pathname.startsWith("/login")) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return res;
 }
 
 export const config = {
-  matcher: ['/poll/create', '/profile', '/login', '/signup'],
+  matcher: ["/poll/create", "/profile", "/login", "/signup"],
 };
 ```
 
@@ -1274,13 +1308,13 @@ export const config = {
 ```typescript
 // lib/services/api-client.ts
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export class ApiClient {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
   }
 
   private async getAuthHeaders() {
@@ -1290,7 +1324,7 @@ export class ApiClient {
     } = await supabase.auth.getSession();
 
     return {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(session && { Authorization: `Bearer ${session.access_token}` }),
     };
   }
@@ -1298,7 +1332,7 @@ export class ApiClient {
   async get<T>(endpoint: string): Promise<T> {
     const headers = await this.getAuthHeaders();
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'GET',
+      method: "GET",
       headers,
     });
 
@@ -1312,7 +1346,7 @@ export class ApiClient {
   async post<T>(endpoint: string, data: any): Promise<T> {
     const headers = await this.getAuthHeaders();
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: JSON.stringify(data),
     });
@@ -1333,14 +1367,18 @@ export const apiClient = new ApiClient();
 ```typescript
 // lib/services/polls.ts
 
-import { apiClient } from './api-client';
-import { Poll, PollWithResults, CreatePollInput } from '@/types/poll';
+import { apiClient } from "./api-client";
+import { Poll, PollWithResults, CreatePollInput } from "@/types/poll";
 
 export const pollService = {
-  async getPolls(params?: { status?: string; limit?: number; offset?: number }) {
+  async getPolls(params?: {
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) {
     const queryString = new URLSearchParams(params as any).toString();
     return apiClient.get<{ polls: Poll[]; total: number }>(
-      `/polls${queryString ? `?${queryString}` : ''}`
+      `/polls${queryString ? `?${queryString}` : ""}`,
     );
   },
 
@@ -1350,26 +1388,28 @@ export const pollService = {
 
   async createPoll(data: CreatePollInput) {
     const formData = new FormData();
-    formData.append('option_a_image', data.option_a_image);
-    formData.append('option_b_image', data.option_b_image);
-    if (data.option_a_label) formData.append('option_a_label', data.option_a_label);
-    if (data.option_b_label) formData.append('option_b_label', data.option_b_label);
-    if (data.description) formData.append('description', data.description);
-    formData.append('is_public', String(data.is_public));
+    formData.append("option_a_image", data.option_a_image);
+    formData.append("option_b_image", data.option_b_image);
+    if (data.option_a_label)
+      formData.append("option_a_label", data.option_a_label);
+    if (data.option_b_label)
+      formData.append("option_b_label", data.option_b_label);
+    if (data.description) formData.append("description", data.description);
+    formData.append("is_public", String(data.is_public));
 
-    const response = await fetch('/api/polls', {
-      method: 'POST',
+    const response = await fetch("/api/polls", {
+      method: "POST",
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create poll');
+      throw new Error("Failed to create poll");
     }
 
     return response.json();
   },
 
-  async vote(pollId: string, choice: 'option_a' | 'option_b') {
+  async vote(pollId: string, choice: "option_a" | "option_b") {
     return apiClient.post(`/polls/${pollId}/vote`, { choice });
   },
 };
@@ -1401,26 +1441,30 @@ apps/web/src/app/api/
 ```typescript
 // app/api/polls/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { z } from "zod";
 
 // GET /api/polls - List polls
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
     const { searchParams } = new URL(request.url);
-    
-    const status = searchParams.get('status') || 'active';
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = parseInt(searchParams.get('offset') || '0');
 
-    const { data: polls, error, count } = await supabase
-      .from('polls')
-      .select('*', { count: 'exact' })
-      .eq('status', status)
-      .order('created_at', { ascending: false })
+    const status = searchParams.get("status") || "active";
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const offset = parseInt(searchParams.get("offset") || "0");
+
+    const {
+      data: polls,
+      error,
+      count,
+    } = await supabase
+      .from("polls")
+      .select("*", { count: "exact" })
+      .eq("status", status)
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) throw error;
@@ -1430,10 +1474,10 @@ export async function GET(request: NextRequest) {
       total: count,
     });
   } catch (error) {
-    console.error('Error fetching polls:', error);
+    console.error("Error fetching polls:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch polls' },
-      { status: 500 }
+      { error: "Failed to fetch polls" },
+      { status: 500 },
     );
   }
 }
@@ -1449,53 +1493,50 @@ const createPollSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
-    
+
     // Verify authentication
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const formData = await request.formData();
-    const option_a_image = formData.get('option_a_image') as File;
-    const option_b_image = formData.get('option_b_image') as File;
-    
+    const option_a_image = formData.get("option_a_image") as File;
+    const option_b_image = formData.get("option_b_image") as File;
+
     // Validate form data
     const pollData = createPollSchema.parse({
-      option_a_label: formData.get('option_a_label'),
-      option_b_label: formData.get('option_b_label'),
-      description: formData.get('description'),
-      is_public: formData.get('is_public') === 'true',
+      option_a_label: formData.get("option_a_label"),
+      option_b_label: formData.get("option_b_label"),
+      description: formData.get("description"),
+      is_public: formData.get("is_public") === "true",
     });
 
     // Upload images to Supabase Storage
     const uploadImage = async (file: File, prefix: string) => {
       const fileName = `${prefix}-${Date.now()}-${file.name}`;
       const { data, error } = await supabase.storage
-        .from('poll-images')
+        .from("poll-images")
         .upload(fileName, file);
-      
+
       if (error) throw error;
-      
-      const { data: { publicUrl } } = supabase.storage
-        .from('poll-images')
-        .getPublicUrl(fileName);
-      
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("poll-images").getPublicUrl(fileName);
+
       return publicUrl;
     };
 
-    const option_a_image_url = await uploadImage(option_a_image, 'a');
-    const option_b_image_url = await uploadImage(option_b_image, 'b');
+    const option_a_image_url = await uploadImage(option_a_image, "a");
+    const option_b_image_url = await uploadImage(option_b_image, "b");
 
     // Create poll in database
     const { data: poll, error } = await supabase
-      .from('polls')
+      .from("polls")
       .insert({
         creator_id: session.user.id,
         option_a_image_url,
@@ -1509,18 +1550,18 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(poll, { status: 201 });
   } catch (error) {
-    console.error('Error creating poll:', error);
-    
+    console.error("Error creating poll:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
-        { status: 400 }
+        { error: "Invalid input", details: error.errors },
+        { status: 400 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: 'Failed to create poll' },
-      { status: 500 }
+      { error: "Failed to create poll" },
+      { status: 500 },
     );
   }
 }
@@ -1537,43 +1578,46 @@ See "Database Schema" section above for complete SQL schema.
 ```typescript
 // lib/db/repositories/poll-repository.ts
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Poll, PollWithResults } from '@/types/poll';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Poll, PollWithResults } from "@/types/poll";
 
 export class PollRepository {
   constructor(private supabase: SupabaseClient) {}
 
-  async findById(pollId: string, userId?: string): Promise<PollWithResults | null> {
+  async findById(
+    pollId: string,
+    userId?: string,
+  ): Promise<PollWithResults | null> {
     // Get poll
     const { data: poll, error: pollError } = await this.supabase
-      .from('polls')
-      .select('*')
-      .eq('id', pollId)
+      .from("polls")
+      .select("*")
+      .eq("id", pollId)
       .single();
 
     if (pollError || !poll) return null;
 
     // Get vote counts
     const { data: votes } = await this.supabase
-      .from('votes')
-      .select('choice')
-      .eq('poll_id', pollId);
+      .from("votes")
+      .select("choice")
+      .eq("poll_id", pollId);
 
     const vote_counts = {
-      option_a: votes?.filter(v => v.choice === 'option_a').length || 0,
-      option_b: votes?.filter(v => v.choice === 'option_b').length || 0,
+      option_a: votes?.filter((v) => v.choice === "option_a").length || 0,
+      option_b: votes?.filter((v) => v.choice === "option_b").length || 0,
     };
 
     // Get user's vote if authenticated
     let user_vote = null;
     if (userId) {
       const { data: userVote } = await this.supabase
-        .from('votes')
-        .select('choice')
-        .eq('poll_id', pollId)
-        .eq('user_id', userId)
+        .from("votes")
+        .select("choice")
+        .eq("poll_id", pollId)
+        .eq("user_id", userId)
         .single();
-      
+
       user_vote = userVote?.choice || null;
     }
 
@@ -1584,9 +1628,11 @@ export class PollRepository {
     };
   }
 
-  async create(pollData: Omit<Poll, 'id' | 'created_at' | 'updated_at'>): Promise<Poll> {
+  async create(
+    pollData: Omit<Poll, "id" | "created_at" | "updated_at">,
+  ): Promise<Poll> {
     const { data, error } = await this.supabase
-      .from('polls')
+      .from("polls")
       .insert(pollData)
       .select()
       .single();
@@ -1596,7 +1642,7 @@ export class PollRepository {
   }
 
   async closeExpired(): Promise<void> {
-    await this.supabase.rpc('close_expired_polls');
+    await this.supabase.rpc("close_expired_polls");
   }
 }
 ```
@@ -1611,7 +1657,7 @@ sequenceDiagram
     participant App as Next.js App
     participant Auth as Supabase Auth
     participant OAuth as OAuth Provider
-    
+
     User->>App: Click "Sign in with Google"
     App->>Auth: signInWithOAuth({ provider: 'google' })
     Auth->>OAuth: Redirect to Google
@@ -1623,7 +1669,7 @@ sequenceDiagram
     App->>Auth: getSession()
     Auth-->>App: Return session + JWT
     App->>User: Redirect to home page
-    
+
     Note over App,Auth: Subsequent requests
     App->>Auth: Include JWT in requests
     Auth->>Auth: Verify JWT
@@ -1635,22 +1681,19 @@ sequenceDiagram
 ```typescript
 // lib/auth/guards.ts
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function requireAuth(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   if (!session) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   return { session, supabase };
@@ -1658,7 +1701,7 @@ export async function requireAuth(request: NextRequest) {
 
 export async function optionalAuth(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
-  
+
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -1828,17 +1871,20 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Deployment Strategy
 
 **Frontend Deployment:**
+
 - **Platform:** Vercel
 - **Build Command:** `npm run build`
 - **Output Directory:** `.next`
 - **CDN/Edge:** Vercel Edge Network (automatic)
 
 **Backend Deployment:**
+
 - **Platform:** Vercel Serverless Functions (automatic with Next.js API routes)
 - **Build Command:** Included in frontend build
 - **Deployment Method:** Git push to main branch triggers automatic deployment
 
 **Database:**
+
 - **Platform:** Supabase Cloud
 - **Migrations:** Applied via Supabase CLI or dashboard
 - **Backups:** Automatic daily backups (Supabase managed)
@@ -1862,7 +1908,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
       - run: npm ci
       - run: npm run lint
       - run: npm run test
@@ -1875,7 +1921,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
       - run: npm ci
       - run: npm run build
       - uses: amondnet/vercel-action@v25
@@ -1883,37 +1929,41 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ### Environments
 
-| Environment | Frontend URL | Backend URL | Purpose |
-|-------------|-------------|-------------|---------|
-| Development | http://localhost:3000 | http://localhost:3000/api | Local development |
-| Preview | https://thisorthat-pr-123.vercel.app | Same (API routes) | PR previews |
-| Production | https://thisorthat.com | https://thisorthat.com/api | Live environment |
+| Environment | Frontend URL                         | Backend URL                | Purpose           |
+| ----------- | ------------------------------------ | -------------------------- | ----------------- |
+| Development | http://localhost:3000                | http://localhost:3000/api  | Local development |
+| Preview     | https://thisorthat-pr-123.vercel.app | Same (API routes)          | PR previews       |
+| Production  | https://thisorthat.com               | https://thisorthat.com/api | Live environment  |
 
 ## Security and Performance
 
 ### Security Requirements
 
 **Frontend Security:**
+
 - **CSP Headers:** `default-src 'self'; img-src 'self' https://supabase.co https://vercel.app; script-src 'self' 'unsafe-inline' 'unsafe-eval'`
 - **XSS Prevention:** React's built-in XSS protection, sanitize user input, use DOMPurify for rich content
 - **Secure Storage:** HttpOnly cookies for session tokens, no sensitive data in localStorage
 
 **Backend Security:**
+
 - **Input Validation:** Zod schemas for all API inputs, file upload validation (type, size)
 - **Rate Limiting:** Vercel Edge Config for rate limiting (100 req/min per IP)
 - **CORS Policy:** `Access-Control-Allow-Origin: https://thisorthat.com` (production only)
 
 **Authentication Security:**
+
 - **Token Storage:** JWT tokens in HttpOnly cookies managed by Supabase
 - **Session Management:** 7-day session expiry, refresh token rotation
 - **Password Policy:** N/A (OAuth only for MVP)
 
 **Database Security:**
+
 - **Row-Level Security:** All tables have RLS policies enabled
 - **SQL Injection Prevention:** Parameterized queries via Supabase client
 - **Encryption:** Data encrypted at rest and in transit (Supabase managed)
@@ -1921,16 +1971,19 @@ jobs:
 ### Performance Optimization
 
 **Frontend Performance:**
+
 - **Bundle Size Target:** < 200KB initial JS bundle
 - **Loading Strategy:** React Server Components for initial render, lazy load client components
 - **Caching Strategy:** Vercel Edge Cache for static assets (1 year), stale-while-revalidate for dynamic content
 
 **Backend Performance:**
+
 - **Response Time Target:** < 200ms p95 for API routes
 - **Database Optimization:** Indexes on foreign keys and frequently queried columns, connection pooling via Supabase
 - **Caching Strategy:** Vercel Edge Cache for GET requests, Redis for future complex queries
 
 **Image Optimization:**
+
 - **Next.js Image Component:** Automatic optimization, lazy loading, WebP format
 - **Supabase Storage:** Automatic image transformation and CDN delivery
 - **Target:** < 100KB per poll image
@@ -2011,7 +2064,7 @@ describe('PollCard', () => {
 
   it('renders poll options', () => {
     render(<PollCard poll={mockPoll} />);
-    
+
     expect(screen.getByText('Option A')).toBeInTheDocument();
     expect(screen.getByText('Option B')).toBeInTheDocument();
     expect(screen.getByText('Test poll')).toBeInTheDocument();
@@ -2019,7 +2072,7 @@ describe('PollCard', () => {
 
   it('shows time remaining for active polls', () => {
     render(<PollCard poll={mockPoll} />);
-    
+
     expect(screen.getByText(/Closes in/)).toBeInTheDocument();
   });
 });
@@ -2029,38 +2082,38 @@ describe('PollCard', () => {
 
 ```typescript
 // tests/api/polls.test.ts
-import { createMocks } from 'node-mocks-http';
-import { GET, POST } from '@/app/api/polls/route';
+import { createMocks } from "node-mocks-http";
+import { GET, POST } from "@/app/api/polls/route";
 
-describe('/api/polls', () => {
-  describe('GET', () => {
-    it('returns list of polls', async () => {
+describe("/api/polls", () => {
+  describe("GET", () => {
+    it("returns list of polls", async () => {
       const { req } = createMocks({
-        method: 'GET',
-        url: '/api/polls?status=active',
+        method: "GET",
+        url: "/api/polls?status=active",
       });
 
       const response = await GET(req as any);
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data).toHaveProperty('polls');
-      expect(data).toHaveProperty('total');
+      expect(data).toHaveProperty("polls");
+      expect(data).toHaveProperty("total");
       expect(Array.isArray(data.polls)).toBe(true);
     });
   });
 
-  describe('POST', () => {
-    it('creates a new poll', async () => {
+  describe("POST", () => {
+    it("creates a new poll", async () => {
       const formData = new FormData();
-      formData.append('option_a_image', new File([''], 'a.jpg'));
-      formData.append('option_b_image', new File([''], 'b.jpg'));
-      formData.append('description', 'Test poll');
+      formData.append("option_a_image", new File([""], "a.jpg"));
+      formData.append("option_b_image", new File([""], "b.jpg"));
+      formData.append("description", "Test poll");
 
       const { req } = createMocks({
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
         body: formData,
       });
@@ -2069,13 +2122,13 @@ describe('/api/polls', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data).toHaveProperty('id');
-      expect(data.description).toBe('Test poll');
+      expect(data).toHaveProperty("id");
+      expect(data.description).toBe("Test poll");
     });
 
-    it('requires authentication', async () => {
+    it("requires authentication", async () => {
       const { req } = createMocks({
-        method: 'POST',
+        method: "POST",
       });
 
       const response = await POST(req as any);
@@ -2090,36 +2143,42 @@ describe('/api/polls', () => {
 
 ```typescript
 // tests/e2e/poll-lifecycle.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Poll Lifecycle', () => {
-  test('user can create and vote on a poll', async ({ page, context }) => {
+test.describe("Poll Lifecycle", () => {
+  test("user can create and vote on a poll", async ({ page, context }) => {
     // Login
-    await page.goto('/login');
-    await page.click('text=Sign in with Google');
+    await page.goto("/login");
+    await page.click("text=Sign in with Google");
     // ... handle OAuth flow ...
 
     // Create poll
-    await page.goto('/poll/create');
-    await page.setInputFiles('input[name="option_a_image"]', 'tests/fixtures/a.jpg');
-    await page.setInputFiles('input[name="option_b_image"]', 'tests/fixtures/b.jpg');
-    await page.fill('input[name="description"]', 'E2E Test Poll');
+    await page.goto("/poll/create");
+    await page.setInputFiles(
+      'input[name="option_a_image"]',
+      "tests/fixtures/a.jpg",
+    );
+    await page.setInputFiles(
+      'input[name="option_b_image"]',
+      "tests/fixtures/b.jpg",
+    );
+    await page.fill('input[name="description"]', "E2E Test Poll");
     await page.click('button[type="submit"]');
 
     // Verify redirect to poll page
     await expect(page).toHaveURL(/\/poll\/[a-z0-9-]+/);
-    await expect(page.locator('text=E2E Test Poll')).toBeVisible();
+    await expect(page.locator("text=E2E Test Poll")).toBeVisible();
 
     // Vote on poll (in new incognito context to simulate different user)
     const newContext = await context.browser()?.newContext();
     const newPage = await newContext!.newPage();
     await newPage.goto(page.url());
-    
+
     await newPage.click('button:has-text("Option A")');
-    await expect(newPage.locator('text=Vote recorded')).toBeVisible();
-    
+    await expect(newPage.locator("text=Vote recorded")).toBeVisible();
+
     // Verify vote count updated
-    await expect(newPage.locator('text=1 vote')).toBeVisible();
+    await expect(newPage.locator("text=1 vote")).toBeVisible();
   });
 });
 ```
@@ -2143,15 +2202,15 @@ test.describe('Poll Lifecycle', () => {
 
 ### Naming Conventions
 
-| Element | Frontend | Backend | Example |
-|---------|----------|---------|---------|
-| Components | PascalCase | - | `PollCard.tsx`, `VoteButton.tsx` |
-| Hooks | camelCase with 'use' | - | `useAuth.ts`, `usePoll.ts` |
-| API Routes | kebab-case | kebab-case | `/api/polls`, `/api/polls/[id]/vote` |
-| Database Tables | snake_case | snake_case | `polls`, `poll_shares` |
-| Functions | camelCase | camelCase | `createPoll()`, `submitVote()` |
-| Types/Interfaces | PascalCase | PascalCase | `Poll`, `VoteChoice` |
-| Constants | UPPER_SNAKE_CASE | UPPER_SNAKE_CASE | `MAX_FILE_SIZE`, `POLL_DURATION` |
+| Element          | Frontend             | Backend          | Example                              |
+| ---------------- | -------------------- | ---------------- | ------------------------------------ |
+| Components       | PascalCase           | -                | `PollCard.tsx`, `VoteButton.tsx`     |
+| Hooks            | camelCase with 'use' | -                | `useAuth.ts`, `usePoll.ts`           |
+| API Routes       | kebab-case           | kebab-case       | `/api/polls`, `/api/polls/[id]/vote` |
+| Database Tables  | snake_case           | snake_case       | `polls`, `poll_shares`               |
+| Functions        | camelCase            | camelCase        | `createPoll()`, `submitVote()`       |
+| Types/Interfaces | PascalCase           | PascalCase       | `Poll`, `VoteChoice`                 |
+| Constants        | UPPER_SNAKE_CASE     | UPPER_SNAKE_CASE | `MAX_FILE_SIZE`, `POLL_DURATION`     |
 
 ## Error Handling Strategy
 
@@ -2163,11 +2222,11 @@ sequenceDiagram
     participant API as API Route
     participant Service as Service Layer
     participant DB as Database
-    
+
     UI->>API: Request
     API->>Service: Call service method
     Service->>DB: Query database
-    
+
     alt Success
         DB-->>Service: Return data
         Service-->>API: Return result
@@ -2184,7 +2243,7 @@ sequenceDiagram
         API->>API: Check auth
         API-->>UI: 401 Unauthorized
     end
-    
+
     UI->>UI: Display error to user
 ```
 
@@ -2211,10 +2270,10 @@ export class ApiError extends Error {
   constructor(
     public code: string,
     message: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -2222,25 +2281,25 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const error = await response.json();
     throw new ApiError(
-      error.error?.code || 'UNKNOWN_ERROR',
-      error.error?.message || 'An error occurred',
-      error.error?.details
+      error.error?.code || "UNKNOWN_ERROR",
+      error.error?.message || "An error occurred",
+      error.error?.details,
     );
   }
   return response.json();
 }
 
 // Usage in components
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 try {
   await pollService.createPoll(data);
-  toast.success('Poll created successfully!');
+  toast.success("Poll created successfully!");
 } catch (error) {
   if (error instanceof ApiError) {
     toast.error(error.message);
   } else {
-    toast.error('An unexpected error occurred');
+    toast.error("An unexpected error occurred");
   }
 }
 ```
@@ -2255,20 +2314,20 @@ export class ApiError extends Error {
     public statusCode: number,
     public code: string,
     message: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
 // lib/utils/error-response.ts
 
-import { NextResponse } from 'next/server';
-import { ApiError } from './api-error';
+import { NextResponse } from "next/server";
+import { ApiError } from "./api-error";
 
 export function errorResponse(error: unknown) {
-  console.error('API Error:', error);
+  console.error("API Error:", error);
 
   if (error instanceof ApiError) {
     return NextResponse.json(
@@ -2281,7 +2340,7 @@ export function errorResponse(error: unknown) {
           requestId: crypto.randomUUID(),
         },
       },
-      { status: error.statusCode }
+      { status: error.statusCode },
     );
   }
 
@@ -2289,18 +2348,18 @@ export function errorResponse(error: unknown) {
   return NextResponse.json(
     {
       error: {
-        code: 'INTERNAL_ERROR',
-        message: 'An internal error occurred',
+        code: "INTERNAL_ERROR",
+        message: "An internal error occurred",
         timestamp: new Date().toISOString(),
         requestId: crypto.randomUUID(),
       },
     },
-    { status: 500 }
+    { status: 500 },
   );
 }
 
 // Usage in API routes
-import { errorResponse } from '@/lib/utils/error-response';
+import { errorResponse } from "@/lib/utils/error-response";
 
 export async function POST(request: NextRequest) {
   try {
@@ -2323,6 +2382,7 @@ export async function POST(request: NextRequest) {
 ### Key Metrics
 
 **Frontend Metrics:**
+
 - Core Web Vitals (LCP, FID, CLS)
 - JavaScript errors and stack traces
 - API response times from client perspective
@@ -2330,6 +2390,7 @@ export async function POST(request: NextRequest) {
 - Page load times
 
 **Backend Metrics:**
+
 - Request rate (requests per minute)
 - Error rate (% of failed requests)
 - Response time (p50, p95, p99)
@@ -2338,6 +2399,7 @@ export async function POST(request: NextRequest) {
 - Storage usage
 
 **Business Metrics:**
+
 - Polls created per day
 - Votes per poll
 - User retention (7-day, 30-day)

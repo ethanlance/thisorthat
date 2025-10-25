@@ -225,7 +225,12 @@ sections:
               - ["H2", "{{h2_size}}", "{{h2_weight}}", "{{h2_line}}"]
               - ["H3", "{{h3_size}}", "{{h3_weight}}", "{{h3_line}}"]
               - ["Body", "{{body_size}}", "{{body_weight}}", "{{body_line}}"]
-              - ["Small", "{{small_size}}", "{{small_weight}}", "{{small_line}}"]
+              - [
+                  "Small",
+                  "{{small_size}}",
+                  "{{small_weight}}",
+                  "{{small_line}}",
+                ]
       - id: iconography
         title: Iconography
         template: |
@@ -280,7 +285,12 @@ sections:
         rows:
           - ["Mobile", "{{mobile_min}}", "{{mobile_max}}", "{{mobile_devices}}"]
           - ["Tablet", "{{tablet_min}}", "{{tablet_max}}", "{{tablet_devices}}"]
-          - ["Desktop", "{{desktop_min}}", "{{desktop_max}}", "{{desktop_devices}}"]
+          - [
+              "Desktop",
+              "{{desktop_min}}",
+              "{{desktop_max}}",
+              "{{desktop_devices}}",
+            ]
           - ["Wide", "{{wide_min}}", "-", "{{wide_devices}}"]
       - id: adaptation-patterns
         title: Adaptation Patterns

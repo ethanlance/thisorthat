@@ -232,18 +232,34 @@ export class PollsService {
   static async getPollsByStatus(
     status: 'active' | 'closed' | 'deleted'
   ): Promise<PollWithResults[]> {
+    // Get all public polls first
     const { data: polls, error } = await supabase
       .from('polls')
       .select('*')
-      .eq('status', status)
+      .eq('is_public', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
     if (!polls) return [];
 
+    // Filter polls based on actual status (considering expires_at)
+    const now = new Date();
+    const filteredPolls = polls.filter(poll => {
+      const expiresAt = new Date(poll.expires_at);
+      const isActuallyActive = poll.status === 'active' && expiresAt > now;
+      const isActuallyClosed = poll.status === 'closed' || expiresAt <= now;
+
+      if (status === 'active') {
+        return isActuallyActive;
+      } else if (status === 'closed') {
+        return isActuallyClosed;
+      }
+      return false;
+    });
+
     // Fetch vote counts for each poll
     const pollsWithVotes = await Promise.all(
-      polls.map(async poll => {
+      filteredPolls.map(async poll => {
         const { data: votes } = await supabase
           .from('votes')
           .select('choice')

@@ -7,6 +7,7 @@ This document provides detailed technical specifications for implementing the Th
 ## Technology Stack
 
 ### Frontend
+
 - **Framework:** Next.js 14+ with App Router
 - **Language:** TypeScript 5.3+
 - **Styling:** Tailwind CSS 3.4+
@@ -15,6 +16,7 @@ This document provides detailed technical specifications for implementing the Th
 - **Testing:** Vitest + React Testing Library + Playwright
 
 ### Backend
+
 - **Database:** PostgreSQL (Supabase)
 - **Authentication:** Supabase Auth (OAuth)
 - **Real-time:** Supabase Realtime
@@ -23,6 +25,7 @@ This document provides detailed technical specifications for implementing the Th
 - **Hosting:** Vercel
 
 ### Development Tools
+
 - **Package Manager:** npm 9+
 - **Linting:** ESLint + Prettier
 - **Type Checking:** TypeScript strict mode
@@ -133,6 +136,7 @@ thisorthat/
 ### Tables
 
 #### polls
+
 ```sql
 CREATE TABLE polls (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -151,6 +155,7 @@ CREATE TABLE polls (
 ```
 
 #### votes
+
 ```sql
 CREATE TABLE votes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -165,6 +170,7 @@ CREATE TABLE votes (
 ```
 
 #### comments
+
 ```sql
 CREATE TABLE comments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -178,6 +184,7 @@ CREATE TABLE comments (
 ```
 
 #### poll_shares
+
 ```sql
 CREATE TABLE poll_shares (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -190,6 +197,7 @@ CREATE TABLE poll_shares (
 ```
 
 ### Indexes
+
 ```sql
 -- Performance indexes
 CREATE INDEX idx_polls_creator ON polls(creator_id);
@@ -206,6 +214,7 @@ CREATE INDEX idx_poll_shares_user ON poll_shares(user_id);
 ### Row Level Security (RLS) Policies
 
 #### Polls Policies
+
 ```sql
 -- Enable RLS
 ALTER TABLE polls ENABLE ROW LEVEL SECURITY;
@@ -237,6 +246,7 @@ CREATE POLICY "Users can update their own polls"
 ```
 
 #### Votes Policies
+
 ```sql
 -- Enable RLS
 ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
@@ -278,11 +288,13 @@ CREATE POLICY "Users can update their own votes"
 ### REST API Endpoints
 
 #### GET /api/polls
+
 List polls accessible to the user
+
 ```typescript
 // Query Parameters
 interface ListPollsParams {
-  status?: 'active' | 'closed';
+  status?: "active" | "closed";
   limit?: number; // default: 20
   offset?: number; // default: 0
 }
@@ -295,7 +307,9 @@ interface ListPollsResponse {
 ```
 
 #### POST /api/polls
+
 Create a new poll
+
 ```typescript
 // Request (multipart/form-data)
 interface CreatePollRequest {
@@ -312,7 +326,9 @@ interface CreatePollResponse extends Poll {}
 ```
 
 #### GET /api/polls/[id]
+
 Get a specific poll with results
+
 ```typescript
 // Response
 interface PollWithResults extends Poll {
@@ -320,16 +336,18 @@ interface PollWithResults extends Poll {
     option_a: number;
     option_b: number;
   };
-  user_vote: 'option_a' | 'option_b' | null;
+  user_vote: "option_a" | "option_b" | null;
 }
 ```
 
 #### POST /api/polls/[id]/vote
+
 Submit a vote for a poll
+
 ```typescript
 // Request
 interface VoteRequest {
-  choice: 'option_a' | 'option_b';
+  choice: "option_a" | "option_b";
 }
 
 // Response
@@ -337,7 +355,9 @@ interface VoteResponse extends Vote {}
 ```
 
 #### GET /api/polls/[id]/comments
+
 Get comments for a poll
+
 ```typescript
 // Response
 interface CommentsResponse {
@@ -346,7 +366,9 @@ interface CommentsResponse {
 ```
 
 #### POST /api/polls/[id]/comments
+
 Add a comment to a poll
+
 ```typescript
 // Request
 interface CreateCommentRequest {
@@ -361,9 +383,10 @@ interface CreateCommentResponse extends Comment {}
 ## TypeScript Types
 
 ### Core Types
+
 ```typescript
 // types/poll.ts
-export type PollStatus = 'active' | 'closed' | 'deleted';
+export type PollStatus = "active" | "closed" | "deleted";
 
 export interface Poll {
   id: string;
@@ -385,7 +408,7 @@ export interface PollWithResults extends Poll {
     option_a: number;
     option_b: number;
   };
-  user_vote: 'option_a' | 'option_b' | null;
+  user_vote: "option_a" | "option_b" | null;
 }
 
 export interface CreatePollInput {
@@ -400,7 +423,7 @@ export interface CreatePollInput {
 
 ```typescript
 // types/vote.ts
-export type VoteChoice = 'option_a' | 'option_b';
+export type VoteChoice = "option_a" | "option_b";
 
 export interface Vote {
   id: string;
@@ -445,6 +468,7 @@ export interface CreateCommentInput {
 ### Core Components
 
 #### PollCreator
+
 ```typescript
 // components/poll/PollCreator.tsx
 'use client';
@@ -479,6 +503,7 @@ export function PollCreator() {
 ```
 
 #### PollViewer
+
 ```typescript
 // components/poll/PollViewer.tsx
 'use client';
@@ -529,16 +554,21 @@ export function PollViewer({ pollId }: { pollId: string }) {
 ## Service Layer
 
 ### Poll Service
+
 ```typescript
 // lib/services/polls.ts
-import { apiClient } from './api-client';
-import { Poll, PollWithResults, CreatePollInput } from '@/types/poll';
+import { apiClient } from "./api-client";
+import { Poll, PollWithResults, CreatePollInput } from "@/types/poll";
 
 export const pollService = {
-  async getPolls(params?: { status?: string; limit?: number; offset?: number }) {
+  async getPolls(params?: {
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) {
     const queryString = new URLSearchParams(params as any).toString();
     return apiClient.get<{ polls: Poll[]; total: number }>(
-      `/polls${queryString ? `?${queryString}` : ''}`
+      `/polls${queryString ? `?${queryString}` : ""}`,
     );
   },
 
@@ -548,26 +578,28 @@ export const pollService = {
 
   async createPoll(data: CreatePollInput) {
     const formData = new FormData();
-    formData.append('option_a_image', data.option_a_image);
-    formData.append('option_b_image', data.option_b_image);
-    if (data.option_a_label) formData.append('option_a_label', data.option_a_label);
-    if (data.option_b_label) formData.append('option_b_label', data.option_b_label);
-    if (data.description) formData.append('description', data.description);
-    formData.append('is_public', String(data.is_public || false));
+    formData.append("option_a_image", data.option_a_image);
+    formData.append("option_b_image", data.option_b_image);
+    if (data.option_a_label)
+      formData.append("option_a_label", data.option_a_label);
+    if (data.option_b_label)
+      formData.append("option_b_label", data.option_b_label);
+    if (data.description) formData.append("description", data.description);
+    formData.append("is_public", String(data.is_public || false));
 
-    const response = await fetch('/api/polls', {
-      method: 'POST',
+    const response = await fetch("/api/polls", {
+      method: "POST",
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create poll');
+      throw new Error("Failed to create poll");
     }
 
     return response.json();
   },
 
-  async vote(pollId: string, choice: 'option_a' | 'option_b') {
+  async vote(pollId: string, choice: "option_a" | "option_b") {
     return apiClient.post(`/polls/${pollId}/vote`, { choice });
   },
 };
@@ -576,22 +608,24 @@ export const pollService = {
 ## Authentication Setup
 
 ### Supabase Client Configuration
+
 ```typescript
 // lib/supabase/client.ts
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const supabase = createClientComponentClient();
 ```
 
 ```typescript
 // lib/supabase/server.ts
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 
 export const supabase = createServerComponentClient({ cookies });
 ```
 
 ### Auth Context
+
 ```typescript
 // hooks/useAuth.ts
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -659,15 +693,13 @@ export const useAuth = () => {
 ## Real-time Implementation
 
 ### Real-time Hook
+
 ```typescript
 // hooks/useRealtime.ts
-import { useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabase/client";
 
-export function useRealtime(
-  channel: string,
-  callback: (payload: any) => void
-) {
+export function useRealtime(channel: string, callback: (payload: any) => void) {
   const callbackRef = useRef(callback);
 
   useEffect(() => {
@@ -677,14 +709,18 @@ export function useRealtime(
   useEffect(() => {
     const subscription = supabase
       .channel(channel)
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: channel.split(':')[0],
-        filter: `id=eq.${channel.split(':')[1]}`,
-      }, (payload) => {
-        callbackRef.current(payload);
-      })
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: channel.split(":")[0],
+          filter: `id=eq.${channel.split(":")[1]}`,
+        },
+        (payload) => {
+          callbackRef.current(payload);
+        },
+      )
       .subscribe();
 
     return () => {
@@ -697,6 +733,7 @@ export function useRealtime(
 ## Environment Configuration
 
 ### Environment Variables
+
 ```bash
 # .env.local
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -706,6 +743,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ### Next.js Configuration
+
 ```typescript
 // next.config.js
 /** @type {import('next').NextConfig} */
@@ -714,7 +752,7 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['your-project.supabase.co'],
+    domains: ["your-project.supabase.co"],
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
@@ -727,6 +765,7 @@ module.exports = nextConfig;
 ## Testing Strategy
 
 ### Unit Tests
+
 ```typescript
 // tests/unit/components/PollCard.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -751,7 +790,7 @@ describe('PollCard', () => {
 
   it('renders poll options', () => {
     render(<PollCard poll={mockPoll} />);
-    
+
     expect(screen.getByText('Option A')).toBeInTheDocument();
     expect(screen.getByText('Option B')).toBeInTheDocument();
     expect(screen.getByText('Test poll')).toBeInTheDocument();
@@ -760,6 +799,7 @@ describe('PollCard', () => {
 ```
 
 ### Integration Tests
+
 ```typescript
 // tests/integration/poll-creation.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -775,15 +815,15 @@ describe('Poll Creation Flow', () => {
     (pollService.createPoll as jest.Mock).mockImplementation(mockCreatePoll);
 
     render(<PollCreator />);
-    
+
     // Fill out form
     fireEvent.change(screen.getByLabelText('Option A Label'), {
       target: { value: 'Pizza' }
     });
-    
+
     // Submit form
     fireEvent.click(screen.getByText('Create Poll'));
-    
+
     await waitFor(() => {
       expect(mockCreatePoll).toHaveBeenCalledWith({
         option_a_image: expect.any(File),
@@ -796,34 +836,41 @@ describe('Poll Creation Flow', () => {
 ```
 
 ### E2E Tests
+
 ```typescript
 // tests/e2e/poll-lifecycle.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Poll Lifecycle', () => {
-  test('user can create and vote on a poll', async ({ page, context }) => {
+test.describe("Poll Lifecycle", () => {
+  test("user can create and vote on a poll", async ({ page, context }) => {
     // Login
-    await page.goto('/login');
-    await page.click('text=Sign in with Google');
+    await page.goto("/login");
+    await page.click("text=Sign in with Google");
     // ... handle OAuth flow ...
 
     // Create poll
-    await page.goto('/poll/create');
-    await page.setInputFiles('input[name="option_a_image"]', 'tests/fixtures/a.jpg');
-    await page.setInputFiles('input[name="option_b_image"]', 'tests/fixtures/b.jpg');
-    await page.fill('input[name="description"]', 'E2E Test Poll');
+    await page.goto("/poll/create");
+    await page.setInputFiles(
+      'input[name="option_a_image"]',
+      "tests/fixtures/a.jpg",
+    );
+    await page.setInputFiles(
+      'input[name="option_b_image"]',
+      "tests/fixtures/b.jpg",
+    );
+    await page.fill('input[name="description"]', "E2E Test Poll");
     await page.click('button[type="submit"]');
 
     // Verify redirect to poll page
     await expect(page).toHaveURL(/\/poll\/[a-z0-9-]+/);
-    await expect(page.locator('text=E2E Test Poll')).toBeVisible();
+    await expect(page.locator("text=E2E Test Poll")).toBeVisible();
 
     // Vote on poll
     await page.click('button:has-text("Option A")');
-    await expect(page.locator('text=Vote recorded')).toBeVisible();
-    
+    await expect(page.locator("text=Vote recorded")).toBeVisible();
+
     // Verify vote count updated
-    await expect(page.locator('text=1 vote')).toBeVisible();
+    await expect(page.locator("text=1 vote")).toBeVisible();
   });
 });
 ```
@@ -831,6 +878,7 @@ test.describe('Poll Lifecycle', () => {
 ## Deployment Configuration
 
 ### Vercel Configuration
+
 ```json
 // vercel.json
 {
@@ -848,6 +896,7 @@ test.describe('Poll Lifecycle', () => {
 ```
 
 ### GitHub Actions CI/CD
+
 ```yaml
 # .github/workflows/deploy.yaml
 name: Deploy to Vercel
@@ -865,7 +914,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
       - run: npm ci
       - run: npm run lint
       - run: npm run test
@@ -878,7 +927,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
       - run: npm ci
       - run: npm run build
       - uses: amondnet/vercel-action@v25
@@ -886,12 +935,13 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ## Performance Optimization
 
 ### Image Optimization
+
 ```typescript
 // components/ui/OptimizedImage.tsx
 import Image from 'next/image';
@@ -921,6 +971,7 @@ export function OptimizedImage({ src, alt, width, height, className }: Optimized
 ```
 
 ### Code Splitting
+
 ```typescript
 // Dynamic imports for heavy components
 import dynamic from 'next/dynamic';
@@ -934,9 +985,10 @@ const PollCreator = dynamic(() => import('@/components/poll/PollCreator'), {
 ## Security Considerations
 
 ### Input Validation
+
 ```typescript
 // lib/utils/validation.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const createPollSchema = z.object({
   option_a_label: z.string().max(50).optional(),
@@ -946,7 +998,7 @@ export const createPollSchema = z.object({
 });
 
 export const voteSchema = z.object({
-  choice: z.enum(['option_a', 'option_b']),
+  choice: z.enum(["option_a", "option_b"]),
 });
 
 export const commentSchema = z.object({
@@ -956,23 +1008,28 @@ export const commentSchema = z.object({
 ```
 
 ### Rate Limiting
+
 ```typescript
 // lib/utils/rate-limit.ts
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
 const rateLimitMap = new Map();
 
-export function rateLimit(identifier: string, limit: number = 10, window: number = 60000) {
+export function rateLimit(
+  identifier: string,
+  limit: number = 10,
+  window: number = 60000,
+) {
   const now = Date.now();
   const windowStart = now - window;
-  
+
   const requests = rateLimitMap.get(identifier) || [];
   const validRequests = requests.filter((time: number) => time > windowStart);
-  
+
   if (validRequests.length >= limit) {
     return false;
   }
-  
+
   validRequests.push(now);
   rateLimitMap.set(identifier, validRequests);
   return true;

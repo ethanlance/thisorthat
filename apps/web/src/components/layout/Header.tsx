@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { User } from 'lucide-react';
+import { User, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { FeedbackModal } from '@/components/feedback/FeedbackModal';
 import MobileNav from './MobileNav';
 
 export default function Header() {
@@ -26,12 +27,31 @@ export default function Header() {
             >
               Browse
             </Link>
+            <Link
+              href="/discover"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Discover
+            </Link>
             {user ? (
-              <Link href="/poll/create">
-                <Button size="sm" className="bg-primary hover:bg-primary-dark">
-                  Create
-                </Button>
-              </Link>
+              <>
+                <Link href="/poll/create">
+                  <Button
+                    size="sm"
+                    className="bg-primary hover:bg-primary-dark"
+                  >
+                    Create
+                  </Button>
+                </Link>
+                <FeedbackModal
+                  trigger={
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Feedback
+                    </Button>
+                  }
+                />
+              </>
             ) : (
               <Link href="/login">
                 <Button variant="outline" size="sm">

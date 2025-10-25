@@ -9,28 +9,28 @@ on:
 jobs:
   validate-main:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'apps/web/package-lock.json'
-          
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "apps/web/package-lock.json"
+
       - name: Install dependencies
         run: |
           cd apps/web
           npm ci
-          
+
       - name: Run comprehensive validation
         run: |
           cd apps/web
           npm run validate
-          
+
       - name: Check for TODO/FIXME comments
         run: |
           echo "Checking for TODO/FIXME comments in code..."

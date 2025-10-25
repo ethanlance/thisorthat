@@ -3,6 +3,7 @@
 ## User Personas
 
 ### Primary Persona: Sarah - The Decision-Paralyzed College Student
+
 - **Age:** 20, Junior in college
 - **Tech Savvy:** High - uses smartphone for everything
 - **Pain Point:** Overwhelmed by choices, spends too much time deciding
@@ -10,7 +11,8 @@
 - **Context:** Lives in dorm, has tight budget, values friend opinions
 
 ### Secondary Persona: Mike - The Helpful Friend
-- **Age:** 19, Sophomore in college  
+
+- **Age:** 19, Sophomore in college
 - **Tech Savvy:** Medium - uses phone for social apps
 - **Pain Point:** Wants to help friends but doesn't want to download apps
 - **Goals:** Quick voting, no friction, help friends decide
@@ -21,11 +23,13 @@
 ### Epic 1: Foundation & Core Infrastructure
 
 #### Story 1.1: Project Setup & Next.js Application
+
 **As a developer,**
 I want to set up the Next.js 14+ application with App Router and TypeScript,
 so that I have a solid foundation for building the ThisOrThat platform.
 
 **Acceptance Criteria:**
+
 - [ ] Next.js 14+ application is created with App Router configuration
 - [ ] TypeScript is configured with strict type checking
 - [ ] Tailwind CSS is installed and configured for styling
@@ -35,11 +39,13 @@ so that I have a solid foundation for building the ThisOrThat platform.
 - [ ] Environment variables are configured for local development
 
 #### Story 1.2: Supabase Integration & Database Setup
+
 **As a developer,**
 I want to integrate Supabase and set up the database schema,
 so that the application has a backend database for storing polls, votes, and user data.
 
 **Acceptance Criteria:**
+
 - [ ] Supabase project is created and configured
 - [ ] Database schema is implemented with polls, votes, and users tables
 - [ ] Row-Level Security (RLS) policies are configured for data protection
@@ -49,11 +55,13 @@ so that the application has a backend database for storing polls, votes, and use
 - [ ] Environment variables for Supabase are properly configured
 
 #### Story 1.3: User Authentication System
+
 **As Sarah (college student),**
 I want to sign in with my Google or Facebook account,
 so that I can create polls and track my voting history.
 
 **Acceptance Criteria:**
+
 - [ ] I can click "Sign in with Google" and be redirected to Google OAuth
 - [ ] I can click "Sign in with Facebook" and be redirected to Facebook OAuth
 - [ ] After successful authentication, I'm redirected back to the app
@@ -63,11 +71,13 @@ so that I can create polls and track my voting history.
 - [ ] If authentication fails, I see a clear error message
 
 #### Story 1.4: Basic UI Components & Layout
+
 **As Sarah (mobile user),**
 I want to see a clean, mobile-responsive interface,
 so that I can navigate the application easily on my phone.
 
 **Acceptance Criteria:**
+
 - [ ] The app loads quickly on my mobile browser
 - [ ] All buttons and links are large enough to tap with my finger
 - [ ] The navigation works with one-handed usage
@@ -79,11 +89,13 @@ so that I can navigate the application easily on my phone.
 ### Epic 2: Poll Creation & Management
 
 #### Story 2.1: Image Upload System
+
 **As Sarah (poll creator),**
 I want to upload two photos from my phone,
 so that I can create a visual comparison for my friends to vote on.
 
 **Acceptance Criteria:**
+
 - [ ] I can tap "Upload Image" and access my phone's camera or photo library
 - [ ] I can take a new photo or select an existing one
 - [ ] I see a preview of the uploaded image before submitting
@@ -93,11 +105,13 @@ so that I can create a visual comparison for my friends to vote on.
 - [ ] I can retry if the upload fails
 
 #### Story 2.2: Poll Creation Form
+
 **As Sarah (decision-maker),**
 I want to create a poll with two images and optional details,
 so that I can get help making a decision from my friends.
 
 **Acceptance Criteria:**
+
 - [ ] I can add labels to each image (e.g., "Pizza" vs "Sushi")
 - [ ] I can add a description explaining my dilemma
 - [ ] The form validates that I've uploaded both images
@@ -107,11 +121,13 @@ so that I can get help making a decision from my friends.
 - [ ] I can see the poll's unique shareable link
 
 #### Story 2.3: Poll Expiration System
+
 **As Sarah (poll creator),**
 I want my polls to automatically close after 24 hours,
 so that I get a decision within a reasonable timeframe.
 
 **Acceptance Criteria:**
+
 - [ ] When I create a poll, it shows "Expires in 24 hours"
 - [ ] I can see a countdown timer showing time remaining
 - [ ] After 24 hours, the poll automatically closes
@@ -121,11 +137,13 @@ so that I get a decision within a reasonable timeframe.
 - [ ] I can still view the results of closed polls
 
 #### Story 2.4: Poll Management Interface
+
 **As Sarah (poll creator),**
 I want to see all my created polls in one place,
 so that I can track their status and results.
 
 **Acceptance Criteria:**
+
 - [ ] I can access "My Polls" from the main navigation
 - [ ] I see a list of all polls I've created
 - [ ] Each poll shows its current status (Active/Closed)
@@ -137,11 +155,13 @@ so that I can track their status and results.
 ### Epic 3: Voting System & Real-time Updates
 
 #### Story 3.1: Poll Viewing Interface
+
 **As Mike (friend/voter),**
 I want to see a poll clearly on my phone,
 so that I can easily understand what I'm voting on.
 
 **Acceptance Criteria:**
+
 - [ ] I can see both images side by side on my phone screen
 - [ ] Option labels are clearly displayed with the images
 - [ ] The poll description is shown if available
@@ -151,11 +171,13 @@ so that I can easily understand what I'm voting on.
 - [ ] The page loads quickly on my mobile browser
 
 #### Story 3.2: Binary Voting System
+
 **As Mike (anonymous voter),**
 I want to vote on a poll without creating an account,
 so that I can help my friend decide without any hassle.
 
 **Acceptance Criteria:**
+
 - [ ] I can vote by tapping either "Option A" or "Option B"
 - [ ] My vote is recorded immediately
 - [ ] I see a confirmation that my vote was counted
@@ -165,11 +187,13 @@ so that I can help my friend decide without any hassle.
 - [ ] I get an error message if voting fails
 
 #### Story 3.3: Real-time Vote Counting
+
 **As Sarah (poll creator),**
 I want to see vote counts update in real-time,
 so that I can watch my friends' opinions come in live.
 
 **Acceptance Criteria:**
+
 - [ ] When someone votes, I see the count update immediately
 - [ ] I can see a visual representation of the vote distribution
 - [ ] The total number of votes is displayed
@@ -179,11 +203,13 @@ so that I can watch my friends' opinions come in live.
 - [ ] If the connection is lost, I see a reconnection message
 
 #### Story 3.4: Poll Results Display
+
 **As Mike (voter),**
 I want to see the final results of a poll,
 so that I can see how my vote compared to others.
 
 **Acceptance Criteria:**
+
 - [ ] I can see the final vote count for both options
 - [ ] The percentage breakdown is clearly displayed
 - [ ] I can see a visual chart or progress bar
@@ -195,11 +221,13 @@ so that I can see how my vote compared to others.
 ### Epic 4: Sharing & Mobile Optimization
 
 #### Story 4.1: Shareable Poll Links
+
 **As Sarah (poll creator),**
 I want to share my poll with friends via text or social media,
 so that they can easily access and vote on it.
 
 **Acceptance Criteria:**
+
 - [ ] I can copy the poll link to my clipboard with one tap
 - [ ] I can share via text message using my phone's native sharing
 - [ ] I can share on social media platforms (Instagram, Twitter, etc.)
@@ -209,11 +237,13 @@ so that they can easily access and vote on it.
 - [ ] I can see how many people have accessed my poll
 
 #### Story 4.2: Mobile Web Optimization
+
 **As Sarah (mobile user),**
 I want the app to work perfectly on my phone,
 so that I can use it easily while walking between classes.
 
 **Acceptance Criteria:**
+
 - [ ] The app loads quickly on my mobile data connection
 - [ ] All buttons are large enough for my thumb to tap easily
 - [ ] I can use the app with one hand while holding my coffee
@@ -223,11 +253,13 @@ so that I can use it easily while walking between classes.
 - [ ] I can use the app offline for viewing previously loaded polls
 
 #### Story 4.3: Progressive Web App Features
+
 **As Sarah (frequent user),**
 I want ThisOrThat to feel like a native app on my phone,
 so that I can access it quickly from my home screen.
 
 **Acceptance Criteria:**
+
 - [ ] I can "Add to Home Screen" from my mobile browser
 - [ ] The app icon appears on my phone's home screen
 - [ ] When I open it, it feels like a native app (no browser UI)
@@ -237,11 +269,13 @@ so that I can access it quickly from my home screen.
 - [ ] It integrates with my phone's camera for photo uploads
 
 #### Story 4.4: Cross-Platform Sharing Integration
+
 **As Sarah (social media user),**
 I want to share polls on different platforms,
 so that I can reach all my friends wherever they are.
 
 **Acceptance Criteria:**
+
 - [ ] I can share directly to Instagram Stories
 - [ ] I can share to Twitter with a preview
 - [ ] I can share via WhatsApp to my group chats
@@ -253,11 +287,13 @@ so that I can reach all my friends wherever they are.
 ### Epic 5: Content Moderation & Safety
 
 #### Story 5.1: Image Content Moderation
+
 **As Sarah (responsible user),**
 I want inappropriate images to be filtered out,
 so that the platform stays safe and appropriate for everyone.
 
 **Acceptance Criteria:**
+
 - [ ] When I upload an inappropriate image, it's automatically blocked
 - [ ] I receive a clear message explaining why the image was rejected
 - [ ] I can appeal if I think the image was incorrectly flagged
@@ -267,11 +303,13 @@ so that the platform stays safe and appropriate for everyone.
 - [ ] I can report images that slip through the moderation
 
 #### Story 5.2: User Reporting System
+
 **As Mike (concerned user),**
 I want to report inappropriate content or behavior,
 so that I can help keep the platform safe for everyone.
 
 **Acceptance Criteria:**
+
 - [ ] I can tap a "Report" button on any poll or user profile
 - [ ] I can select from different report categories (inappropriate content, spam, harassment)
 - [ ] I can add additional details about why I'm reporting
@@ -281,11 +319,13 @@ so that I can help keep the platform safe for everyone.
 - [ ] I can see the status of my reports in my account
 
 #### Story 5.3: Community Guidelines & Enforcement
+
 **As Sarah (new user),**
 I want clear guidelines about what's appropriate,
 so that I know how to use the platform responsibly.
 
 **Acceptance Criteria:**
+
 - [ ] I can easily find and read the community guidelines
 - [ ] The guidelines are written in simple, clear language
 - [ ] I see the guidelines when I first create a poll
@@ -295,11 +335,13 @@ so that I know how to use the platform responsibly.
 - [ ] I can ask questions about the guidelines if I'm unsure
 
 #### Story 5.4: User Blocking & Safety Features
+
 **As Sarah (harassed user),**
 I want to block users who are causing problems,
 so that I can control my experience on the platform.
 
 **Acceptance Criteria:**
+
 - [ ] I can block a user from their profile or poll
 - [ ] Once blocked, that user can't see my polls or profile
 - [ ] Blocked users can't vote on my polls or interact with me
@@ -311,6 +353,7 @@ so that I can control my experience on the platform.
 ## User Journey Scenarios
 
 ### Scenario 1: Sarah's Outfit Decision
+
 **Context:** Sarah is getting ready for a party and can't decide between two outfits.
 
 1. Sarah takes photos of both outfits
@@ -323,11 +366,12 @@ so that I can control my experience on the platform.
 8. Sarah wears the red dress and feels confident in her choice
 
 ### Scenario 2: Mike Helps His Friend
+
 **Context:** Mike receives a poll link from his friend about dinner choices.
 
 1. Mike clicks the link in his group chat
 2. He sees two restaurant photos side by side
-3. He quickly votes for "Pizza Place" 
+3. He quickly votes for "Pizza Place"
 4. He sees his vote counted immediately
 5. He adds a comment "Pizza Place has the best wings!"
 6. He shares the poll with his own friends
@@ -335,6 +379,7 @@ so that I can control my experience on the platform.
 8. He feels good about helping his friend decide
 
 ### Scenario 3: Group Study Break Decision
+
 **Context:** A study group needs to decide on a break activity.
 
 1. One student creates a poll: "Coffee" vs "Walk around campus"
@@ -348,18 +393,21 @@ so that I can control my experience on the platform.
 ## Success Metrics
 
 ### User Engagement
+
 - **Poll Creation Rate:** Target 2+ polls per user per week
 - **Vote Participation:** Target 80% of shared polls receive votes
 - **Return Usage:** Target 60% of users return within 7 days
 - **Session Duration:** Target 3-5 minutes average session
 
 ### Technical Performance
+
 - **Page Load Time:** < 2 seconds on mobile 3G
 - **Vote Response Time:** < 500ms for real-time updates
 - **Uptime:** 99.9% availability during peak hours
 - **Error Rate:** < 1% of user actions result in errors
 
 ### User Satisfaction
+
 - **Decision Confidence:** Users report feeling more confident in their decisions
 - **Time Saved:** Users report spending less time on decisions
 - **Friend Engagement:** Users report increased interaction with friends

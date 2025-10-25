@@ -66,31 +66,6 @@ export function PollsList({ className }: PollsListProps) {
     );
   }
 
-  if (polls.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="space-y-4">
-          <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-            <Users className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">No polls found</h3>
-            <p className="text-muted-foreground">
-              {activeTab === 'active'
-                ? 'There are no active polls at the moment. Check back later or create your own!'
-                : 'No closed polls to display.'}
-            </p>
-          </div>
-          {activeTab === 'active' && (
-            <Link href="/poll/create">
-              <Button>Create Your First Poll</Button>
-            </Link>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={cn('space-y-6', className)}>
       <Tabs
@@ -103,19 +78,55 @@ export function PollsList({ className }: PollsListProps) {
         </TabsList>
 
         <TabsContent value="active" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {polls.map(poll => (
-              <PollCard key={poll.id} poll={poll} />
-            ))}
-          </div>
+          {polls.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="space-y-4">
+                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                  <Users className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">No active polls</h3>
+                  <p className="text-muted-foreground">
+                    There are no active polls at the moment. Check back later or
+                    create your own!
+                  </p>
+                </div>
+                <Link href="/poll/create">
+                  <Button>Create Your First Poll</Button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {polls.map(poll => (
+                <PollCard key={poll.id} poll={poll} />
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="closed" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {polls.map(poll => (
-              <PollCard key={poll.id} poll={poll} />
-            ))}
-          </div>
+          {polls.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="space-y-4">
+                <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                  <Users className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">No closed polls</h3>
+                  <p className="text-muted-foreground">
+                    No closed polls to display.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {polls.map(poll => (
+                <PollCard key={poll.id} poll={poll} />
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

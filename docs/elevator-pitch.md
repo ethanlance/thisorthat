@@ -92,4 +92,4 @@ We're building ThisOrThat with our community, not for them. Join our early adopt
 **Ready to Stop Overthinking?**
 Sign up for our waitlist at [ThisOrThat.com/waitlist](https://ThisOrThat.com/waitlist) and be the first to know when we launch. Follow us on social media for behind-the-scenes development updates and early sneak peeks at our character designs.
 
-*Coming soon to a browser near you - but you can get there first.*
+_Coming soon to a browser near you - but you can get there first._

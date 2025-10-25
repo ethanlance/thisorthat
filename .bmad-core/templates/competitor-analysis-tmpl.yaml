@@ -153,12 +153,36 @@ sections:
         rows:
           - category: "Core Functionality"
             items:
-              - ["Feature A", "{{status}}", "{{status}}", "{{status}}", "{{status}}"]
-              - ["Feature B", "{{status}}", "{{status}}", "{{status}}", "{{status}}"]
+              - [
+                  "Feature A",
+                  "{{status}}",
+                  "{{status}}",
+                  "{{status}}",
+                  "{{status}}",
+                ]
+              - [
+                  "Feature B",
+                  "{{status}}",
+                  "{{status}}",
+                  "{{status}}",
+                  "{{status}}",
+                ]
           - category: "User Experience"
             items:
-              - ["Mobile App", "{{rating}}", "{{rating}}", "{{rating}}", "{{rating}}"]
-              - ["Onboarding Time", "{{time}}", "{{time}}", "{{time}}", "{{time}}"]
+              - [
+                  "Mobile App",
+                  "{{rating}}",
+                  "{{rating}}",
+                  "{{rating}}",
+                  "{{rating}}",
+                ]
+              - [
+                  "Onboarding Time",
+                  "{{time}}",
+                  "{{time}}",
+                  "{{time}}",
+                  "{{time}}",
+                ]
           - category: "Integration & Ecosystem"
             items:
               - [
@@ -168,11 +192,29 @@ sections:
                   "{{availability}}",
                   "{{availability}}",
                 ]
-              - ["Third-party Integrations", "{{number}}", "{{number}}", "{{number}}", "{{number}}"]
+              - [
+                  "Third-party Integrations",
+                  "{{number}}",
+                  "{{number}}",
+                  "{{number}}",
+                  "{{number}}",
+                ]
           - category: "Pricing & Plans"
             items:
-              - ["Starting Price", "{{price}}", "{{price}}", "{{price}}", "{{price}}"]
-              - ["Free Tier", "{{yes_no}}", "{{yes_no}}", "{{yes_no}}", "{{yes_no}}"]
+              - [
+                  "Starting Price",
+                  "{{price}}",
+                  "{{price}}",
+                  "{{price}}",
+                  "{{price}}",
+                ]
+              - [
+                  "Free Tier",
+                  "{{yes_no}}",
+                  "{{yes_no}}",
+                  "{{yes_no}}",
+                  "{{yes_no}}",
+                ]
       - id: swot-comparison
         title: SWOT Comparison
         instruction: Create SWOT analysis for your solution vs. top competitors

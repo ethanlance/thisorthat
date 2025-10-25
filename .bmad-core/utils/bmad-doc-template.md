@@ -16,7 +16,7 @@ template:
   output:
     format: markdown
     filename: default-path/to/{{filename}}.md
-    title: '{{variable}} Document Title'
+    title: "{{variable}} Document Title"
 
 workflow:
   mode: interactive
@@ -110,8 +110,8 @@ sections:
 Use `{{variable_name}}` in titles, templates, and content:
 
 ```yaml
-title: 'Epic {{epic_number}} {{epic_title}}'
-template: 'As a {{user_type}}, I want {{action}}, so that {{benefit}}.'
+title: "Epic {{epic_number}} {{epic_title}}"
+template: "As a {{user_type}}, I want {{action}}, so that {{benefit}}."
 ```
 
 ### Conditional Sections
@@ -214,7 +214,7 @@ choices:
         - id: criteria
           title: Acceptance Criteria
           type: numbered-list
-          item_template: '{{criterion_number}}: {{criteria}}'
+          item_template: "{{criterion_number}}: {{criteria}}"
           repeatable: true
 ```
 
@@ -222,7 +222,7 @@ choices:
 
 ````yaml
 examples:
-  - 'FR6: The system must authenticate users within 2 seconds'
+  - "FR6: The system must authenticate users within 2 seconds"
   - |
     ```mermaid
     sequenceDiagram

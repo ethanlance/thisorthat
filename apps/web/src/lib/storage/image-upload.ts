@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/client';
+import { ContentDetectionService, ContentDetectionResult } from '@/lib/services/content-detection';
 
 export interface UploadResult {
   success: boolean;
   url?: string;
   error?: string;
+  moderationResult?: ContentDetectionResult;
 }
 
 export const uploadPollImage = async (
@@ -15,6 +17,22 @@ export const uploadPollImage = async (
     const supabase = createClient();
     const fileExt = file.name.split('.').pop();
     const fileName = `${pollId}-${option}.${fileExt}`;
+
+    // First, scan the image for inappropriate content
+    const moderationResult = await ContentDetectionService.scanContent(
+      'image',
+      `${pollId}-${option}`,
+      file
+    );
+
+    // If content is inappropriate, reject the upload
+    if (!moderationResult.isApproved) {
+      return {
+        success: false,
+        error: `Content rejected: ${moderationResult.reason || 'Inappropriate content detected'}`,
+        moderationResult,
+      };
+    }
 
     const { data, error } = await supabase.storage
       .from('poll-images')
@@ -32,7 +50,11 @@ export const uploadPollImage = async (
       .from('poll-images')
       .getPublicUrl(fileName);
 
-    return { success: true, url: urlData.publicUrl };
+    return { 
+      success: true, 
+      url: urlData.publicUrl,
+      moderationResult 
+    };
   } catch (error) {
     return {
       success: false,

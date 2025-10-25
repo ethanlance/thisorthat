@@ -3,6 +3,7 @@
 ## Goals and Background Context
 
 ### Goals
+
 - Enable college students to make quick decisions through simple, time-limited polls
 - Create a mobile web-first polling platform that works seamlessly on any device
 - Build a share-and-vote mechanism that connects friend groups for decision-making
@@ -16,9 +17,10 @@ ThisOrThat addresses the modern epidemic of decision paralysis among college stu
 The MVP targets college students as the primary user base, recognizing their need for quick decision-making tools for everything from outfit choices to dining decisions. By starting with a mobile web-first approach using Next.js and Supabase, we can rapidly validate the core concept while building a scalable foundation for future features like character interactions and predictive AI.
 
 ### Change Log
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-27 | 1.0 | Initial MVP PRD creation | Product Manager |
+
+| Date       | Version | Description              | Author          |
+| ---------- | ------- | ------------------------ | --------------- |
+| 2025-01-27 | 1.0     | Initial MVP PRD creation | Product Manager |
 
 ## Requirements
 
@@ -106,6 +108,7 @@ Single repository structure using npm workspaces to manage the Next.js applicati
 ### Service Architecture
 
 **Jamstack Architecture with Serverless Functions**
+
 - Next.js 14+ with App Router for frontend and API routes
 - Supabase for backend-as-a-service (database, authentication, real-time, storage)
 - Vercel for hosting and serverless function deployment
@@ -114,6 +117,7 @@ Single repository structure using npm workspaces to manage the Next.js applicati
 ### Testing Requirements
 
 **Unit + Integration Testing**
+
 - Frontend: Vitest + React Testing Library for component testing
 - Backend: Vitest for API route testing
 - E2E: Playwright for critical user flows (poll creation, voting, sharing)
@@ -134,18 +138,23 @@ Single repository structure using npm workspaces to manage the Next.js applicati
 ## Epic List
 
 ### Epic 1: Foundation & Core Infrastructure
+
 **Goal:** Establish project setup, authentication, and basic user management to enable poll creation and voting.
 
 ### Epic 2: Poll Creation & Management
+
 **Goal:** Enable users to create polls with two images, optional labels/descriptions, and automatic 24-hour expiration.
 
 ### Epic 3: Voting System & Real-time Updates
+
 **Goal:** Implement binary voting interface with real-time vote counting and results display.
 
 ### Epic 4: Sharing & Mobile Optimization
+
 **Goal:** Enable shareable poll links and optimize the entire experience for mobile web browsers.
 
 ### Epic 5: Content Moderation & Safety
+
 **Goal:** Implement basic content moderation and safety features to ensure appropriate use of the platform.
 
 ## Epic 1: Foundation & Core Infrastructure
@@ -159,6 +168,7 @@ I want to set up the Next.js 14+ application with App Router and TypeScript,
 so that I have a solid foundation for building the ThisOrThat platform.
 
 **Acceptance Criteria:**
+
 1. Next.js 14+ application is created with App Router configuration
 2. TypeScript is configured with strict type checking
 3. Tailwind CSS is installed and configured for styling
@@ -174,6 +184,7 @@ I want to integrate Supabase and set up the database schema,
 so that the application has a backend database for storing polls, votes, and user data.
 
 **Acceptance Criteria:**
+
 1. Supabase project is created and configured
 2. Database schema is implemented with polls, votes, and users tables
 3. Row-Level Security (RLS) policies are configured for data protection
@@ -189,6 +200,7 @@ I want to authenticate using Google or Facebook OAuth,
 so that I can create polls and manage my account securely.
 
 **Acceptance Criteria:**
+
 1. Supabase Auth is configured with Google and Facebook OAuth providers
 2. Login page is created with OAuth provider buttons
 3. Authentication flow works end-to-end (login, logout, session management)
@@ -204,6 +216,7 @@ I want to see a clean, mobile-responsive interface,
 so that I can navigate the application easily on my mobile device.
 
 **Acceptance Criteria:**
+
 1. Responsive layout component is created with mobile-first design
 2. Navigation header is implemented with authentication status
 3. Basic UI components (buttons, forms, cards) are created using Tailwind CSS
@@ -223,6 +236,7 @@ I want to upload two images for my poll,
 so that I can create visual comparisons for decision-making.
 
 **Acceptance Criteria:**
+
 1. Image upload interface is created with drag-and-drop and file picker options
 2. Images are uploaded to Supabase Storage with proper organization
 3. Image validation is implemented (file type, size limits up to 5MB)
@@ -238,6 +252,7 @@ I want to create a poll with two images and optional details,
 so that I can share my decision dilemma with friends.
 
 **Acceptance Criteria:**
+
 1. Poll creation form is created with two image upload fields
 2. Optional label fields are provided for each image option
 3. Optional description field is available for poll context
@@ -253,6 +268,7 @@ I want my polls to automatically close after 24 hours,
 so that decisions are made within a reasonable timeframe.
 
 **Acceptance Criteria:**
+
 1. Poll expiration is set to 24 hours from creation time
 2. Automatic poll closure system is implemented
 3. Poll status is tracked (active, closed, deleted)
@@ -268,6 +284,7 @@ I want to view and manage my created polls,
 so that I can track their status and results.
 
 **Acceptance Criteria:**
+
 1. User dashboard displays all created polls
 2. Poll status is clearly indicated (active, closed, expired)
 3. Poll results are displayed with vote counts
@@ -287,6 +304,7 @@ I want to view polls with clear voting options,
 so that I can easily understand and participate in the decision-making process.
 
 **Acceptance Criteria:**
+
 1. Poll viewing page displays two images side by side
 2. Option labels are clearly displayed with images
 3. Poll description is shown when available
@@ -302,6 +320,7 @@ I want to vote on polls by selecting one of two options,
 so that I can participate in helping friends make decisions.
 
 **Acceptance Criteria:**
+
 1. Binary voting interface allows selection of Option A or Option B
 2. Vote submission is processed and stored in database
 3. Users can vote anonymously without authentication
@@ -317,6 +336,7 @@ I want to see vote counts update in real-time,
 so that I can track the progress of polls I'm interested in.
 
 **Acceptance Criteria:**
+
 1. Real-time vote counting is implemented using Supabase Realtime
 2. Vote counts update immediately when new votes are cast
 3. Visual progress bars or charts display vote distribution
@@ -332,6 +352,7 @@ I want to see clear poll results with vote counts,
 so that I can understand the outcome of the decision-making process.
 
 **Acceptance Criteria:**
+
 1. Final poll results display vote counts for both options
 2. Percentage breakdown is calculated and displayed
 3. Visual representation (progress bars, charts) shows results clearly
@@ -351,6 +372,7 @@ I want to share my polls with friends via links,
 so that they can easily access and vote on my polls.
 
 **Acceptance Criteria:**
+
 1. Unique shareable links are generated for each poll
 2. Links can be copied to clipboard with one tap
 3. Native mobile sharing integration is implemented
@@ -366,6 +388,7 @@ I want the application to work seamlessly on my mobile browser,
 so that I can use ThisOrThat easily on my phone.
 
 **Acceptance Criteria:**
+
 1. Mobile-first responsive design is implemented across all pages
 2. Touch targets are optimized for finger navigation (minimum 44px)
 3. One-handed usage is supported for all primary actions
@@ -381,6 +404,7 @@ I want ThisOrThat to feel like a native app on my phone,
 so that I can access it quickly and easily.
 
 **Acceptance Criteria:**
+
 1. Web App Manifest is configured for mobile installation
 2. Service Worker is implemented for offline functionality
 3. App icons are created for mobile home screen installation
@@ -396,6 +420,7 @@ I want to share polls easily across different platforms,
 so that I can reach my friends wherever they are.
 
 **Acceptance Criteria:**
+
 1. Social media sharing is implemented (Twitter, Facebook, Instagram)
 2. Messaging app integration works (WhatsApp, iMessage, SMS)
 3. Email sharing functionality is available
@@ -415,6 +440,7 @@ I want inappropriate images to be filtered out,
 so that the platform remains safe and appropriate for all users.
 
 **Acceptance Criteria:**
+
 1. Image content moderation system is implemented using AI/ML services
 2. Inappropriate images are automatically flagged and blocked
 3. Manual review process is available for flagged content
@@ -430,6 +456,7 @@ I want to report inappropriate content or behavior,
 so that I can help maintain a safe community environment.
 
 **Acceptance Criteria:**
+
 1. Report functionality is available on all polls and user profiles
 2. Multiple report categories are provided (inappropriate content, spam, harassment)
 3. Report submission is anonymous and secure
@@ -445,6 +472,7 @@ I want clear guidelines about appropriate behavior,
 so that I understand how to use the platform responsibly.
 
 **Acceptance Criteria:**
+
 1. Community guidelines are clearly displayed and accessible
 2. Guidelines cover appropriate content, behavior, and usage
 3. Guidelines are written in clear, student-friendly language
@@ -460,6 +488,7 @@ I want to block users who are causing problems,
 so that I can control my experience on the platform.
 
 **Acceptance Criteria:**
+
 1. User blocking functionality is implemented
 2. Blocked users cannot interact with the blocker's polls
 3. Blocked users cannot see the blocker's profile or content

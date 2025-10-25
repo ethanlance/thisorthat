@@ -4,10 +4,9 @@ import { PollPrivacyService } from '@/lib/services/poll-privacy';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ pollId: string }> }
+  { params }: { params: { pollId: string } }
 ) {
   try {
-    const { pollId } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -18,32 +17,46 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user has admin access to poll
-    const hasAccess = await PollPrivacyService.hasPollAccess(pollId, user.id);
-    if (!hasAccess) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
+    const { pollId } = params;
     const body = await request.json();
-    const { user_id, message } = body;
+    const { email, message, access_level, expires_at } = body;
 
-    if (!user_id) {
+    // Validate required fields
+    if (!email || !email.trim()) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
 
-    const success = await PollPrivacyService.inviteUserToPoll(
+    // Check if user is poll creator
+    const { data: poll } = await supabase
+      .from('polls')
+      .select('creator_id, privacy_level')
+      .eq('id', pollId)
+      .single();
+
+    if (!poll || poll.creator_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Check if poll is private
+    if (poll.privacy_level !== 'private') {
+      return NextResponse.json(
+        { error: 'Can only invite users to private polls' },
+        { status: 400 }
+      );
+    }
+
+    const success = await PollPrivacyService.inviteUsersToPoll(
       pollId,
-      user_id,
-      user.id,
-      message
+      [email.trim()],
+      message?.trim()
     );
 
     if (!success) {
       return NextResponse.json(
-        { error: 'Failed to invite user' },
+        { error: 'Failed to send poll invitation' },
         { status: 500 }
       );
     }

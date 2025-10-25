@@ -698,6 +698,280 @@ export interface Database {
         };
       };
     };
+    poll_categories: {
+      Row: {
+        id: string;
+        name: string;
+        description: string | null;
+        color: string;
+        icon: string;
+        is_active: boolean;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        name: string;
+        description?: string | null;
+        color?: string;
+        icon?: string;
+        is_active?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        name?: string;
+        description?: string | null;
+        color?: string;
+        icon?: string;
+        is_active?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    poll_tags: {
+      Row: {
+        id: string;
+        name: string;
+        description: string | null;
+        usage_count: number;
+        is_active: boolean;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        name: string;
+        description?: string | null;
+        usage_count?: number;
+        is_active?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        name?: string;
+        description?: string | null;
+        usage_count?: number;
+        is_active?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    poll_category_assignments: {
+      Row: {
+        id: string;
+        poll_id: string;
+        category_id: string;
+        assigned_by: string | null;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        category_id: string;
+        assigned_by?: string | null;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        category_id?: string;
+        assigned_by?: string | null;
+        created_at?: string;
+      };
+    };
+    poll_tag_assignments: {
+      Row: {
+        id: string;
+        poll_id: string;
+        tag_id: string;
+        assigned_by: string | null;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        tag_id: string;
+        assigned_by?: string | null;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        tag_id?: string;
+        assigned_by?: string | null;
+        created_at?: string;
+      };
+    };
+    poll_metrics: {
+      Row: {
+        id: string;
+        poll_id: string;
+        view_count: number;
+        vote_count: number;
+        comment_count: number;
+        share_count: number;
+        engagement_score: number;
+        trending_score: number;
+        popularity_score: number;
+        last_calculated: string;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        poll_id: string;
+        view_count?: number;
+        vote_count?: number;
+        comment_count?: number;
+        share_count?: number;
+        engagement_score?: number;
+        trending_score?: number;
+        popularity_score?: number;
+        last_calculated?: string;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        poll_id?: string;
+        view_count?: number;
+        vote_count?: number;
+        comment_count?: number;
+        share_count?: number;
+        engagement_score?: number;
+        trending_score?: number;
+        popularity_score?: number;
+        last_calculated?: string;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    user_feed_preferences: {
+      Row: {
+        id: string;
+        user_id: string;
+        feed_type: 'personalized' | 'trending' | 'recent' | 'following';
+        show_categories: string[];
+        hide_categories: string[];
+        show_tags: string[];
+        hide_tags: string[];
+        min_engagement_score: number;
+        max_poll_age_days: number;
+        include_private_polls: boolean;
+        created_at: string;
+        updated_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        feed_type?: 'personalized' | 'trending' | 'recent' | 'following';
+        show_categories?: string[];
+        hide_categories?: string[];
+        show_tags?: string[];
+        hide_tags?: string[];
+        min_engagement_score?: number;
+        max_poll_age_days?: number;
+        include_private_polls?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        feed_type?: 'personalized' | 'trending' | 'recent' | 'following';
+        show_categories?: string[];
+        hide_categories?: string[];
+        show_tags?: string[];
+        hide_tags?: string[];
+        min_engagement_score?: number;
+        max_poll_age_days?: number;
+        include_private_polls?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    };
+    feed_interactions: {
+      Row: {
+        id: string;
+        user_id: string;
+        poll_id: string;
+        interaction_type:
+          | 'view'
+          | 'vote'
+          | 'comment'
+          | 'share'
+          | 'save'
+          | 'hide'
+          | 'report';
+        interaction_data: Record<string, unknown>;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        user_id: string;
+        poll_id: string;
+        interaction_type:
+          | 'view'
+          | 'vote'
+          | 'comment'
+          | 'share'
+          | 'save'
+          | 'hide'
+          | 'report';
+        interaction_data?: Record<string, unknown>;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        user_id?: string;
+        poll_id?: string;
+        interaction_type?:
+          | 'view'
+          | 'vote'
+          | 'comment'
+          | 'share'
+          | 'save'
+          | 'hide'
+          | 'report';
+        interaction_data?: Record<string, unknown>;
+        created_at?: string;
+      };
+    };
+    trending_topics: {
+      Row: {
+        id: string;
+        topic_type: 'category' | 'tag' | 'keyword';
+        topic_value: string;
+        trending_score: number;
+        velocity: number;
+        period_start: string;
+        period_end: string;
+        created_at: string;
+      };
+      Insert: {
+        id?: string;
+        topic_type: 'category' | 'tag' | 'keyword';
+        topic_value: string;
+        trending_score: number;
+        velocity?: number;
+        period_start: string;
+        period_end: string;
+        created_at?: string;
+      };
+      Update: {
+        id?: string;
+        topic_type?: 'category' | 'tag' | 'keyword';
+        topic_value?: string;
+        trending_score?: number;
+        velocity?: number;
+        period_start?: string;
+        period_end?: string;
+        created_at?: string;
+      };
+    };
     Enums: Record<string, never>;
   };
 }

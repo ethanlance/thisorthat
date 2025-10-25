@@ -14,7 +14,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const groups = await FriendGroupService.getUserGroups(user.id);
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type') || 'user'; // 'user' or 'public'
+
+    let groups;
+
+    if (type === 'public') {
+      const limit = parseInt(searchParams.get('limit') || '20');
+      const offset = parseInt(searchParams.get('offset') || '0');
+      groups = await FriendGroupService.getPublicFriendGroups(limit, offset);
+    } else {
+      groups = await FriendGroupService.getUserFriendGroups();
+    }
 
     return NextResponse.json({ groups });
   } catch (error) {
@@ -41,23 +52,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { name, description, is_public } = body;
 
-    if (!name) {
+    // Validate required fields
+    if (!name || !name.trim()) {
       return NextResponse.json(
         { error: 'Group name is required' },
         { status: 400 }
       );
     }
 
-    const group = await FriendGroupService.createGroup(
-      name,
-      description || null,
-      is_public || false,
-      user.id
+    const group = await FriendGroupService.createFriendGroup(
+      name.trim(),
+      description?.trim(),
+      is_public || false
     );
 
     if (!group) {
       return NextResponse.json(
-        { error: 'Failed to create group' },
+        { error: 'Failed to create friend group' },
         { status: 500 }
       );
     }

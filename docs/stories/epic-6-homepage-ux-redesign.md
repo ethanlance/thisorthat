@@ -9,6 +9,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 ### Existing System Context
 
 **Current relevant functionality:**
+
 - Homepage exists at `apps/web/src/app/page.tsx` with static hero section, features grid, and multiple CTAs
 - Existing poll viewing and voting components in `src/components/poll/`
 - Real-time voting system already implemented with Supabase Realtime
@@ -16,12 +17,14 @@ Transform the ThisOrThat homepage from a static feature description page into an
 - Mobile-responsive layout with Next.js App Router
 
 **Technology stack:**
+
 - Frontend: Next.js 14+ (App Router), React, TypeScript, Tailwind CSS
 - Backend: Supabase (PostgreSQL, Realtime, Auth, Storage)
 - Deployment: Vercel Edge Network
 - Testing: Vitest, React Testing Library, Playwright
 
 **Integration points:**
+
 - Replaces `/apps/web/src/app/page.tsx` (landing page)
 - Reuses existing poll components (`PollViewer`, `PollCard`, `VoteButton`)
 - Integrates with existing real-time voting system
@@ -57,6 +60,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
    - Error states and loading skeletons
 
 **How it integrates:**
+
 - Uses existing `PollViewer` component with enhanced styling
 - Leverages current Supabase Realtime subscriptions
 - Extends existing Tailwind configuration with new color tokens
@@ -64,6 +68,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 - No database schema changes required
 
 **Success criteria:**
+
 - [ ] Homepage loads in <1.5 seconds on mobile 3G
 - [ ] Users can vote on demo poll within 10 seconds of landing
 - [ ] 30%+ of voters proceed to "Create Your Own" (conversion goal)
@@ -74,9 +79,11 @@ Transform the ThisOrThat homepage from a static feature description page into an
 ## Stories
 
 ### Story 6.1: Live Demo Poll Component & Core Redesign
+
 **Description:** Transform homepage to feature a full-viewport, interactive demo poll that users can vote on immediately. Replace static content with a working poll that demonstrates product value instantly.
 
 **Key Tasks:**
+
 - Update `page.tsx` to render full-screen poll card
 - Implement demo poll data fetching (curated or featured poll)
 - Enable anonymous voting on demo poll
@@ -85,6 +92,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 - Remove old hero section and features grid
 
 **Acceptance Criteria:**
+
 - Demo poll loads and displays within 1.5s on mobile
 - Anonymous users can vote without login
 - Vote submission provides immediate visual feedback
@@ -94,9 +102,11 @@ Transform the ThisOrThat homepage from a static feature description page into an
 ---
 
 ### Story 6.2: Discord-Inspired Design System & Animations
+
 **Description:** Implement the Discord-inspired purple/blue design system across the homepage with celebration animations (confetti, progress bars) and modern UI polish.
 
 **Key Tasks:**
+
 - Add purple/blue color tokens to Tailwind config (#5865F2, etc.)
 - Style poll card with new design system
 - Implement confetti celebration animation on vote
@@ -105,6 +115,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 - Ensure `prefers-reduced-motion` accessibility support
 
 **Acceptance Criteria:**
+
 - Primary purple (#5865F2) used for all CTAs and highlights
 - Confetti animation triggers on vote submission (2s duration)
 - Progress bars animate smoothly (800ms ease-out)
@@ -114,9 +125,11 @@ Transform the ThisOrThat homepage from a static feature description page into an
 ---
 
 ### Story 6.3: Conversion CTA & Performance Optimization
+
 **Description:** Implement the conversion funnel (Vote → Results → "Create Your Own" CTA) and optimize homepage performance to meet <1.5s FCP target on mobile 3G.
 
 **Key Tasks:**
+
 - Add "Create Your Own" CTA after vote results
 - Simplify navigation (remove redundant CTAs)
 - Implement code splitting and lazy loading
@@ -125,6 +138,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 - Run Lighthouse audits and fix performance issues
 
 **Acceptance Criteria:**
+
 - "Create Your Own" CTA prominently displayed after voting
 - Secondary "Browse Polls" action available
 - First Contentful Paint <1.5s on mobile 3G
@@ -147,12 +161,14 @@ Transform the ThisOrThat homepage from a static feature description page into an
 **Primary Risk:** Homepage redesign might confuse existing users who expect traditional landing page format
 
 **Mitigation:**
+
 - A/B test new homepage with subset of traffic (10% initially)
 - Add subtle "What is ThisOrThat?" link for first-time visitors
 - Implement feature flag to quickly rollback if conversion drops
 - Monitor analytics for bounce rate and conversion metrics
 
 **Rollback Plan:**
+
 - Homepage is a single file replacement (`page.tsx`)
 - Revert to previous version via git (`git revert <commit>`)
 - Feature flag allows instant rollback without deployment
@@ -162,6 +178,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 **Secondary Risk:** Real-time voting performance degrades with high traffic
 
 **Mitigation:**
+
 - Use existing battle-tested Supabase Realtime infrastructure
 - Implement client-side debouncing for vote updates (300ms)
 - Add loading states and optimistic UI updates
@@ -170,6 +187,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 **Tertiary Risk:** Confetti animation causes accessibility issues or performance problems
 
 **Mitigation:**
+
 - Respect `prefers-reduced-motion` setting (disable animations)
 - Lazy load confetti library (15KB gzipped) only after vote
 - Limit animation to 2 seconds with proper cleanup
@@ -198,9 +216,9 @@ Transform the ThisOrThat homepage from a static feature description page into an
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-01-27 | 1.0 | Epic created from UX specification | John (PM) |
+| Date       | Version | Description                        | Author    |
+| ---------- | ------- | ---------------------------------- | --------- |
+| 2025-01-27 | 1.0     | Epic created from UX specification | John (PM) |
 
 ---
 
@@ -211,6 +229,7 @@ Transform the ThisOrThat homepage from a static feature description page into an
 This is an enhancement to an existing Next.js 14+ application with Tailwind CSS and Supabase backend. The homepage redesign focuses on replacing static content with an interactive demo poll to reduce decision paralysis (brand mission: "Stop Overthinking. Start Choosing").
 
 **Integration points:**
+
 - Homepage file: `apps/web/src/app/page.tsx`
 - Poll components: `src/components/poll/PollViewer.tsx`, `PollCard.tsx`, `VoteButton.tsx`
 - Real-time system: Supabase Realtime subscriptions (already implemented)
@@ -218,6 +237,7 @@ This is an enhancement to an existing Next.js 14+ application with Tailwind CSS 
 - Styling: Tailwind CSS with new color tokens, Shadcn/ui components
 
 **Existing patterns to follow:**
+
 - React Server Components for initial data fetching
 - Client Components (`'use client'`) for interactive elements
 - Service layer pattern: `lib/services/polls.ts` for API calls
@@ -226,6 +246,7 @@ This is an enhancement to an existing Next.js 14+ application with Tailwind CSS 
 - Loading states: Skeleton components from Shadcn/ui
 
 **Critical compatibility requirements:**
+
 - No database schema changes (pure frontend redesign)
 - Existing poll creation flow must continue working unchanged
 - Real-time voting system integration (already exists, reuse it)
@@ -233,12 +254,14 @@ This is an enhancement to an existing Next.js 14+ application with Tailwind CSS 
 - Accessibility compliance (WCAG AA standard across app)
 
 **Key constraints:**
+
 - Performance budget: <1.5s FCP on mobile 3G
 - Bundle size: New components should lazy load (code splitting)
 - Animation performance: 60fps on modern devices, 30fps minimum
 - Browser support: All modern browsers (no IE11)
 
 Each story must include:
+
 1. Clear acceptance criteria linking to UX spec sections
 2. Testing requirements (unit, integration, E2E)
 3. Performance validation steps
@@ -246,4 +269,3 @@ Each story must include:
 5. Regression testing to ensure existing functionality intact
 
 The epic maintains system integrity while delivering a conversion-optimized homepage that embodies the ThisOrThat brand promise.
-

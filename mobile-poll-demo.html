@@ -1,608 +1,715 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ThisOrThat - Decision Helper Demo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#5865F2', // Discord blurple
-                        secondary: '#57F287', // Discord green
-                        accent: '#FEE75C', // Discord yellow
-                        dark: '#2C2F33', // Discord dark
-                        darker: '#23272A', // Discord darker
-                        light: '#99AAB5', // Discord light gray
-                    },
-                    fontFamily: {
-                        'discord': ['Whitney', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#5865F2", // Discord blurple
+              secondary: "#57F287", // Discord green
+              accent: "#FEE75C", // Discord yellow
+              dark: "#2C2F33", // Discord dark
+              darker: "#23272A", // Discord darker
+              light: "#99AAB5", // Discord light gray
+            },
+            fontFamily: {
+              discord: [
+                "Whitney",
+                "Helvetica Neue",
+                "Helvetica",
+                "Arial",
+                "sans-serif",
+              ],
+            },
+          },
+        },
+      };
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+
+      .discord-card {
+        background: rgba(44, 47, 51, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .vote-button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: scale(1);
+      }
+
+      .vote-button:hover {
+        transform: scale(1.02);
+      }
+
+      .vote-button:active {
+        transform: scale(0.98);
+      }
+
+      .vote-button.selected {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(87, 242, 135, 0.4);
+      }
+
+      .progress-bar {
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .pulse-animation {
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
         }
-        
-        .discord-card {
-            background: rgba(44, 47, 51, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        50% {
+          opacity: 0.7;
         }
-        
-        .vote-button {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: scale(1);
+      }
+
+      .slide-up {
+        animation: slideUp 0.5s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        
-        .vote-button:hover {
-            transform: scale(1.02);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        .vote-button:active {
-            transform: scale(0.98);
+      }
+
+      .bounce-in {
+        animation: bounceIn 0.6s ease-out;
+      }
+
+      @keyframes bounceIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.3);
         }
-        
-        .vote-button.selected {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(87, 242, 135, 0.4);
+        50% {
+          opacity: 1;
+          transform: scale(1.05);
         }
-        
-        .progress-bar {
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        70% {
+          transform: scale(0.9);
         }
-        
-        .pulse-animation {
-            animation: pulse 2s infinite;
+        100% {
+          opacity: 1;
+          transform: scale(1);
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+      }
+
+      .comment-bubble {
+        background: linear-gradient(135deg, #5865f2 0%, #4752c4 100%);
+        position: relative;
+      }
+
+      .comment-bubble::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: -8px;
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 8px solid #4752c4;
+      }
+
+      .floating-emoji {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: floatUp 2s ease-out forwards;
+      }
+
+      @keyframes floatUp {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
-        
-        .slide-up {
-            animation: slideUp 0.5s ease-out;
+        100% {
+          opacity: 0;
+          transform: translateY(-50px) scale(1.2);
         }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .bounce-in {
-            animation: bounceIn 0.6s ease-out;
-        }
-        
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        .comment-bubble {
-            background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
-            position: relative;
-        }
-        
-        .comment-bubble::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: -8px;
-            width: 0;
-            height: 0;
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-right: 8px solid #4752C4;
-        }
-        
-        .floating-emoji {
-            position: absolute;
-            font-size: 1.5rem;
-            pointer-events: none;
-            animation: floatUp 2s ease-out forwards;
-        }
-        
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px) scale(1.2);
-            }
-        }
+      }
     </style>
-</head>
-<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+  </head>
+  <body
+    class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen"
+  >
     <!-- Mobile Poll Demo Container -->
     <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <div class="discord-card rounded-b-2xl p-4 mb-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">T</span>
-                    </div>
-                    <h1 class="text-white font-semibold text-lg">ThisOrThat</h1>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center">
-                        <span class="text-dark font-bold text-sm">👤</span>
-                    </div>
-                </div>
+      <!-- Header -->
+      <div class="discord-card rounded-b-2xl p-4 mb-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+            >
+              <span class="text-white font-bold text-sm">T</span>
             </div>
+            <h1 class="text-white font-semibold text-lg">ThisOrThat</h1>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div
+              class="w-8 h-8 bg-secondary rounded-full flex items-center justify-center"
+            >
+              <span class="text-dark font-bold text-sm">👤</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Poll Container -->
+      <div class="flex-1 px-4 pb-4">
+        <!-- Poll Card -->
+        <div class="discord-card rounded-2xl p-6 mb-4 slide-up">
+          <!-- Poll Header -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center"
+              >
+                <span class="text-white font-bold">S</span>
+              </div>
+              <div>
+                <p class="text-white font-medium">@sarah_chen</p>
+                <p class="text-light text-sm">2 hours ago</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-light text-sm">⏰ 22h left</span>
+              <div
+                class="w-2 h-2 bg-secondary rounded-full pulse-animation"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Poll Question -->
+          <div class="mb-6">
+            <h2 class="text-white text-xl font-semibold mb-2">
+              Which outfit for the party tonight? 🎉
+            </h2>
+            <p class="text-light text-sm">
+              Help me decide! The party starts at 8pm and I'm still not sure
+              what to wear 😅
+            </p>
+            <div class="mt-3 flex items-center space-x-2 text-accent text-sm">
+              <span>⏰</span>
+              <span>Decision needed by 8:00 PM</span>
+            </div>
+          </div>
+
+          <!-- Poll Options -->
+          <div class="space-y-4 mb-6">
+            <!-- Option A -->
+            <div class="relative">
+              <div
+                class="vote-button bg-gradient-to-br from-red-400 to-pink-500 rounded-xl p-4 cursor-pointer"
+                onclick="vote('optionA')"
+                id="optionA"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-16 h-16 bg-white rounded-lg flex items-center justify-center"
+                    >
+                      <span class="text-2xl">👗</span>
+                    </div>
+                    <div>
+                      <h3 class="text-white font-semibold">Red Dress</h3>
+                      <p class="text-white text-sm opacity-80">
+                        Classic and bold
+                      </p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-white font-bold text-lg" id="votesA">
+                      8
+                    </div>
+                    <div class="text-white text-sm opacity-80">votes</div>
+                  </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="mt-3 bg-white bg-opacity-20 rounded-full h-2">
+                  <div
+                    class="progress-bar bg-white rounded-full h-2"
+                    id="progressA"
+                    style="width: 67%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Option B -->
+            <div class="relative">
+              <div
+                class="vote-button bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl p-4 cursor-pointer"
+                onclick="vote('optionB')"
+                id="optionB"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-16 h-16 bg-white rounded-lg flex items-center justify-center"
+                    >
+                      <span class="text-2xl">👕</span>
+                    </div>
+                    <div>
+                      <h3 class="text-white font-semibold">Blue Top + Jeans</h3>
+                      <p class="text-white text-sm opacity-80">
+                        Casual and comfy
+                      </p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-white font-bold text-lg" id="votesB">
+                      4
+                    </div>
+                    <div class="text-white text-sm opacity-80">votes</div>
+                  </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="mt-3 bg-white bg-opacity-20 rounded-full h-2">
+                  <div
+                    class="progress-bar bg-white rounded-full h-2"
+                    id="progressB"
+                    style="width: 33%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vote Status -->
+          <div class="text-center mb-4">
+            <p class="text-light text-sm" id="voteStatus">
+              👥 12 friends have voted so far
+            </p>
+            <p class="text-accent text-xs mt-1">
+              Your vote helps Sarah make a decision!
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex space-x-3">
+            <button
+              class="flex-1 bg-primary hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors"
+              onclick="sharePoll()"
+            >
+              📤 Share with Friends
+            </button>
+            <button
+              class="flex-1 bg-secondary hover:bg-green-600 text-dark font-medium py-3 px-4 rounded-xl transition-colors"
+              onclick="addComment()"
+            >
+              💬 Add Advice
+            </button>
+          </div>
+
+          <!-- Decision Helper Message -->
+          <div
+            class="mt-4 p-3 bg-darker rounded-xl border border-primary border-opacity-30"
+          >
+            <p class="text-white text-sm text-center">
+              <span class="text-accent">💡</span>
+              <strong>Decision Helper:</strong> This poll closes in 22 hours.
+              Once you vote, you can't change it - just like real decisions!
+            </p>
+          </div>
+
+          <!-- Character Reaction -->
+          <div
+            class="mt-4 p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl"
+            id="characterReaction"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-12 h-12 bg-white rounded-full flex items-center justify-center"
+              >
+                <span class="text-2xl">🐱</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-white text-sm font-medium">
+                  Marby the Decision Cat
+                </p>
+                <p class="text-white text-sm opacity-90" id="characterMessage">
+                  "Your friends are helping you decide! That's what friends are
+                  for! 🎉"
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Poll Container -->
-        <div class="flex-1 px-4 pb-4">
-            <!-- Poll Card -->
-            <div class="discord-card rounded-2xl p-6 mb-4 slide-up">
-                <!-- Poll Header -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-bold">S</span>
-                        </div>
-                        <div>
-                            <p class="text-white font-medium">@sarah_chen</p>
-                            <p class="text-light text-sm">2 hours ago</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-light text-sm">⏰ 22h left</span>
-                        <div class="w-2 h-2 bg-secondary rounded-full pulse-animation"></div>
-                    </div>
-                </div>
+        <!-- Comments Section -->
+        <div class="discord-card rounded-2xl p-6">
+          <h3 class="text-white font-semibold mb-4 flex items-center">
+            💬 Friend Advice (5)
+          </h3>
 
-                <!-- Poll Question -->
-                <div class="mb-6">
-                    <h2 class="text-white text-xl font-semibold mb-2">Which outfit for the party tonight? 🎉</h2>
-                    <p class="text-light text-sm">Help me decide! The party starts at 8pm and I'm still not sure what to wear 😅</p>
-                    <div class="mt-3 flex items-center space-x-2 text-accent text-sm">
-                        <span>⏰</span>
-                        <span>Decision needed by 8:00 PM</span>
-                    </div>
+          <div class="space-y-4">
+            <!-- Comment 1 -->
+            <div class="flex space-x-3">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-white font-bold text-sm">M</span>
+              </div>
+              <div class="flex-1">
+                <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
+                  <p class="text-white text-sm font-medium">@mike_rodriguez</p>
+                  <p class="text-white text-sm mt-1">
+                    Red dress for sure! 🔥 You always look amazing in red
+                  </p>
+                  <p class="text-white text-xs opacity-70 mt-1">1 hour ago</p>
                 </div>
-
-                <!-- Poll Options -->
-                <div class="space-y-4 mb-6">
-                    <!-- Option A -->
-                    <div class="relative">
-                        <div class="vote-button bg-gradient-to-br from-red-400 to-pink-500 rounded-xl p-4 cursor-pointer" 
-                             onclick="vote('optionA')" id="optionA">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
-                                        <span class="text-2xl">👗</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-white font-semibold">Red Dress</h3>
-                                        <p class="text-white text-sm opacity-80">Classic and bold</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-white font-bold text-lg" id="votesA">8</div>
-                                    <div class="text-white text-sm opacity-80">votes</div>
-                                </div>
-                            </div>
-                            <!-- Progress Bar -->
-                            <div class="mt-3 bg-white bg-opacity-20 rounded-full h-2">
-                                <div class="progress-bar bg-white rounded-full h-2" id="progressA" style="width: 67%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Option B -->
-                    <div class="relative">
-                        <div class="vote-button bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl p-4 cursor-pointer" 
-                             onclick="vote('optionB')" id="optionB">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-16 h-16 bg-white rounded-lg flex items-center justify-center">
-                                        <span class="text-2xl">👕</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-white font-semibold">Blue Top + Jeans</h3>
-                                        <p class="text-white text-sm opacity-80">Casual and comfy</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-white font-bold text-lg" id="votesB">4</div>
-                                    <div class="text-white text-sm opacity-80">votes</div>
-                                </div>
-                            </div>
-                            <!-- Progress Bar -->
-                            <div class="mt-3 bg-white bg-opacity-20 rounded-full h-2">
-                                <div class="progress-bar bg-white rounded-full h-2" id="progressB" style="width: 33%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vote Status -->
-                <div class="text-center mb-4">
-                    <p class="text-light text-sm" id="voteStatus">👥 12 friends have voted so far</p>
-                    <p class="text-accent text-xs mt-1">Your vote helps Sarah make a decision!</p>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex space-x-3">
-                    <button class="flex-1 bg-primary hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-xl transition-colors" 
-                            onclick="sharePoll()">
-                        📤 Share with Friends
-                    </button>
-                    <button class="flex-1 bg-secondary hover:bg-green-600 text-dark font-medium py-3 px-4 rounded-xl transition-colors" 
-                            onclick="addComment()">
-                        💬 Add Advice
-                    </button>
-                </div>
-                
-                <!-- Decision Helper Message -->
-                <div class="mt-4 p-3 bg-darker rounded-xl border border-primary border-opacity-30">
-                    <p class="text-white text-sm text-center">
-                        <span class="text-accent">💡</span> 
-                        <strong>Decision Helper:</strong> This poll closes in 22 hours. Once you vote, you can't change it - just like real decisions!
-                    </p>
-                </div>
-                
-                <!-- Character Reaction -->
-                <div class="mt-4 p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl" id="characterReaction">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                            <span class="text-2xl">🐱</span>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-white text-sm font-medium">Marby the Decision Cat</p>
-                            <p class="text-white text-sm opacity-90" id="characterMessage">
-                                "Your friends are helping you decide! That's what friends are for! 🎉"
-                            </p>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
 
-            <!-- Comments Section -->
-            <div class="discord-card rounded-2xl p-6">
-                <h3 class="text-white font-semibold mb-4 flex items-center">
-                    💬 Friend Advice (5)
-                </h3>
-                
-                <div class="space-y-4">
-                    <!-- Comment 1 -->
-                    <div class="flex space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span class="text-white font-bold text-sm">M</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
-                                <p class="text-white text-sm font-medium">@mike_rodriguez</p>
-                                <p class="text-white text-sm mt-1">Red dress for sure! 🔥 You always look amazing in red</p>
-                                <p class="text-white text-xs opacity-70 mt-1">1 hour ago</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comment 2 -->
-                    <div class="flex space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span class="text-white font-bold text-sm">J</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
-                                <p class="text-white text-sm font-medium">@jessica_lee</p>
-                                <p class="text-white text-sm mt-1">Blue top is more you! Plus you can dance without worrying about the dress 😄</p>
-                                <p class="text-white text-xs opacity-70 mt-1">45 min ago</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comment 3 -->
-                    <div class="flex space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span class="text-white font-bold text-sm">A</span>
-                        </div>
-                        <div class="flex-1">
-                            <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
-                                <p class="text-white text-sm font-medium">@alex_kim</p>
-                                <p class="text-white text-sm mt-1">Why not both? Change halfway through the night! 🎭</p>
-                                <p class="text-white text-xs opacity-70 mt-1">30 min ago</p>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Comment 2 -->
+            <div class="flex space-x-3">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-white font-bold text-sm">J</span>
+              </div>
+              <div class="flex-1">
+                <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
+                  <p class="text-white text-sm font-medium">@jessica_lee</p>
+                  <p class="text-white text-sm mt-1">
+                    Blue top is more you! Plus you can dance without worrying
+                    about the dress 😄
+                  </p>
+                  <p class="text-white text-xs opacity-70 mt-1">45 min ago</p>
                 </div>
-
-                <!-- Add Comment Input -->
-                <div class="mt-4 flex space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span class="text-white font-bold text-sm">Y</span>
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" 
-                               placeholder="Give Sarah some advice..." 
-                               class="w-full bg-darker border border-light border-opacity-30 rounded-xl px-4 py-3 text-white placeholder-light focus:outline-none focus:border-primary transition-colors">
-                    </div>
-                </div>
-                
-                <!-- Purpose Reminder -->
-                <div class="mt-3 text-center">
-                    <p class="text-light text-xs">
-                        💡 <strong>Remember:</strong> Your advice helps Sarah make a real decision. Be helpful, not judgmental!
-                    </p>
-                </div>
+              </div>
             </div>
+
+            <!-- Comment 3 -->
+            <div class="flex space-x-3">
+              <div
+                class="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-white font-bold text-sm">A</span>
+              </div>
+              <div class="flex-1">
+                <div class="comment-bubble rounded-2xl rounded-tl-sm p-3">
+                  <p class="text-white text-sm font-medium">@alex_kim</p>
+                  <p class="text-white text-sm mt-1">
+                    Why not both? Change halfway through the night! 🎭
+                  </p>
+                  <p class="text-white text-xs opacity-70 mt-1">30 min ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Comment Input -->
+          <div class="mt-4 flex space-x-3">
+            <div
+              class="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0"
+            >
+              <span class="text-white font-bold text-sm">Y</span>
+            </div>
+            <div class="flex-1">
+              <input
+                type="text"
+                placeholder="Give Sarah some advice..."
+                class="w-full bg-darker border border-light border-opacity-30 rounded-xl px-4 py-3 text-white placeholder-light focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
+          </div>
+
+          <!-- Purpose Reminder -->
+          <div class="mt-3 text-center">
+            <p class="text-light text-xs">
+              💡 <strong>Remember:</strong> Your advice helps Sarah make a real
+              decision. Be helpful, not judgmental!
+            </p>
+          </div>
         </div>
+      </div>
 
-        <!-- Bottom Navigation -->
-        <div class="discord-card rounded-t-2xl p-4">
-            <div class="flex justify-around">
-                <button class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors">
-                    <span class="text-xl">🏠</span>
-                    <span class="text-xs">My Polls</span>
-                </button>
-                <button class="flex flex-col items-center space-y-1 text-primary">
-                    <span class="text-xl">🤝</span>
-                    <span class="text-xs">Help Friends</span>
-                </button>
-                <button class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors">
-                    <span class="text-xl">➕</span>
-                    <span class="text-xs">Ask for Help</span>
-                </button>
-                <button class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors">
-                    <span class="text-xl">👥</span>
-                    <span class="text-xs">Friend Groups</span>
-                </button>
-                <button class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors">
-                    <span class="text-xl">👤</span>
-                    <span class="text-xs">Profile</span>
-                </button>
-            </div>
+      <!-- Bottom Navigation -->
+      <div class="discord-card rounded-t-2xl p-4">
+        <div class="flex justify-around">
+          <button
+            class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors"
+          >
+            <span class="text-xl">🏠</span>
+            <span class="text-xs">My Polls</span>
+          </button>
+          <button class="flex flex-col items-center space-y-1 text-primary">
+            <span class="text-xl">🤝</span>
+            <span class="text-xs">Help Friends</span>
+          </button>
+          <button
+            class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors"
+          >
+            <span class="text-xl">➕</span>
+            <span class="text-xs">Ask for Help</span>
+          </button>
+          <button
+            class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors"
+          >
+            <span class="text-xl">👥</span>
+            <span class="text-xs">Friend Groups</span>
+          </button>
+          <button
+            class="flex flex-col items-center space-y-1 text-light hover:text-white transition-colors"
+          >
+            <span class="text-xl">👤</span>
+            <span class="text-xs">Profile</span>
+          </button>
         </div>
+      </div>
     </div>
 
     <script>
-        let hasVoted = false;
-        let userVote = null;
+      let hasVoted = false;
+      let userVote = null;
 
-        function vote(option) {
-            if (hasVoted) {
-                // Show change vote option
-                if (userVote === option) {
-                    return; // Already voted for this option
-                }
-                
-                // Change vote
-                changeVote(option);
-                return;
-            }
+      function vote(option) {
+        if (hasVoted) {
+          // Show change vote option
+          if (userVote === option) {
+            return; // Already voted for this option
+          }
 
-            // First vote
-            hasVoted = true;
-            userVote = option;
-            
-            // Add visual feedback
-            document.getElementById(option).classList.add('selected');
-            
-            // Show floating emoji
-            showFloatingEmoji(option);
-            
-            // Update vote counts (simulate real-time update)
-            setTimeout(() => {
-                updateVoteCounts(option);
-                updateVoteStatus();
-            }, 500);
-            
-            // Show success message
-            showNotification('Vote recorded! 🎉');
-            
-            // Update character reaction
-            updateCharacterReaction(option);
+          // Change vote
+          changeVote(option);
+          return;
         }
 
-        function changeVote(option) {
-            // Remove previous selection
-            if (userVote) {
-                document.getElementById(userVote).classList.remove('selected');
-            }
-            
-            // Add new selection
-            document.getElementById(option).classList.add('selected');
-            userVote = option;
-            
-            // Update vote counts
-            updateVoteCounts(option);
-            updateVoteStatus();
-            
-            showNotification('Vote changed! ✨');
-            
-            // Update character reaction
-            updateCharacterReaction(option);
+        // First vote
+        hasVoted = true;
+        userVote = option;
+
+        // Add visual feedback
+        document.getElementById(option).classList.add("selected");
+
+        // Show floating emoji
+        showFloatingEmoji(option);
+
+        // Update vote counts (simulate real-time update)
+        setTimeout(() => {
+          updateVoteCounts(option);
+          updateVoteStatus();
+        }, 500);
+
+        // Show success message
+        showNotification("Vote recorded! 🎉");
+
+        // Update character reaction
+        updateCharacterReaction(option);
+      }
+
+      function changeVote(option) {
+        // Remove previous selection
+        if (userVote) {
+          document.getElementById(userVote).classList.remove("selected");
         }
 
-        function updateVoteCounts(votedOption) {
-            const votesA = document.getElementById('votesA');
-            const votesB = document.getElementById('votesB');
-            const progressA = document.getElementById('progressA');
-            const progressB = document.getElementById('progressB');
-            
-            let newVotesA = parseInt(votesA.textContent);
-            let newVotesB = parseInt(votesB.textContent);
-            
-            if (votedOption === 'optionA') {
-                newVotesA += 1;
-            } else {
-                newVotesB += 1;
-            }
-            
-            const totalVotes = newVotesA + newVotesB;
-            const percentageA = (newVotesA / totalVotes) * 100;
-            const percentageB = (newVotesB / totalVotes) * 100;
-            
-            // Animate vote count updates
-            animateCount(votesA, newVotesA);
-            animateCount(votesB, newVotesB);
-            
-            // Animate progress bars
-            progressA.style.width = percentageA + '%';
-            progressB.style.width = percentageB + '%';
+        // Add new selection
+        document.getElementById(option).classList.add("selected");
+        userVote = option;
+
+        // Update vote counts
+        updateVoteCounts(option);
+        updateVoteStatus();
+
+        showNotification("Vote changed! ✨");
+
+        // Update character reaction
+        updateCharacterReaction(option);
+      }
+
+      function updateVoteCounts(votedOption) {
+        const votesA = document.getElementById("votesA");
+        const votesB = document.getElementById("votesB");
+        const progressA = document.getElementById("progressA");
+        const progressB = document.getElementById("progressB");
+
+        let newVotesA = parseInt(votesA.textContent);
+        let newVotesB = parseInt(votesB.textContent);
+
+        if (votedOption === "optionA") {
+          newVotesA += 1;
+        } else {
+          newVotesB += 1;
         }
 
-        function animateCount(element, targetValue) {
-            const startValue = parseInt(element.textContent);
-            const increment = (targetValue - startValue) / 20;
-            let currentValue = startValue;
-            
-            const timer = setInterval(() => {
-                currentValue += increment;
-                if ((increment > 0 && currentValue >= targetValue) || 
-                    (increment < 0 && currentValue <= targetValue)) {
-                    element.textContent = targetValue;
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.round(currentValue);
-                }
-            }, 50);
-        }
+        const totalVotes = newVotesA + newVotesB;
+        const percentageA = (newVotesA / totalVotes) * 100;
+        const percentageB = (newVotesB / totalVotes) * 100;
 
-        function updateVoteStatus() {
-            const status = document.getElementById('voteStatus');
-            const totalVotes = parseInt(document.getElementById('votesA').textContent) + 
-                              parseInt(document.getElementById('votesB').textContent);
-            
-            if (hasVoted) {
-                status.innerHTML = `✅ You helped Sarah decide! ${totalVotes} friends have voted so far`;
-            } else {
-                status.innerHTML = `👥 ${totalVotes} friends have voted so far`;
-            }
-        }
+        // Animate vote count updates
+        animateCount(votesA, newVotesA);
+        animateCount(votesB, newVotesB);
 
-        function showFloatingEmoji(option) {
-            const emojis = ['🎉', '✨', '🔥', '💫', '⭐'];
-            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-            
-            const floatingEmoji = document.createElement('div');
-            floatingEmoji.className = 'floating-emoji';
-            floatingEmoji.textContent = emoji;
-            
-            const button = document.getElementById(option);
-            const rect = button.getBoundingClientRect();
-            
-            floatingEmoji.style.left = (rect.left + rect.width / 2) + 'px';
-            floatingEmoji.style.top = (rect.top + rect.height / 2) + 'px';
-            
-            document.body.appendChild(floatingEmoji);
-            
-            setTimeout(() => {
-                document.body.removeChild(floatingEmoji);
-            }, 2000);
-        }
+        // Animate progress bars
+        progressA.style.width = percentageA + "%";
+        progressB.style.width = percentageB + "%";
+      }
 
-        function showNotification(message) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-xl shadow-lg z-50 bounce-in';
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
+      function animateCount(element, targetValue) {
+        const startValue = parseInt(element.textContent);
+        const increment = (targetValue - startValue) / 20;
+        let currentValue = startValue;
 
-        function sharePoll() {
-            showNotification('Link copied! Share with friends who can help! 📋');
-            // In real app, this would copy the poll link to clipboard
-        }
+        const timer = setInterval(() => {
+          currentValue += increment;
+          if (
+            (increment > 0 && currentValue >= targetValue) ||
+            (increment < 0 && currentValue <= targetValue)
+          ) {
+            element.textContent = targetValue;
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.round(currentValue);
+          }
+        }, 50);
+      }
 
-        function addComment() {
-            const commentInput = document.querySelector('input[placeholder="Give Sarah some advice..."]');
-            commentInput.focus();
-            commentInput.scrollIntoView({ behavior: 'smooth' });
-        }
+      function updateVoteStatus() {
+        const status = document.getElementById("voteStatus");
+        const totalVotes =
+          parseInt(document.getElementById("votesA").textContent) +
+          parseInt(document.getElementById("votesB").textContent);
 
-        function updateCharacterReaction(option) {
-            const characterMessage = document.getElementById('characterMessage');
-            const reactions = {
-                optionA: [
-                    "Red dress it is! You'll look amazing! 🔥",
-                    "Great choice! Red is perfect for parties! ✨",
-                    "Sarah will love that red dress! 💃"
-                ],
-                optionB: [
-                    "Blue top and jeans - comfy and stylish! 👕",
-                    "Perfect for dancing all night! 💃",
-                    "Casual but cute - great choice! 😊"
-                ]
-            };
-            
-            const randomReaction = reactions[option][Math.floor(Math.random() * reactions[option].length)];
-            characterMessage.textContent = `"${randomReaction}"`;
-            
-            // Add a little bounce animation
-            const characterReaction = document.getElementById('characterReaction');
-            characterReaction.classList.add('bounce-in');
-            setTimeout(() => {
-                characterReaction.classList.remove('bounce-in');
-            }, 600);
+        if (hasVoted) {
+          status.innerHTML = `✅ You helped Sarah decide! ${totalVotes} friends have voted so far`;
+        } else {
+          status.innerHTML = `👥 ${totalVotes} friends have voted so far`;
         }
+      }
 
-        // Simulate real-time updates
-        setInterval(() => {
-            if (!hasVoted && Math.random() < 0.1) { // 10% chance every 3 seconds
-                const randomOption = Math.random() < 0.5 ? 'optionA' : 'optionB';
-                updateVoteCounts(randomOption);
-                updateVoteStatus();
-            }
+      function showFloatingEmoji(option) {
+        const emojis = ["🎉", "✨", "🔥", "💫", "⭐"];
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        const floatingEmoji = document.createElement("div");
+        floatingEmoji.className = "floating-emoji";
+        floatingEmoji.textContent = emoji;
+
+        const button = document.getElementById(option);
+        const rect = button.getBoundingClientRect();
+
+        floatingEmoji.style.left = rect.left + rect.width / 2 + "px";
+        floatingEmoji.style.top = rect.top + rect.height / 2 + "px";
+
+        document.body.appendChild(floatingEmoji);
+
+        setTimeout(() => {
+          document.body.removeChild(floatingEmoji);
+        }, 2000);
+      }
+
+      function showNotification(message) {
+        // Create notification element
+        const notification = document.createElement("div");
+        notification.className =
+          "fixed top-4 left-1/2 transform -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-xl shadow-lg z-50 bounce-in";
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
         }, 3000);
+      }
 
-        // Add some interactive touches
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effects to vote buttons
-            const voteButtons = document.querySelectorAll('.vote-button');
-            voteButtons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('selected')) {
-                        this.style.transform = 'scale(1.02)';
-                    }
-                });
-                
-                button.addEventListener('mouseleave', function() {
-                    if (!this.classList.contains('selected')) {
-                        this.style.transform = 'scale(1)';
-                    }
-                });
-            });
+      function sharePoll() {
+        showNotification("Link copied! Share with friends who can help! 📋");
+        // In real app, this would copy the poll link to clipboard
+      }
+
+      function addComment() {
+        const commentInput = document.querySelector(
+          'input[placeholder="Give Sarah some advice..."]',
+        );
+        commentInput.focus();
+        commentInput.scrollIntoView({ behavior: "smooth" });
+      }
+
+      function updateCharacterReaction(option) {
+        const characterMessage = document.getElementById("characterMessage");
+        const reactions = {
+          optionA: [
+            "Red dress it is! You'll look amazing! 🔥",
+            "Great choice! Red is perfect for parties! ✨",
+            "Sarah will love that red dress! 💃",
+          ],
+          optionB: [
+            "Blue top and jeans - comfy and stylish! 👕",
+            "Perfect for dancing all night! 💃",
+            "Casual but cute - great choice! 😊",
+          ],
+        };
+
+        const randomReaction =
+          reactions[option][
+            Math.floor(Math.random() * reactions[option].length)
+          ];
+        characterMessage.textContent = `"${randomReaction}"`;
+
+        // Add a little bounce animation
+        const characterReaction = document.getElementById("characterReaction");
+        characterReaction.classList.add("bounce-in");
+        setTimeout(() => {
+          characterReaction.classList.remove("bounce-in");
+        }, 600);
+      }
+
+      // Simulate real-time updates
+      setInterval(() => {
+        if (!hasVoted && Math.random() < 0.1) {
+          // 10% chance every 3 seconds
+          const randomOption = Math.random() < 0.5 ? "optionA" : "optionB";
+          updateVoteCounts(randomOption);
+          updateVoteStatus();
+        }
+      }, 3000);
+
+      // Add some interactive touches
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add hover effects to vote buttons
+        const voteButtons = document.querySelectorAll(".vote-button");
+        voteButtons.forEach((button) => {
+          button.addEventListener("mouseenter", function () {
+            if (!this.classList.contains("selected")) {
+              this.style.transform = "scale(1.02)";
+            }
+          });
+
+          button.addEventListener("mouseleave", function () {
+            if (!this.classList.contains("selected")) {
+              this.style.transform = "scale(1)";
+            }
+          });
         });
+      });
     </script>
-</body>
+  </body>
 </html>

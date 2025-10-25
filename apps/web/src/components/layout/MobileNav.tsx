@@ -78,6 +78,15 @@ export default function MobileNav() {
                 </Link>
 
                 <Link
+                  href="/discover"
+                  className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+                  onClick={closeMenu}
+                >
+                  <BarChart3 className="h-5 w-5" />
+                  <span>Discover</span>
+                </Link>
+
+                <Link
                   href="/about"
                   className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
                   onClick={closeMenu}

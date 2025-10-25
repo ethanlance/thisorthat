@@ -4,10 +4,9 @@ import { FriendGroupService } from '@/lib/services/friend-groups';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ groupId: string }> }
+  { params }: { params: { groupId: string } }
 ) {
   try {
-    const { groupId } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -18,8 +17,10 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is group member
-    const isMember = await FriendGroupService.isGroupMember(groupId, user.id);
+    const { groupId } = params;
+
+    // Check if user is member of the group
+    const isMember = await FriendGroupService.isUserGroupMember(groupId, user.id);
     if (!isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -28,7 +29,7 @@ export async function GET(
 
     return NextResponse.json({ members });
   } catch (error) {
-    console.error('Error in get group members API:', error);
+    console.error('Error in group members API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -38,10 +39,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ groupId: string }> }
+  { params }: { params: { groupId: string } }
 ) {
   try {
-    const { groupId } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -52,15 +52,11 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is group admin
-    const isAdmin = await FriendGroupService.isGroupAdmin(groupId, user.id);
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-
+    const { groupId } = params;
     const body = await request.json();
     const { user_id, role } = body;
 
+    // Validate required fields
     if (!user_id) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -68,7 +64,13 @@ export async function POST(
       );
     }
 
-    const success = await FriendGroupService.addMember(
+    // Check if user is admin of the group
+    const isMember = await FriendGroupService.isUserGroupMember(groupId, user.id);
+    if (!isMember) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const success = await FriendGroupService.addGroupMember(
       groupId,
       user_id,
       role || 'member',
@@ -77,7 +79,7 @@ export async function POST(
 
     if (!success) {
       return NextResponse.json(
-        { error: 'Failed to add member' },
+        { error: 'Failed to add group member' },
         { status: 500 }
       );
     }

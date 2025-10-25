@@ -11,12 +11,14 @@ import {
   getFileSizeString,
 } from '@/lib/storage/image-validation';
 import { uploadPollImage } from '@/lib/storage/image-upload';
+import { ContentDetectionResult } from '@/lib/services/content-detection';
 
 interface ImageUploadProps {
   onImageSelect: (file: File) => void;
   onUploadComplete: (url: string) => void;
   onError: (error: string) => void;
   onRemove: () => void;
+  onModerationResult?: (result: ContentDetectionResult) => void;
   disabled?: boolean;
   option: 'a' | 'b';
   pollId?: string;
@@ -28,6 +30,7 @@ export default function ImageUpload({
   onUploadComplete,
   onError,
   onRemove,
+  onModerationResult,
   disabled = false,
   option,
   pollId,
@@ -68,6 +71,11 @@ export default function ImageUpload({
           if (result.success && result.url) {
             onUploadComplete(result.url);
             setUploadProgress(100);
+            
+            // Notify parent component of moderation result
+            if (result.moderationResult && onModerationResult) {
+              onModerationResult(result.moderationResult);
+            }
           } else {
             throw new Error(result.error || 'Upload failed');
           }
