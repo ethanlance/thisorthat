@@ -251,7 +251,7 @@ export default function PollSearch({
                 <label className="text-sm font-medium">Sort by</label>
                 <Select
                   value={sortBy}
-                  onValueChange={(value: any) => setSortBy(value)}
+                  onValueChange={(value: string) => setSortBy(value)}
                 >
                   <SelectTrigger>
                     <SelectValue />

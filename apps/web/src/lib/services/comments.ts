@@ -57,15 +57,19 @@ export class CommentService {
           details: error.details,
           hint: error.hint,
           code: error.code,
-          fullError: error
+          fullError: error,
         });
-        
+
         // Fallback to direct query if RPC function doesn't exist
-        if (error.code === '42883' || error.message?.includes('function') || error.message?.includes('does not exist')) {
+        if (
+          error.code === '42883' ||
+          error.message?.includes('function') ||
+          error.message?.includes('does not exist')
+        ) {
           console.log('RPC function not found, falling back to direct query');
           return await this.getPollCommentsFallback(pollId, limit, offset);
         }
-        
+
         return [];
       }
 
@@ -119,7 +123,8 @@ export class CommentService {
       // Get comments with basic user info
       const { data: comments, error: commentsError } = await supabase
         .from('comments')
-        .select(`
+        .select(
+          `
           id,
           poll_id,
           user_id,
@@ -135,7 +140,8 @@ export class CommentService {
             email,
             raw_user_meta_data
           )
-        `)
+        `
+        )
         .eq('poll_id', pollId)
         .eq('is_deleted', false)
         .order('created_at', { ascending: true })
@@ -162,14 +168,16 @@ export class CommentService {
         is_deleted: comment.is_deleted,
         created_at: comment.created_at,
         updated_at: comment.updated_at,
-        user_display_name: comment.user?.raw_user_meta_data?.display_name || comment.user?.email || 'Anonymous',
+        user_display_name:
+          comment.user?.raw_user_meta_data?.display_name ||
+          comment.user?.email ||
+          'Anonymous',
         user_avatar_url: comment.user?.raw_user_meta_data?.avatar_url || null,
         like_count: 0,
         dislike_count: 0,
         user_reaction: null,
-        reply_count: 0
+        reply_count: 0,
       }));
-
     } catch (error) {
       console.error('Error in getPollCommentsFallback:', error);
       return [];

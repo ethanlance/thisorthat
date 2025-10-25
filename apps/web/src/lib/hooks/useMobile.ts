@@ -177,7 +177,7 @@ export function useMobileShare() {
 export function usePWA() {
   const [isPWA, setIsPWA] = useState(false);
   const [isInstallable, setIsInstallable] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<unknown>(null);
 
   useEffect(() => {
     // Check if running as PWA
@@ -188,7 +188,7 @@ export function usePWA() {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isInStandaloneMode =
         'standalone' in window.navigator &&
-        (window.navigator as any).standalone;
+        (window.navigator as { standalone?: boolean }).standalone;
 
       setIsPWA(isStandalone || (isIOS && isInStandaloneMode));
     };
@@ -275,7 +275,11 @@ export function useHapticFeedback() {
     async (type: 'light' | 'medium' | 'heavy' = 'medium') => {
       if (isSupported && 'haptics' in navigator) {
         try {
-          const haptics = (navigator as any).haptics;
+          const haptics = (
+            navigator as {
+              haptics?: { vibrate: (type: string) => Promise<void> };
+            }
+          ).haptics;
           await haptics.vibrate(type);
         } catch (error) {
           console.warn('Haptic feedback failed:', error);
@@ -307,7 +311,11 @@ export function useNetworkStatus() {
       setIsOnline(navigator.onLine);
 
       if ('connection' in navigator) {
-        const connection = (navigator as any).connection;
+        const connection = (
+          navigator as {
+            connection?: { effectiveType?: string; downlink?: number };
+          }
+        ).connection;
         setConnectionType(connection.effectiveType || 'unknown');
         setConnectionSpeed(
           connection.downlink ? `${connection.downlink}Mbps` : 'unknown'

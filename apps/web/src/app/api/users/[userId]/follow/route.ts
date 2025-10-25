@@ -4,7 +4,7 @@ import { ProfileService } from '@/lib/services/profile';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -17,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     if (user.id === userId) {
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -60,7 +60,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     const success = await ProfileService.unfollowUser(userId);
 

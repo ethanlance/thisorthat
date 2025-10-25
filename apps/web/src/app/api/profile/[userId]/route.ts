@@ -4,7 +4,7 @@ import { ProfileService } from '@/lib/services/profile';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId } = params;
+    const { userId } = await params;
 
     const profile = await ProfileService.getUserProfile(userId);
 

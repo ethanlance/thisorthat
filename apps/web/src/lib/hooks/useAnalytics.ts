@@ -11,7 +11,7 @@ export function useAnalytics() {
       action: string,
       label?: string,
       value?: number,
-      properties: Record<string, any> = {}
+      properties: Record<string, unknown> = {}
     ) => {
       analyticsService.track(event, category, action, label, value, properties);
     },
@@ -31,7 +31,7 @@ export function useAnalytics() {
       category: string,
       label?: string,
       value?: number,
-      properties: Record<string, any> = {}
+      properties: Record<string, unknown> = {}
     ) => {
       analyticsService.trackUserAction(
         action,
@@ -48,7 +48,7 @@ export function useAnalytics() {
     (
       pollId: string,
       action: 'view' | 'vote' | 'share' | 'comment' | 'create' | 'delete',
-      properties: Record<string, any> = {}
+      properties: Record<string, unknown> = {}
     ) => {
       analyticsService.trackPollEvent(pollId, action, properties);
     },
@@ -64,7 +64,7 @@ export function useAnalytics() {
         | 'group_join'
         | 'group_leave',
       targetUserId?: string,
-      properties: Record<string, any> = {}
+      properties: Record<string, unknown> = {}
     ) => {
       analyticsService.trackSocialEvent(action, targetUserId, properties);
     },
@@ -72,14 +72,22 @@ export function useAnalytics() {
   );
 
   const trackPerformance = useCallback(
-    (metric: string, value: number, properties: Record<string, any> = {}) => {
+    (
+      metric: string,
+      value: number,
+      properties: Record<string, unknown> = {}
+    ) => {
       analyticsService.trackPerformance(metric, value, properties);
     },
     [analyticsService]
   );
 
   const trackError = useCallback(
-    (error: Error, context: string, properties: Record<string, any> = {}) => {
+    (
+      error: Error,
+      context: string,
+      properties: Record<string, unknown> = {}
+    ) => {
       analyticsService.trackError(error, context, properties);
     },
     [analyticsService]

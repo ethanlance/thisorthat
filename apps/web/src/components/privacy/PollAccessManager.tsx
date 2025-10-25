@@ -313,7 +313,9 @@ export default function PollAccessManager({
                   <Label htmlFor="access-level">Access Level</Label>
                   <Select
                     value={accessLevel}
-                    onValueChange={value => setAccessLevel(value as any)}
+                    onValueChange={value =>
+                      setAccessLevel(value as 'view' | 'vote' | 'comment')
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />

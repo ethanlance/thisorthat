@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       userIds.length > 0
         ? supabase
             .from('analytics_events')
-            .select('session_id, timestamp, event')
+            .select('session_id, timestamp, event, user_id')
             .in('user_id', userIds)
             .gte('timestamp', startDate.toISOString())
         : { data: [], error: null },

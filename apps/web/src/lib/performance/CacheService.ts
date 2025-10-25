@@ -14,7 +14,7 @@ export interface CacheItem<T> {
 
 export class CacheService {
   private static instance: CacheService;
-  private cache: Map<string, CacheItem<any>> = new Map();
+  private cache: Map<string, CacheItem<unknown>> = new Map();
   private options: CacheOptions;
   private maxSize: number;
   private strategy: 'lru' | 'fifo' | 'ttl';
@@ -128,7 +128,7 @@ export class CacheService {
     };
   }
 
-  private isExpired(item: CacheItem<any>): boolean {
+  private isExpired(item: CacheItem<unknown>): boolean {
     return Date.now() - item.timestamp > item.ttl;
   }
 
@@ -214,7 +214,7 @@ export class CacheService {
 // API Cache Service
 export class ApiCacheService {
   private cache: CacheService;
-  private performanceService: any;
+  private performanceService: unknown;
 
   constructor() {
     this.cache = CacheService.getInstance({

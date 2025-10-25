@@ -518,4 +518,89 @@ export class FriendGroupService {
       };
     }
   }
+
+  /**
+   * Check if a user is an admin of a friend group
+   */
+  static async isGroupAdmin(groupId: string, userId: string): Promise<boolean> {
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('group_members')
+        .select('role')
+        .eq('group_id', groupId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error || !data) {
+        return false;
+      }
+
+      return data.role === 'admin';
+    } catch (error) {
+      console.error('Error in isGroupAdmin:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Remove a member from a friend group
+   */
+  static async removeMember(groupId: string, userId: string): Promise<boolean> {
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('group_members')
+        .delete()
+        .eq('group_id', groupId)
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error removing member:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in removeMember:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get group details with members
+   */
+  static async getGroupDetails(groupId: string): Promise<FriendGroupWithMembers | null> {
+    try {
+      const supabase = createClient();
+      const { data: group, error: groupError } = await supabase
+        .from('friend_groups')
+        .select('*')
+        .eq('id', groupId)
+        .single();
+
+      if (groupError || !group) {
+        return null;
+      }
+
+      const { data: members, error: membersError } = await supabase
+        .from('group_members')
+        .select('*')
+        .eq('group_id', groupId);
+
+      if (membersError) {
+        console.error('Error fetching members:', membersError);
+        return null;
+      }
+
+      return {
+        ...group,
+        member_count: members?.length || 0,
+        members: members || [],
+      };
+    } catch (error) {
+      console.error('Error in getGroupDetails:', error);
+      return null;
+    }
+  }
 }

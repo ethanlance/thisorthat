@@ -199,9 +199,10 @@ export class ContentDetectionService {
   /**
    * Process Google Vision API result
    */
-  private static processGoogleVisionResult(
-    result: any
-  ): ContentDetectionResult {
+  private static processGoogleVisionResult(result: {
+    safeSearchAnnotation?: { adult?: string; violence?: string; racy?: string };
+    labelAnnotations?: Array<{ score: number; description: string }>;
+  }): ContentDetectionResult {
     const safeSearch = result.safeSearchAnnotation;
     const labels = result.labelAnnotations || [];
 
@@ -237,8 +238,8 @@ export class ContentDetectionService {
 
     // Check labels for additional context
     const detectedCategories = labels
-      .filter((label: any) => label.score > 0.7)
-      .map((label: any) => label.description);
+      .filter((label: { score: number }) => label.score > 0.7)
+      .map((label: { description: string }) => label.description);
 
     return {
       isApproved: classification === 'safe',

@@ -94,7 +94,7 @@ export class PerformanceService {
       let clsValue = 0;
       const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        entries.forEach((entry: PerformanceEntry) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
             this.recordMetric('cls', clsValue);
@@ -181,7 +181,11 @@ export class PerformanceService {
   }
 
   private getConnectionType(): string {
-    const connection = (navigator as any).connection;
+    const connection = (
+      navigator as {
+        connection?: { effectiveType?: string; downlink?: number };
+      }
+    ).connection;
     return connection ? connection.effectiveType || 'unknown' : 'unknown';
   }
 
@@ -307,7 +311,7 @@ export class PerformanceService {
     };
   }
 
-  private async sendToMonitoringService(data: any) {
+  private async sendToMonitoringService(data: unknown) {
     try {
       await fetch('/api/performance', {
         method: 'POST',

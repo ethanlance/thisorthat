@@ -1,18 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
-    
+
     // Test basic connection
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError) {
-      return NextResponse.json({ 
-        error: 'Auth error', 
-        details: authError.message 
-      }, { status: 401 });
+      return NextResponse.json(
+        {
+          error: 'Auth error',
+          details: authError.message,
+        },
+        { status: 401 }
+      );
     }
 
     // Test if RPC function exists
@@ -23,27 +29,32 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ 
-        error: 'RPC function error', 
-        details: {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint
-        }
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: 'RPC function error',
+          details: {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint,
+          },
+        },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'RPC function is available',
-      data: data 
+      data: data,
     });
-
   } catch (error) {
-    return NextResponse.json({ 
-      error: 'Server error', 
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

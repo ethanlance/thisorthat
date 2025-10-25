@@ -6,7 +6,7 @@ export function usePerformance() {
 
   const recordMetric = useCallback(
     (name: string, value: number) => {
-      performanceService.recordMetric(name as any, value);
+      performanceService.recordMetric(name as string, value);
     },
     [performanceService]
   );
@@ -42,7 +42,7 @@ export function usePerformance() {
   };
 }
 
-export function useOptimizedCallback<T extends (...args: any[]) => any>(
+export function useOptimizedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   deps: React.DependencyList
 ): T {
@@ -157,7 +157,7 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export function useThrottle<T extends (...args: any[]) => any>(
+export function useThrottle<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number
 ): T {

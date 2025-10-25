@@ -315,7 +315,7 @@ export class OfflineStorage {
   }
 
   // Settings Management
-  public async setSetting(key: string, value: any): Promise<void> {
+  public async setSetting(key: string, value: unknown): Promise<void> {
     const db = await this.waitForDB();
     const transaction = db.transaction(['settings'], 'readwrite');
     const store = transaction.objectStore('settings');
@@ -327,7 +327,7 @@ export class OfflineStorage {
     });
   }
 
-  public async getSetting(key: string): Promise<any> {
+  public async getSetting(key: string): Promise<unknown> {
     const db = await this.waitForDB();
     const transaction = db.transaction(['settings'], 'readonly');
     const store = transaction.objectStore('settings');

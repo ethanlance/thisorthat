@@ -4,7 +4,7 @@ import { FeedService } from '@/lib/services/feed';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { pollId: string } }
+  { params }: { params: Promise<{ pollId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -17,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { pollId } = params;
+    const { pollId } = await params;
     const body = await request.json();
     const { interaction_type, reason } = body;
 
@@ -65,7 +65,7 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { pollId: string } }
+  { params }: { params: Promise<{ pollId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -78,7 +78,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { pollId } = params;
+    const { pollId } = await params;
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
 

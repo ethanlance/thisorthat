@@ -15,7 +15,7 @@ export interface SyncResult {
 export interface ConflictResolution {
   strategy: 'server' | 'client' | 'merge' | 'manual';
   resolved: boolean;
-  data: any;
+  data: unknown;
 }
 
 export class OfflineSync {

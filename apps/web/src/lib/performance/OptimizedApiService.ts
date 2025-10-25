@@ -4,7 +4,7 @@ import { PerformanceService } from './PerformanceService';
 export interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   cache?: boolean;
   cacheTTL?: number;
   timeout?: number;
@@ -147,7 +147,11 @@ export class OptimizedApiService {
     }
   }
 
-  private generateCacheKey(url: string, method: string, body?: any): string {
+  private generateCacheKey(
+    url: string,
+    method: string,
+    body?: unknown
+  ): string {
     const bodyHash = body ? JSON.stringify(body) : '';
     return `${method}:${url}:${bodyHash}`;
   }
@@ -162,7 +166,7 @@ export class OptimizedApiService {
 
   public async post<T>(
     endpoint: string,
-    body: any,
+    body: unknown,
     options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'POST', body });
@@ -170,7 +174,7 @@ export class OptimizedApiService {
 
   public async put<T>(
     endpoint: string,
-    body: any,
+    body: unknown,
     options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PUT', body });
@@ -185,7 +189,7 @@ export class OptimizedApiService {
 
   public async patch<T>(
     endpoint: string,
-    body: any,
+    body: unknown,
     options: Omit<ApiRequestOptions, 'method' | 'body'> = {}
   ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'PATCH', body });
@@ -215,7 +219,7 @@ export class OptimizedApiService {
   }
 
   // Request deduplication
-  private pendingRequests = new Map<string, Promise<any>>();
+  private pendingRequests = new Map<string, Promise<unknown>>();
 
   public async deduplicatedRequest<T>(
     endpoint: string,

@@ -4,7 +4,7 @@ import { FriendGroupService } from '@/lib/services/friend-groups';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { groupId } = params;
+    const { groupId } = await params;
 
     // Check if user is member of the group
     const isMember = await FriendGroupService.isUserGroupMember(
@@ -42,7 +42,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { groupId: string } }
+  { params }: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -55,7 +55,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { groupId } = params;
+    const { groupId } = await params;
     const body = await request.json();
     const { user_id, role } = body;
 

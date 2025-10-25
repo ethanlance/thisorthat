@@ -47,7 +47,7 @@ export default function CommentsList({ pollId }: CommentsListProps) {
           error: err,
           pollId,
           limit,
-          offset
+          offset,
         });
         setError('Failed to load comments. Please try again.');
       } finally {

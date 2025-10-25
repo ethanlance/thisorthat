@@ -4,7 +4,7 @@ import { PollPrivacyService } from '@/lib/services/poll-privacy';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { pollId: string } }
+  { params }: { params: Promise<{ pollId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -17,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { pollId } = params;
+    const { pollId } = await params;
     const body = await request.json();
     const { email, message, access_level, expires_at } = body;
 
