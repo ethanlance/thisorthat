@@ -29,9 +29,9 @@ export function OfflineStatus({
   className,
   showDetails = false,
 }: OfflineStatusProps) {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(false);
   const [syncStatus, setSyncStatus] = useState({
-    isOnline: navigator.onLine,
+    isOnline: false,
     lastSync: null as Date | null,
     pendingVotes: 0,
     pendingDrafts: 0,
@@ -47,6 +47,12 @@ export function OfflineStatus({
   const offlineStorage = OfflineStorage.getInstance();
 
   useEffect(() => {
+    // Initialize online status safely
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      setIsOnline(navigator.onLine);
+      setSyncStatus(prev => ({ ...prev, isOnline: navigator.onLine }));
+    }
+
     const updateStatus = async () => {
       const status = await offlineSync.getSyncStatus();
       setSyncStatus(status);
