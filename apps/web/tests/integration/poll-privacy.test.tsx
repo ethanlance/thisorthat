@@ -27,7 +27,9 @@ describe('Poll Privacy System', () => {
         updated_at: '2024-01-01T00:00:00Z',
       };
 
-      vi.spyOn(FriendGroupService, 'createFriendGroup').mockResolvedValue(mockGroup);
+      vi.spyOn(FriendGroupService, 'createFriendGroup').mockResolvedValue(
+        mockGroup
+      );
 
       const result = await FriendGroupService.createFriendGroup(
         'Test Group',
@@ -47,7 +49,9 @@ describe('Poll Privacy System', () => {
         },
       ];
 
-      vi.spyOn(FriendGroupService, 'getUserFriendGroups').mockResolvedValue(mockGroups);
+      vi.spyOn(FriendGroupService, 'getUserFriendGroups').mockResolvedValue(
+        mockGroups
+      );
 
       const result = await FriendGroupService.getUserFriendGroups();
 
@@ -80,7 +84,10 @@ describe('Poll Privacy System', () => {
     });
 
     it('should respond to group invitation', async () => {
-      vi.spyOn(FriendGroupService, 'respondToGroupInvitation').mockResolvedValue(true);
+      vi.spyOn(
+        FriendGroupService,
+        'respondToGroupInvitation'
+      ).mockResolvedValue(true);
 
       const result = await FriendGroupService.respondToGroupInvitation(
         'invitation-123',
@@ -101,7 +108,9 @@ describe('Poll Privacy System', () => {
         access_expires_at: null,
       };
 
-      vi.spyOn(PollPrivacyService, 'createPollWithPrivacy').mockResolvedValue(mockPoll);
+      vi.spyOn(PollPrivacyService, 'createPollWithPrivacy').mockResolvedValue(
+        mockPoll
+      );
 
       const result = await PollPrivacyService.createPollWithPrivacy(
         {
@@ -121,7 +130,10 @@ describe('Poll Privacy System', () => {
     it('should check user poll access', async () => {
       vi.spyOn(PollPrivacyService, 'userHasPollAccess').mockResolvedValue(true);
 
-      const result = await PollPrivacyService.userHasPollAccess('poll-123', 'user-456');
+      const result = await PollPrivacyService.userHasPollAccess(
+        'poll-123',
+        'user-456'
+      );
 
       expect(result).toBe(true);
     });
@@ -140,7 +152,9 @@ describe('Poll Privacy System', () => {
         },
       ];
 
-      vi.spyOn(PollPrivacyService, 'getPollAccess').mockResolvedValue(mockAccess);
+      vi.spyOn(PollPrivacyService, 'getPollAccess').mockResolvedValue(
+        mockAccess
+      );
 
       const result = await PollPrivacyService.getPollAccess('poll-123');
 
@@ -160,7 +174,9 @@ describe('Poll Privacy System', () => {
     });
 
     it('should respond to poll invitation', async () => {
-      vi.spyOn(PollPrivacyService, 'respondToPollInvitation').mockResolvedValue(true);
+      vi.spyOn(PollPrivacyService, 'respondToPollInvitation').mockResolvedValue(
+        true
+      );
 
       const result = await PollPrivacyService.respondToPollInvitation(
         'invitation-123',
@@ -295,15 +311,16 @@ describe('Poll Privacy System', () => {
         if (url.includes('/api/friend-groups') && url.includes('POST')) {
           return Promise.resolve({
             ok: true,
-            json: () => Promise.resolve({
-              group: {
-                id: 'group-123',
-                name: 'New Group',
-                description: 'A new group',
-                is_public: false,
-                member_count: 1,
-              },
-            }),
+            json: () =>
+              Promise.resolve({
+                group: {
+                  id: 'group-123',
+                  name: 'New Group',
+                  description: 'A new group',
+                  is_public: false,
+                  member_count: 1,
+                },
+              }),
           });
         }
         return Promise.resolve({
@@ -331,7 +348,10 @@ describe('Poll Privacy System', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/friend-groups', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/friend-groups',
+          expect.any(Object)
+        );
       });
     });
 
@@ -390,7 +410,10 @@ describe('Poll Privacy System', () => {
       fireEvent.click(inviteButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/friend-groups/group-123/invite', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/friend-groups/group-123/invite',
+          expect.any(Object)
+        );
       });
     });
   });
@@ -491,7 +514,10 @@ describe('Poll Privacy System', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/polls/poll-123/invite', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/polls/poll-123/invite',
+          expect.any(Object)
+        );
       });
     });
   });
@@ -661,7 +687,10 @@ describe('Poll Privacy System', () => {
       expect(poll).toBeDefined();
 
       // 4. Check access
-      const hasAccess = await PollPrivacyService.userHasPollAccess(poll!.id, 'user-456');
+      const hasAccess = await PollPrivacyService.userHasPollAccess(
+        poll!.id,
+        'user-456'
+      );
       expect(hasAccess).toBeDefined();
     });
 

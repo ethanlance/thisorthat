@@ -54,7 +54,9 @@ describe('Content Moderation System', () => {
         },
       ];
 
-      vi.spyOn(ModerationService, 'getModerationQueue').mockResolvedValue(mockQueue);
+      vi.spyOn(ModerationService, 'getModerationQueue').mockResolvedValue(
+        mockQueue
+      );
 
       const result = await ModerationService.getModerationQueue(10, 0);
 
@@ -62,7 +64,9 @@ describe('Content Moderation System', () => {
     });
 
     it('should take moderation action', async () => {
-      vi.spyOn(ModerationService, 'takeModerationAction').mockResolvedValue(true);
+      vi.spyOn(ModerationService, 'takeModerationAction').mockResolvedValue(
+        true
+      );
 
       const result = await ModerationService.takeModerationAction(
         'moderator-123',
@@ -85,7 +89,9 @@ describe('Content Moderation System', () => {
         requiresHumanReview: true,
       };
 
-      vi.spyOn(ModerationService, 'classifyContent').mockResolvedValue(mockResult);
+      vi.spyOn(ModerationService, 'classifyContent').mockResolvedValue(
+        mockResult
+      );
 
       const result = await ModerationService.classifyContent(
         'comment',
@@ -132,7 +138,7 @@ describe('Content Moderation System', () => {
 
     it('should scan content during upload', async () => {
       const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
-      
+
       const result = await ContentDetectionService.scanContent(
         'image',
         'image-123',
@@ -243,7 +249,10 @@ describe('Content Moderation System', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/moderation/action', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/moderation/action',
+          expect.any(Object)
+        );
       });
     });
   });
@@ -259,7 +268,7 @@ describe('Content Moderation System', () => {
       );
 
       expect(screen.getByText('Report Content')).toBeInTheDocument();
-      expect(screen.getByText('What\'s the issue? *')).toBeInTheDocument();
+      expect(screen.getByText("What's the issue? *")).toBeInTheDocument();
     });
 
     it('should submit a report', async () => {
@@ -281,15 +290,21 @@ describe('Content Moderation System', () => {
       fireEvent.click(categorySelect);
 
       // Fill in description
-      const descriptionInput = screen.getByPlaceholderText(/additional context/i);
-      fireEvent.change(descriptionInput, { target: { value: 'This is inappropriate' } });
+      const descriptionInput =
+        screen.getByPlaceholderText(/additional context/i);
+      fireEvent.change(descriptionInput, {
+        target: { value: 'This is inappropriate' },
+      });
 
       // Submit the form
       const submitButton = screen.getByText('Submit Report');
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/content/report', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/content/report',
+          expect.any(Object)
+        );
       });
     });
   });
@@ -298,14 +313,15 @@ describe('Content Moderation System', () => {
     it('should render content guidelines', async () => {
       (fetch as any).mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({
-          guidelines: 'Test guidelines',
-          examples: {
-            appropriate: ['Good example'],
-            inappropriate: ['Bad example'],
-          },
-          consequences: 'Test consequences',
-        }),
+        json: () =>
+          Promise.resolve({
+            guidelines: 'Test guidelines',
+            examples: {
+              appropriate: ['Good example'],
+              inappropriate: ['Bad example'],
+            },
+            consequences: 'Test consequences',
+          }),
       });
 
       render(<ContentGuidelines />);
@@ -336,7 +352,9 @@ describe('Content Moderation System', () => {
 
       expect(screen.getByText('Content Moderation Alert')).toBeInTheDocument();
       expect(screen.getByText('INAPPROPRIATE')).toBeInTheDocument();
-      expect(screen.getByText('Contains inappropriate content')).toBeInTheDocument();
+      expect(
+        screen.getByText('Contains inappropriate content')
+      ).toBeInTheDocument();
     });
 
     it('should handle approve action', () => {
@@ -374,8 +392,12 @@ describe('Content Moderation System', () => {
         />
       );
 
-      expect(screen.getByText('Appeal Moderation Decision')).toBeInTheDocument();
-      expect(screen.getByText('Why do you believe this decision was incorrect? *')).toBeInTheDocument();
+      expect(
+        screen.getByText('Appeal Moderation Decision')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Why do you believe this decision was incorrect? *')
+      ).toBeInTheDocument();
     });
 
     it('should submit an appeal', async () => {
@@ -394,14 +416,19 @@ describe('Content Moderation System', () => {
 
       // Fill in appeal reason
       const reasonInput = screen.getByPlaceholderText(/explain why/i);
-      fireEvent.change(reasonInput, { target: { value: 'This was a mistake' } });
+      fireEvent.change(reasonInput, {
+        target: { value: 'This was a mistake' },
+      });
 
       // Submit the appeal
       const submitButton = screen.getByText('Submit Appeal');
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/content/appeal', expect.any(Object));
+        expect(fetch).toHaveBeenCalledWith(
+          '/api/content/appeal',
+          expect.any(Object)
+        );
       });
     });
   });

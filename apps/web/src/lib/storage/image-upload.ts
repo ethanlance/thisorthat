@@ -37,7 +37,7 @@ export const uploadPollImage = async (
       };
     }
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('poll-images')
       .upload(fileName, file, {
         cacheControl: '3600',

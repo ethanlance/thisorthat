@@ -28,8 +28,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -62,8 +68,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -90,8 +102,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -119,8 +137,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -147,9 +171,18 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'followUser').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'followUser'
+    ).mockResolvedValue(true);
 
     render(<UserProfile userId="user-123" />);
 
@@ -160,7 +193,9 @@ describe('UserProfile', () => {
     const followButton = screen.getByText('Follow');
     fireEvent.click(followButton);
 
-    expect(require('@/lib/services/profile').ProfileService.followUser).toHaveBeenCalledWith('user-123');
+    expect(
+      require('@/lib/services/profile').ProfileService.followUser
+    ).toHaveBeenCalledWith('user-123');
   });
 
   it('should handle unfollow action', async () => {
@@ -181,9 +216,18 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(true);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'unfollowUser').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'unfollowUser'
+    ).mockResolvedValue(true);
 
     render(<UserProfile userId="user-123" />);
 
@@ -194,11 +238,16 @@ describe('UserProfile', () => {
     const unfollowButton = screen.getByText('Unfollow');
     fireEvent.click(unfollowButton);
 
-    expect(require('@/lib/services/profile').ProfileService.unfollowUser).toHaveBeenCalledWith('user-123');
+    expect(
+      require('@/lib/services/profile').ProfileService.unfollowUser
+    ).toHaveBeenCalledWith('user-123');
   });
 
   it('should show loading state', () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockImplementation(() => new Promise(() => {})); // Never resolves
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockImplementation(() => new Promise(() => {})); // Never resolves
 
     render(<UserProfile userId="user-123" />);
 
@@ -206,7 +255,10 @@ describe('UserProfile', () => {
   });
 
   it('should show error state', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockRejectedValue(new Error('Profile not found'));
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockRejectedValue(new Error('Profile not found'));
 
     render(<UserProfile userId="user-123" />);
 
@@ -216,7 +268,10 @@ describe('UserProfile', () => {
   });
 
   it('should show profile not found error', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(null);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(null);
 
     render(<UserProfile userId="user-123" />);
 
@@ -243,8 +298,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -276,8 +337,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -311,8 +378,14 @@ describe('UserProfile', () => {
         following_count: 15,
       };
 
-      vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-      vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+      vi.spyOn(
+        require('@/lib/services/profile').ProfileService,
+        'getUserProfile'
+      ).mockResolvedValue(mockProfile);
+      vi.spyOn(
+        require('@/lib/services/profile').ProfileService,
+        'isFollowing'
+      ).mockResolvedValue(false);
 
       const { unmount } = render(<UserProfile userId="user-123" />);
 
@@ -342,8 +415,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 
@@ -370,8 +449,14 @@ describe('UserProfile', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserProfile userId="user-123" />);
 

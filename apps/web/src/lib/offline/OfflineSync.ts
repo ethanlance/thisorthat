@@ -1,9 +1,5 @@
-import { OfflineStorage, OfflineVote, OfflineDraft } from './OfflineStorage';
+import { OfflineStorage, OfflineVote } from './OfflineStorage';
 import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/types/database';
-
-type Poll = Database['public']['Tables']['polls']['Row'];
-type Vote = Database['public']['Tables']['votes']['Row'];
 
 export interface SyncResult {
   success: boolean;
@@ -38,6 +34,8 @@ export class OfflineSync {
   }
 
   private setupNetworkListeners(): void {
+    if (typeof window === 'undefined') return;
+
     window.addEventListener('online', () => {
       this.isOnline = true;
       this.syncWhenOnline();
@@ -98,16 +96,12 @@ export class OfflineSync {
 
     for (const vote of unsyncedVotes) {
       try {
-        const { data, error } = await this.supabase
-          .from('votes')
-          .insert({
-            poll_id: vote.poll_id,
-            choice: vote.choice,
-            user_id: vote.user_id,
-            anonymous_id: vote.anonymous_id,
-          })
-          .select()
-          .single();
+        const { error } = await this.supabase.from('votes').insert({
+          poll_id: vote.poll_id,
+          choice: vote.choice,
+          user_id: vote.user_id,
+          anonymous_id: vote.anonymous_id,
+        });
 
         if (error) {
           // Check for conflict (duplicate vote)
@@ -160,20 +154,16 @@ export class OfflineSync {
         }
 
         // Create poll
-        const { data, error } = await this.supabase
-          .from('polls')
-          .insert({
-            title: draft.title,
-            description: draft.description,
-            option_a: draft.option_a,
-            option_b: draft.option_b,
-            image_a_url: imageAUrl,
-            image_b_url: imageBUrl,
-            is_public: draft.is_public,
-            expires_at: draft.expires_at,
-          })
-          .select()
-          .single();
+        const { error } = await this.supabase.from('polls').insert({
+          title: draft.title,
+          description: draft.description,
+          option_a: draft.option_a,
+          option_b: draft.option_b,
+          image_a_url: imageAUrl,
+          image_b_url: imageBUrl,
+          is_public: draft.is_public,
+          expires_at: draft.expires_at,
+        });
 
         if (error) {
           errors.push(
@@ -199,7 +189,7 @@ export class OfflineSync {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `poll-images/${fileName}`;
 
-    const { data, error } = await this.supabase.storage
+    const { error } = await this.supabase.storage
       .from('poll-images')
       .upload(filePath, file);
 
@@ -357,7 +347,7 @@ export class OfflineSync {
 
   public async getLastSyncTime(): Promise<Date | null> {
     const lastSync = await this.storage.getSetting('last_sync');
-    return lastSync ? new Date(lastSync) : null;
+    return lastSync ? new Date(lastSync as string) : null;
   }
 
   public async isSyncNeeded(): Promise<boolean> {

@@ -17,8 +17,12 @@ export function useOffline() {
     syncInProgress: false,
   });
 
-  const offlineStorage = OfflineStorage.getInstance();
   const offlineSync = OfflineSync.getInstance();
+
+  const updateSyncStatus = useCallback(async () => {
+    const status = await offlineSync.getSyncStatus();
+    setSyncStatus(status);
+  }, [offlineSync]);
 
   useEffect(() => {
     const handleOnline = () => {
@@ -40,12 +44,7 @@ export function useOffline() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
-
-  const updateSyncStatus = useCallback(async () => {
-    const status = await offlineSync.getSyncStatus();
-    setSyncStatus(status);
-  }, [offlineSync]);
+  }, [updateSyncStatus]);
 
   const syncWhenOnline = useCallback(async () => {
     const result = await offlineSync.syncWhenOnline();

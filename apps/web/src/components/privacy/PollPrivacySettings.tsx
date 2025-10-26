@@ -74,7 +74,7 @@ export default function PollPrivacySettings({
   const [userInput, setUserInput] = useState('');
   const [customMessage, setCustomMessage] = useState('');
   const [accessExpires, setAccessExpires] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

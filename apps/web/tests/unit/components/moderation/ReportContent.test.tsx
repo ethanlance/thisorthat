@@ -20,8 +20,10 @@ describe('ReportContent', () => {
     );
 
     expect(screen.getByText('Report Content')).toBeInTheDocument();
-    expect(screen.getByText('What\'s the issue? *')).toBeInTheDocument();
-    expect(screen.getByText('Additional Details (Optional)')).toBeInTheDocument();
+    expect(screen.getByText("What's the issue? *")).toBeInTheDocument();
+    expect(
+      screen.getByText('Additional Details (Optional)')
+    ).toBeInTheDocument();
   });
 
   it('should show content type badge', () => {
@@ -54,7 +56,9 @@ describe('ReportContent', () => {
     const submitButton = screen.getByText('Submit Report');
     fireEvent.click(submitButton);
 
-    expect(screen.getByText('Please select a report category')).toBeInTheDocument();
+    expect(
+      screen.getByText('Please select a report category')
+    ).toBeInTheDocument();
   });
 
   it('should submit a report successfully', async () => {
@@ -79,14 +83,19 @@ describe('ReportContent', () => {
 
     // Fill in description
     const descriptionInput = screen.getByPlaceholderText(/additional context/i);
-    fireEvent.change(descriptionInput, { target: { value: 'This is inappropriate' } });
+    fireEvent.change(descriptionInput, {
+      target: { value: 'This is inappropriate' },
+    });
 
     // Submit the form
     const submitButton = screen.getByText('Submit Report');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/content/report', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/content/report',
+        expect.any(Object)
+      );
     });
 
     expect(onReportSubmitted).toHaveBeenCalled();
@@ -143,7 +152,9 @@ describe('ReportContent', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Report Submitted')).toBeInTheDocument();
-      expect(screen.getByText('Thank you for helping keep our community safe')).toBeInTheDocument();
+      expect(
+        screen.getByText('Thank you for helping keep our community safe')
+      ).toBeInTheDocument();
     });
   });
 

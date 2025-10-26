@@ -12,7 +12,9 @@ describe('ModerationDashboard', () => {
 
   it('should render loading state', () => {
     render(<ModerationDashboard />);
-    expect(screen.getByText('Loading moderation dashboard...')).toBeInTheDocument();
+    expect(
+      screen.getByText('Loading moderation dashboard...')
+    ).toBeInTheDocument();
   });
 
   it('should render error state', async () => {
@@ -36,13 +38,14 @@ describe('ModerationDashboard', () => {
       if (url.includes('/api/moderation/stats')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({
-            total_reports: 0,
-            pending_reports: 0,
-            resolved_reports: 0,
-            total_actions: 0,
-            appeals_pending: 0,
-          }),
+          json: () =>
+            Promise.resolve({
+              total_reports: 0,
+              pending_reports: 0,
+              resolved_reports: 0,
+              total_actions: 0,
+              appeals_pending: 0,
+            }),
         });
       }
       return Promise.reject(new Error('Unknown URL'));
@@ -79,13 +82,14 @@ describe('ModerationDashboard', () => {
       if (url.includes('/api/moderation/stats')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({
-            total_reports: 1,
-            pending_reports: 1,
-            resolved_reports: 0,
-            total_actions: 0,
-            appeals_pending: 0,
-          }),
+          json: () =>
+            Promise.resolve({
+              total_reports: 1,
+              pending_reports: 1,
+              resolved_reports: 0,
+              total_actions: 0,
+              appeals_pending: 0,
+            }),
         });
       }
       return Promise.reject(new Error('Unknown URL'));
@@ -123,13 +127,14 @@ describe('ModerationDashboard', () => {
       if (url.includes('/api/moderation/stats')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({
-            total_reports: 1,
-            pending_reports: 1,
-            resolved_reports: 0,
-            total_actions: 0,
-            appeals_pending: 0,
-          }),
+          json: () =>
+            Promise.resolve({
+              total_reports: 1,
+              pending_reports: 1,
+              resolved_reports: 0,
+              total_actions: 0,
+              appeals_pending: 0,
+            }),
         });
       }
       return Promise.reject(new Error('Unknown URL'));
@@ -173,13 +178,14 @@ describe('ModerationDashboard', () => {
       if (url.includes('/api/moderation/stats')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({
-            total_reports: 1,
-            pending_reports: 1,
-            resolved_reports: 0,
-            total_actions: 0,
-            appeals_pending: 0,
-          }),
+          json: () =>
+            Promise.resolve({
+              total_reports: 1,
+              pending_reports: 1,
+              resolved_reports: 0,
+              total_actions: 0,
+              appeals_pending: 0,
+            }),
         });
       }
       if (url.includes('/api/moderation/action')) {
@@ -210,7 +216,10 @@ describe('ModerationDashboard', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/moderation/action', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/moderation/action',
+        expect.any(Object)
+      );
     });
   });
 });

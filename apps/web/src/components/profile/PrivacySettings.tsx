@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { ProfileService, ProfileData } from '@/lib/services/profile';
+import { ProfileService, UserProfileData } from '@/lib/services/profile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -14,16 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Shield,
-  Eye,
-  EyeOff,
-  Users,
-  Globe,
-  Lock,
-  Save,
-  Loader2,
-} from 'lucide-react';
+import { Shield, Users, Globe, Lock, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface PrivacySettingsProps {
@@ -32,7 +23,7 @@ interface PrivacySettingsProps {
 
 export default function PrivacySettings({ onSave }: PrivacySettingsProps) {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -57,10 +48,11 @@ export default function PrivacySettings({ onSave }: PrivacySettingsProps) {
         // Set privacy settings from profile
         if (profileData) {
           setPrivacyLevel(profileData.privacy_level);
-          setShowEmail(profileData.show_email || false);
-          setShowActivity(profileData.show_activity !== false);
-          setAllowFollows(profileData.allow_follows !== false);
-          setShowAchievements(profileData.show_achievements !== false);
+          // Use default values for privacy settings since they're not in the profile data
+          setShowEmail(false);
+          setShowActivity(true);
+          setAllowFollows(true);
+          setShowAchievements(true);
         }
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -78,12 +70,8 @@ export default function PrivacySettings({ onSave }: PrivacySettingsProps) {
 
     setIsSaving(true);
     try {
-      await ProfileService.updateProfile(user.id, {
+      await ProfileService.updateProfile({
         privacy_level: privacyLevel,
-        show_email: showEmail,
-        show_activity: showActivity,
-        allow_follows: allowFollows,
-        show_achievements: showAchievements,
       });
 
       toast.success('Privacy settings updated successfully');

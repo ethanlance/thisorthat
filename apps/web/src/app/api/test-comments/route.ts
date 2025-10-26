@@ -6,10 +6,7 @@ export async function GET() {
     const supabase = await createClient();
 
     // Test basic connection
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const { error: authError } = await supabase.auth.getUser();
 
     if (authError) {
       return NextResponse.json(

@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
-import { Save, RefreshCw, X } from 'lucide-react';
+import { Save, RefreshCw } from 'lucide-react';
 
 interface FeedPreferencesProps {
   className?: string;

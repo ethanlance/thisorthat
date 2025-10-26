@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -99,11 +100,14 @@ export default function PollCard({
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="text-center">
             <div className="relative">
-              <img
-                src={poll.option_a_image_url}
-                alt={poll.option_a_label || 'Option A'}
-                className="w-full h-20 object-cover rounded-lg border"
-              />
+              <div className="relative w-full h-20">
+                <Image
+                  src={poll.option_a_image_url}
+                  alt={poll.option_a_label || 'Option A'}
+                  fill
+                  className="object-cover rounded-lg border"
+                />
+              </div>
               {!isActive && (
                 <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
                   <span className="text-white text-xs font-medium">
@@ -119,11 +123,14 @@ export default function PollCard({
 
           <div className="text-center">
             <div className="relative">
-              <img
-                src={poll.option_b_image_url}
-                alt={poll.option_b_label || 'Option B'}
-                className="w-full h-20 object-cover rounded-lg border"
-              />
+              <div className="relative w-full h-20">
+                <Image
+                  src={poll.option_b_image_url}
+                  alt={poll.option_b_label || 'Option B'}
+                  fill
+                  className="object-cover rounded-lg border"
+                />
+              </div>
               {!isActive && (
                 <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
                   <span className="text-white text-xs font-medium">

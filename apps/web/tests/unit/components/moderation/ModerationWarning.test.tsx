@@ -26,7 +26,9 @@ describe('ModerationWarning', () => {
 
     expect(screen.getByText('Content Moderation Alert')).toBeInTheDocument();
     expect(screen.getByText('INAPPROPRIATE')).toBeInTheDocument();
-    expect(screen.getByText('Contains inappropriate content')).toBeInTheDocument();
+    expect(
+      screen.getByText('Contains inappropriate content')
+    ).toBeInTheDocument();
     expect(screen.getByText('Adult content detected')).toBeInTheDocument();
   });
 
@@ -69,8 +71,12 @@ describe('ModerationWarning', () => {
     );
 
     expect(screen.getByText('QUESTIONABLE')).toBeInTheDocument();
-    expect(screen.getByText('Contains potentially inappropriate content')).toBeInTheDocument();
-    expect(screen.getByText('This content requires human review before approval')).toBeInTheDocument();
+    expect(
+      screen.getByText('Contains potentially inappropriate content')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('This content requires human review before approval')
+    ).toBeInTheDocument();
   });
 
   it('should handle approve action', () => {

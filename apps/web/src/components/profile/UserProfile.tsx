@@ -1,18 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   User,
   Mail,
   Calendar,
   Users,
-  Vote,
   TrendingUp,
   Shield,
   Globe,
@@ -43,17 +41,7 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
 
   const isOwnProfile = currentUser?.id === userId;
 
-  useEffect(() => {
-    loadProfile();
-  }, [userId]);
-
-  useEffect(() => {
-    if (profile && currentUser && !isOwnProfile) {
-      checkFollowingStatus();
-    }
-  }, [profile, currentUser, isOwnProfile]);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -72,9 +60,13 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
-  const checkFollowingStatus = async () => {
+  useEffect(() => {
+    loadProfile();
+  }, [userId, loadProfile]);
+
+  const checkFollowingStatus = useCallback(async () => {
     if (!currentUser || !profile) return;
 
     try {
@@ -86,7 +78,13 @@ export default function UserProfile({ userId, className }: UserProfileProps) {
     } catch (err) {
       console.error('Error checking following status:', err);
     }
-  };
+  }, [currentUser, profile]);
+
+  useEffect(() => {
+    if (profile && currentUser && !isOwnProfile) {
+      checkFollowingStatus();
+    }
+  }, [profile, currentUser, isOwnProfile, checkFollowingStatus]);
 
   const handleFollow = async () => {
     if (!currentUser || !profile) return;

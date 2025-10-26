@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +35,7 @@ export default function TrendingPolls({
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadTrendingPolls = async () => {
+  const loadTrendingPolls = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -47,7 +48,7 @@ export default function TrendingPolls({
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -95,7 +96,7 @@ export default function TrendingPolls({
 
   useEffect(() => {
     loadTrendingPolls();
-  }, [limit]);
+  }, [loadTrendingPolls]);
 
   if (loading) {
     return (
@@ -201,10 +202,11 @@ export default function TrendingPolls({
                                 Option A
                               </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <img
+                                <Image
                                   src={poll.option_a_image_url}
                                   alt={poll.option_a_label || 'Option A'}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  fill
+                                  className="object-cover rounded-lg"
                                 />
                               </div>
                               {poll.option_a_label && (
@@ -219,10 +221,11 @@ export default function TrendingPolls({
                                 Option B
                               </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <img
+                                <Image
                                   src={poll.option_b_image_url}
                                   alt={poll.option_b_label || 'Option B'}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  fill
+                                  className="object-cover rounded-lg"
                                 />
                               </div>
                               {poll.option_b_label && (

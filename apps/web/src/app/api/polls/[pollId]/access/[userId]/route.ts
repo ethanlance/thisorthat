@@ -19,7 +19,10 @@ export async function DELETE(
     }
 
     // Check if user has admin access to poll
-    const hasAccess = await PollPrivacyService.hasPollAccess(pollId, user.id);
+    const hasAccess = await PollPrivacyService.userHasPollAccess(
+      pollId,
+      user.id
+    );
     if (!hasAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -60,7 +63,10 @@ export async function PUT(
     }
 
     // Check if user has admin access to poll
-    const hasAccess = await PollPrivacyService.hasPollAccess(pollId, user.id);
+    const hasAccess = await PollPrivacyService.userHasPollAccess(
+      pollId,
+      user.id
+    );
     if (!hasAccess) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

@@ -72,31 +72,22 @@ export function useTouchGestures() {
   );
 
   const addTapListener = useCallback(
-    (
-      callback: (x: number, y: number) => void,
-      options?: { threshold?: number; velocity?: number }
-    ) => {
-      return touchGestures.addTapListener(callback, options);
+    (callback: (x: number, y: number) => void) => {
+      return touchGestures.addTapListener(callback);
     },
     [touchGestures]
   );
 
   const addLongPressListener = useCallback(
-    (
-      callback: (x: number, y: number, duration: number) => void,
-      options?: { threshold?: number; velocity?: number }
-    ) => {
-      return touchGestures.addLongPressListener(callback, options);
+    (callback: (x: number, y: number, duration: number) => void) => {
+      return touchGestures.addLongPressListener(callback);
     },
     [touchGestures]
   );
 
   const addPinchListener = useCallback(
-    (
-      callback: (scale: number, center: { x: number; y: number }) => void,
-      options?: { threshold?: number; velocity?: number }
-    ) => {
-      return touchGestures.addPinchListener(callback, options);
+    (callback: (scale: number, center: { x: number; y: number }) => void) => {
+      return touchGestures.addPinchListener(callback);
     },
     [touchGestures]
   );
@@ -177,7 +168,10 @@ export function useMobileShare() {
 export function usePWA() {
   const [isPWA, setIsPWA] = useState(false);
   const [isInstallable, setIsInstallable] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<unknown>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<{
+    prompt: () => void;
+    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+  } | null>(null);
 
   useEffect(() => {
     // Check if running as PWA
@@ -190,7 +184,7 @@ export function usePWA() {
         'standalone' in window.navigator &&
         (window.navigator as { standalone?: boolean }).standalone;
 
-      setIsPWA(isStandalone || (isIOS && isInStandaloneMode));
+      setIsPWA(Boolean(isStandalone) || (isIOS && Boolean(isInStandaloneMode)));
     };
 
     checkPWA();
@@ -198,7 +192,12 @@ export function usePWA() {
     // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(
+        e as unknown as {
+          prompt: () => void;
+          userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+        }
+      );
       setIsInstallable(true);
     };
 
@@ -280,7 +279,11 @@ export function useHapticFeedback() {
               haptics?: { vibrate: (type: string) => Promise<void> };
             }
           ).haptics;
-          await haptics.vibrate(type);
+          if (haptics) {
+            await haptics.vibrate(type);
+          } else {
+            vibrate();
+          }
         } catch (error) {
           console.warn('Haptic feedback failed:', error);
           // Fallback to vibration
@@ -316,10 +319,12 @@ export function useNetworkStatus() {
             connection?: { effectiveType?: string; downlink?: number };
           }
         ).connection;
-        setConnectionType(connection.effectiveType || 'unknown');
-        setConnectionSpeed(
-          connection.downlink ? `${connection.downlink}Mbps` : 'unknown'
-        );
+        if (connection) {
+          setConnectionType(connection.effectiveType || 'unknown');
+          setConnectionSpeed(
+            connection.downlink ? `${connection.downlink}Mbps` : 'unknown'
+          );
+        }
       }
     };
 

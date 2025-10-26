@@ -24,7 +24,11 @@ export const metadata: Metadata = {
     'Create and participate in quick polls to make decisions easier with community insights.',
   keywords: ['polls', 'decisions', 'voting', 'community', 'surveys'],
   authors: [{ name: 'ThisOrThat Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({

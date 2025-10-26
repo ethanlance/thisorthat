@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ProfileService, type UserActivity } from '@/lib/services/profile';
+import { useState, useEffect, useCallback } from 'react';
+import { ProfileService, type UserActivityData } from '@/lib/services/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -35,40 +35,43 @@ const activityColors = {
 };
 
 export default function UserActivity({ userId }: UserActivityProps) {
-  const [activities, setActivities] = useState<UserActivity[]>([]);
+  const [activities, setActivities] = useState<UserActivityData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
-  const loadActivities = async (reset = false) => {
-    try {
-      setIsLoading(true);
-      const newActivities = await ProfileService.getUserActivity(
-        userId,
-        limit,
-        reset ? 0 : offset
-      );
+  const loadActivities = useCallback(
+    async (reset = false) => {
+      try {
+        setIsLoading(true);
+        const newActivities = await ProfileService.getUserActivity(
+          userId,
+          limit,
+          reset ? 0 : offset
+        );
 
-      if (reset) {
-        setActivities(newActivities);
-        setOffset(newActivities.length);
-      } else {
-        setActivities(prev => [...prev, ...newActivities]);
-        setOffset(prev => prev + newActivities.length);
+        if (reset) {
+          setActivities(newActivities);
+          setOffset(newActivities.length);
+        } else {
+          setActivities(prev => [...prev, ...newActivities]);
+          setOffset(prev => prev + newActivities.length);
+        }
+
+        setHasMore(newActivities.length === limit);
+      } catch (error) {
+        console.error('Error loading activities:', error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setHasMore(newActivities.length === limit);
-    } catch (error) {
-      console.error('Error loading activities:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [userId, limit, offset]
+  );
 
   useEffect(() => {
     loadActivities(true);
-  }, [userId]);
+  }, [userId, loadActivities]);
 
   const handleLoadMore = () => {
     loadActivities(false);

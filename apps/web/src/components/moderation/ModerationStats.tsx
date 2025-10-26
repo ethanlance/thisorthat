@@ -13,8 +13,6 @@ import {
   BarChart3,
   Loader2,
   AlertTriangle,
-  TrendingUp,
-  TrendingDown,
 } from 'lucide-react';
 
 interface ModerationStatsData {
@@ -69,15 +67,6 @@ export default function ModerationStats() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getTrendIcon = (current: number, previous: number) => {
-    if (current > previous) {
-      return <TrendingUp className="h-3 w-3 text-red-500" />;
-    } else if (current < previous) {
-      return <TrendingDown className="h-3 w-3 text-green-500" />;
-    }
-    return null;
   };
 
   if (loading) {

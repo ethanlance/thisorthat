@@ -37,7 +37,7 @@ interface PollFormFieldsProps {
 export default function PollFormFields({
   formData,
   fieldErrors,
-  uploadStatus: _,
+  uploadStatus,
   isSubmitting,
   onImageSelect,
   onImageUpload,
@@ -45,6 +45,8 @@ export default function PollFormFields({
   onImageRemove,
   onInputChange,
 }: PollFormFieldsProps) {
+  // uploadStatus is available but not used in this component
+  void uploadStatus;
   return (
     <>
       {/* Image Uploads */}

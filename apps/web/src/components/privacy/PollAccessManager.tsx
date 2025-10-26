@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,10 +33,8 @@ import {
   Eye,
   Vote,
   Crown,
-  MoreHorizontal,
   Loader2,
   AlertTriangle,
-  CheckCircle,
   X,
 } from 'lucide-react';
 
@@ -84,15 +82,11 @@ export default function PollAccessManager({
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteMessage, setInviteMessage] = useState('');
   const [accessLevel, setAccessLevel] = useState<
-    'view' | 'view_vote' | 'admin'
-  >('view_vote');
+    'view' | 'vote' | 'comment' | 'admin'
+  >('vote');
   const [expiresAt, setExpiresAt] = useState('');
 
-  useEffect(() => {
-    loadPollAccess();
-  }, [pollId]);
-
-  const loadPollAccess = async () => {
+  const loadPollAccess = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -123,7 +117,11 @@ export default function PollAccessManager({
     } finally {
       setLoading(false);
     }
-  };
+  }, [pollId]);
+
+  useEffect(() => {
+    loadPollAccess();
+  }, [pollId, loadPollAccess]);
 
   const handleInviteUser = async (e: React.FormEvent) => {
     e.preventDefault();

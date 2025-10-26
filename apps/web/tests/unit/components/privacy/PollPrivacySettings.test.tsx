@@ -82,7 +82,9 @@ describe('PollPrivacySettings', () => {
     );
 
     expect(screen.getByText('Invite Users')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/enter email or username/i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/enter email or username/i)
+    ).toBeInTheDocument();
   });
 
   it('should add and remove invited users', () => {
@@ -137,7 +139,7 @@ describe('PollPrivacySettings', () => {
     );
 
     const emailInput = screen.getByPlaceholderText(/enter email or username/i);
-    
+
     // Add user first time
     fireEvent.change(emailInput, { target: { value: 'user@example.com' } });
     fireEvent.keyPress(emailInput, { key: 'Enter' });
@@ -164,7 +166,9 @@ describe('PollPrivacySettings', () => {
     );
 
     expect(screen.getByText('Custom Message (Optional)')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/add a personal message/i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/add a personal message/i)
+    ).toBeInTheDocument();
   });
 
   it('should show access expiration field', () => {
@@ -192,7 +196,9 @@ describe('PollPrivacySettings', () => {
     );
 
     expect(screen.getByText('Privacy Preview')).toBeInTheDocument();
-    expect(screen.getByText(/this poll will be visible to everyone/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/this poll will be visible to everyone/i)
+    ).toBeInTheDocument();
   });
 
   it('should update privacy preview when settings change', () => {
@@ -208,7 +214,9 @@ describe('PollPrivacySettings', () => {
     const privateOption = screen.getByLabelText(/private/i);
     fireEvent.click(privateOption);
 
-    expect(screen.getByText(/this poll will only be accessible to you/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/this poll will only be accessible to you/i)
+    ).toBeInTheDocument();
   });
 
   it('should load friend groups for group selection', async () => {
@@ -255,7 +263,9 @@ describe('PollPrivacySettings', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/you don't have any friend groups yet/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/you don't have any friend groups yet/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -301,11 +311,11 @@ describe('PollPrivacySettings', () => {
     );
 
     const emailInput = screen.getByPlaceholderText(/enter email or username/i);
-    
+
     // Add two users
     fireEvent.change(emailInput, { target: { value: 'user1@example.com' } });
     fireEvent.keyPress(emailInput, { key: 'Enter' });
-    
+
     fireEvent.change(emailInput, { target: { value: 'user2@example.com' } });
     fireEvent.keyPress(emailInput, { key: 'Enter' });
 

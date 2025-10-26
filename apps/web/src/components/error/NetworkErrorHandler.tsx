@@ -85,7 +85,7 @@ export default function NetworkErrorHandler() {
       } else {
         throw new Error('Connection test failed');
       }
-    } catch (error) {
+    } catch {
       setNetworkStatus(prev => ({
         ...prev,
         isReconnecting: false,

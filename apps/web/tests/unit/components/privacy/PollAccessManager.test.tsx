@@ -87,7 +87,11 @@ describe('PollAccessManager', () => {
     });
 
     expect(screen.getByText('Private')).toBeInTheDocument();
-    expect(screen.getByText(/this poll is private and only accessible to invited users/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /this poll is private and only accessible to invited users/i
+      )
+    ).toBeInTheDocument();
   });
 
   it('should show invite button for private polls', async () => {
@@ -241,7 +245,10 @@ describe('PollAccessManager', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/polls/poll-123/invite', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/polls/poll-123/invite',
+        expect.any(Object)
+      );
     });
   });
 
@@ -419,7 +426,9 @@ describe('PollAccessManager', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No users have access to this poll yet')).toBeInTheDocument();
+      expect(
+        screen.getByText('No users have access to this poll yet')
+      ).toBeInTheDocument();
     });
   });
 
@@ -449,7 +458,9 @@ describe('PollAccessManager', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load poll access information')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load poll access information')
+      ).toBeInTheDocument();
     });
   });
 
@@ -479,7 +490,9 @@ describe('PollAccessManager', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/this poll is public and accessible to everyone/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/this poll is public and accessible to everyone/i)
+      ).toBeInTheDocument();
     });
 
     rerender(
@@ -491,7 +504,11 @@ describe('PollAccessManager', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/this poll is accessible to all members of the associated friend group/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /this poll is accessible to all members of the associated friend group/i
+        )
+      ).toBeInTheDocument();
     });
   });
 
@@ -535,7 +552,10 @@ describe('PollAccessManager', () => {
     fireEvent.click(submitButton);
 
     // Should not make API call without email
-    expect(fetch).not.toHaveBeenCalledWith('/api/polls/poll-123/invite', expect.any(Object));
+    expect(fetch).not.toHaveBeenCalledWith(
+      '/api/polls/poll-123/invite',
+      expect.any(Object)
+    );
   });
 
   it('should close invitation dialog on cancel', async () => {

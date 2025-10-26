@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -12,20 +12,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import {
   Save,
   Edit,
   Trash2,
-  Upload,
   Clock,
   Database,
   AlertCircle,
   CheckCircle,
   Plus,
-  Image as ImageIcon,
 } from 'lucide-react';
 import { OfflineStorage, OfflineDraft } from '@/lib/offline/OfflineStorage';
 import { OfflineSync } from '@/lib/offline/OfflineSync';
@@ -48,12 +45,7 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
   const offlineStorage = OfflineStorage.getInstance();
   const offlineSync = OfflineSync.getInstance();
 
-  useEffect(() => {
-    loadDrafts();
-    updateSyncStatus();
-  }, []);
-
-  const loadDrafts = async () => {
+  const loadDrafts = useCallback(async () => {
     try {
       setLoading(true);
       const draftList = await offlineStorage.getDrafts();
@@ -63,15 +55,20 @@ export function OfflineDraftManager({ className }: OfflineDraftManagerProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [offlineStorage]);
 
-  const updateSyncStatus = async () => {
+  const updateSyncStatus = useCallback(async () => {
     const status = await offlineSync.getSyncStatus();
     setSyncStatus({
       pendingDrafts: status.pendingDrafts,
       syncInProgress: status.syncInProgress,
     });
-  };
+  }, [offlineSync]);
+
+  useEffect(() => {
+    loadDrafts();
+    updateSyncStatus();
+  }, [loadDrafts, updateSyncStatus]);
 
   const handleCreateDraft = () => {
     const newDraft: OfflineDraft = {

@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { DashboardService, UserPollSummary } from '@/lib/services/dashboard';
-import { Poll } from '@/lib/supabase/types';
 
 export interface UseUserPollsReturn {
   polls: UserPollSummary[];
@@ -156,7 +155,7 @@ export const useUserPolls = (
     return () => {
       subscription.unsubscribe();
     };
-  }, [userId, polls.map(p => p.id).join(','), fetchUserPolls]);
+  }, [userId, fetchUserPolls, polls]);
 
   return {
     polls,

@@ -2,8 +2,6 @@ import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
 type Comment = Database['public']['Tables']['comments']['Row'];
-type CommentInsert = Database['public']['Tables']['comments']['Insert'];
-type CommentReaction = Database['public']['Tables']['comment_reactions']['Row'];
 
 export interface CommentWithUser extends Comment {
   user_display_name: string;
@@ -44,6 +42,17 @@ export class CommentService {
     try {
       const supabase = createClient();
 
+      // Test database connection first
+      const { error: connectionError } = await supabase
+        .from('comments')
+        .select('id')
+        .limit(1);
+
+      if (connectionError) {
+        console.error('Database connection test failed:', connectionError);
+        return [];
+      }
+
       // Use the RPC function to get comments with user info and reactions
       const { data, error } = await supabase.rpc('get_comment_thread', {
         poll_uuid: pollId,
@@ -58,19 +67,32 @@ export class CommentService {
           hint: error.hint,
           code: error.code,
           fullError: error,
+          errorType: typeof error,
+          errorKeys: Object.keys(error),
         });
 
-        // Fallback to direct query if RPC function doesn't exist
+        // Fallback to direct query if RPC function doesn't exist or fails
         if (
           error.code === '42883' ||
           error.message?.includes('function') ||
-          error.message?.includes('does not exist')
+          error.message?.includes('does not exist') ||
+          !error.message || // If error has no message, likely a connection issue
+          error.code === 'PGRST301' || // Function not found
+          error.code === 'PGRST302' // Function execution error
         ) {
-          console.log('RPC function not found, falling back to direct query');
+          console.log(
+            'RPC function not found or failed, falling back to direct query'
+          );
           return await this.getPollCommentsFallback(pollId, limit, offset);
         }
 
         return [];
+      }
+
+      // If no error but no data, also try fallback
+      if (!data) {
+        console.log('RPC function returned no data, trying fallback');
+        return await this.getPollCommentsFallback(pollId, limit, offset);
       }
 
       if (!data || data.length === 0) {
@@ -112,7 +134,7 @@ export class CommentService {
    * Fallback method to get poll comments using direct queries
    * Used when RPC function is not available
    */
-  private async getPollCommentsFallback(
+  private static async getPollCommentsFallback(
     pollId: string,
     limit: number = 50,
     offset: number = 0
@@ -134,12 +156,7 @@ export class CommentService {
           edited_at,
           is_deleted,
           created_at,
-          updated_at,
-          user:auth.users!inner(
-            id,
-            email,
-            raw_user_meta_data
-          )
+          updated_at
         `
         )
         .eq('poll_id', pollId)
@@ -148,7 +165,15 @@ export class CommentService {
         .range(offset, offset + limit - 1);
 
       if (commentsError) {
-        console.error('Error in fallback query:', commentsError);
+        console.error('Error in fallback query:', {
+          message: commentsError.message,
+          details: commentsError.details,
+          hint: commentsError.hint,
+          code: commentsError.code,
+          fullError: commentsError,
+          errorType: typeof commentsError,
+          errorKeys: Object.keys(commentsError),
+        });
         return [];
       }
 
@@ -157,6 +182,7 @@ export class CommentService {
       }
 
       // Transform the data to match the expected format
+      // Note: In fallback mode, we don't have access to user info due to RLS
       return comments.map(comment => ({
         id: comment.id,
         poll_id: comment.poll_id,
@@ -168,15 +194,14 @@ export class CommentService {
         is_deleted: comment.is_deleted,
         created_at: comment.created_at,
         updated_at: comment.updated_at,
-        user_display_name:
-          comment.user?.raw_user_meta_data?.display_name ||
-          comment.user?.email ||
-          'Anonymous',
-        user_avatar_url: comment.user?.raw_user_meta_data?.avatar_url || null,
+        user_display_name: 'Anonymous', // Fallback to anonymous since we can't access user data
+        user_avatar_url: null,
         like_count: 0,
         dislike_count: 0,
         user_reaction: null,
         reply_count: 0,
+        deleted_at: null,
+        deleted_by: null,
       }));
     } catch (error) {
       console.error('Error in getPollCommentsFallback:', error);

@@ -19,10 +19,12 @@ interface PollResultsProps {
 export default function PollResults({
   poll,
   userVote,
-  onShare: _,
+  onShare,
   showConversionCTA = false,
   className,
 }: PollResultsProps) {
+  // onShare is available but not used in this component
+  void onShare;
   // Use real-time vote counts
   const { voteCounts } = useRealtimeVotes(poll.id);
 

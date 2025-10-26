@@ -48,7 +48,9 @@ export default function ProfileEditor({
   onCancel,
   className,
 }: ProfileEditorProps) {
-  const { user: currentUser } = useAuth();
+  const { user } = useAuth();
+  // user is available but not used in this component
+  void user;
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -72,7 +74,7 @@ export default function ProfileEditor({
 
       const profileData = await ProfileService.getCurrentUserProfile();
 
-      if (!profileData) {
+      if (profileData) {
         setProfile(profileData);
         setFormData({
           display_name: profileData.display_name || '',
@@ -173,19 +175,6 @@ export default function ProfileEditor({
       setError('Failed to update profile');
     } finally {
       setSaving(false);
-    }
-  };
-
-  const getPrivacyIcon = (level: string) => {
-    switch (level) {
-      case 'public':
-        return <Globe className="h-4 w-4" />;
-      case 'friends':
-        return <Users className="h-4 w-4" />;
-      case 'private':
-        return <Lock className="h-4 w-4" />;
-      default:
-        return <Globe className="h-4 w-4" />;
     }
   };
 

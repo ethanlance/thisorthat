@@ -233,8 +233,8 @@ export default function ErrorDisplay({
 
   const errorType = getErrorType(error);
   const errorSeverity = getErrorSeverity(error);
-  const userMessage = errorService.getUserFriendlyMessage(error, context);
-  const recoveryOptions = errorService.getErrorRecoveryOptions(error, context);
+  const userMessage = errorService.getUserFriendlyMessage(error);
+  const recoveryOptions = errorService.getErrorRecoveryOptions(error);
 
   return (
     <Card className={`border-red-200 ${className}`}>

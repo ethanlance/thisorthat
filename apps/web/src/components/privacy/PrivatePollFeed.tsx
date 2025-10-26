@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,11 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users,
   Lock,
-  Globe,
   Shield,
-  Clock,
   Vote,
-  Eye,
   Loader2,
   AlertTriangle,
   CheckCircle,
@@ -21,18 +18,11 @@ import {
 } from 'lucide-react';
 import { PollPrivacyService } from '@/lib/services/poll-privacy';
 import { FriendGroupService } from '@/lib/services/friend-groups';
+import { useAuth } from '@/contexts/AuthContext';
+import { Database } from '@/types/database';
 
-interface PrivatePoll {
-  id: string;
-  title: string;
-  description: string | null;
-  privacy_level: 'public' | 'private' | 'group';
-  friend_group_id: string | null;
-  created_at: string;
-  access_level: string;
-  creator_name: string;
-  group_name?: string;
-}
+type Poll = Database['public']['Tables']['polls']['Row'];
+// Removed unused PrivatePoll interface
 
 interface GroupInvitation {
   id: string;
@@ -57,7 +47,8 @@ interface PrivatePollFeedProps {
 }
 
 export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
-  const [polls, setPolls] = useState<PrivatePoll[]>([]);
+  const { user } = useAuth();
+  const [polls, setPolls] = useState<Poll[]>([]);
   const [groupInvitations, setGroupInvitations] = useState<GroupInvitation[]>(
     []
   );
@@ -66,17 +57,16 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('polls');
 
-  useEffect(() => {
-    loadPrivatePolls();
-    loadInvitations();
-  }, []);
+  const loadPrivatePolls = useCallback(async () => {
+    if (!user?.id) return;
 
-  const loadPrivatePolls = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const accessiblePolls = await PollPrivacyService.getUserAccessiblePolls();
+      const accessiblePolls = await PollPrivacyService.getUserAccessiblePolls(
+        user.id
+      );
       setPolls(accessiblePolls);
     } catch (err) {
       console.error('Error loading private polls:', err);
@@ -84,7 +74,12 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    loadPrivatePolls();
+    loadInvitations();
+  }, [loadPrivatePolls]);
 
   const loadInvitations = async () => {
     try {
@@ -140,42 +135,29 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
     }
   };
 
-  const getPrivacyIcon = (level: string) => {
-    switch (level) {
-      case 'public':
-        return <Globe className="h-4 w-4" />;
-      case 'private':
-        return <Lock className="h-4 w-4" />;
-      case 'group':
-        return <Users className="h-4 w-4" />;
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'closed':
+        return <Lock className="h-4 w-4 text-gray-500" />;
+      case 'deleted':
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
       default:
         return <Shield className="h-4 w-4" />;
     }
   };
 
-  const getPrivacyColor = (level: string) => {
-    switch (level) {
-      case 'public':
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
         return 'bg-green-100 text-green-800';
-      case 'private':
-        return 'bg-blue-100 text-blue-800';
-      case 'group':
-        return 'bg-purple-100 text-purple-800';
+      case 'closed':
+        return 'bg-gray-100 text-gray-800';
+      case 'deleted':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getAccessLevelIcon = (level: string) => {
-    switch (level) {
-      case 'view':
-        return <Eye className="h-4 w-4" />;
-      case 'view_vote':
-        return <Vote className="h-4 w-4" />;
-      case 'admin':
-        return <Shield className="h-4 w-4" />;
-      default:
-        return <Eye className="h-4 w-4" />;
     }
   };
 
@@ -258,11 +240,11 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg line-clamp-2">
-                        {poll.title}
+                        {poll.option_a_label || 'Option A'} vs{' '}
+                        {poll.option_b_label || 'Option B'}
                       </CardTitle>
                       <div className="flex items-center space-x-1">
-                        {getPrivacyIcon(poll.privacy_level)}
-                        {getAccessLevelIcon(poll.access_level)}
+                        {getStatusIcon(poll.status)}
                       </div>
                     </div>
                     {poll.description && (
@@ -274,12 +256,9 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                   <CardContent className="pt-0">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <Badge className={getPrivacyColor(poll.privacy_level)}>
-                          {poll.privacy_level}
+                        <Badge className={getStatusColor(poll.status)}>
+                          {poll.status}
                         </Badge>
-                        {poll.group_name && (
-                          <Badge variant="outline">{poll.group_name}</Badge>
-                        )}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {new Date(poll.created_at).toLocaleDateString()}
@@ -287,7 +266,7 @@ export default function PrivatePollFeed({ className }: PrivatePollFeedProps) {
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">
-                        by {poll.creator_name}
+                        Poll ID: {poll.id.slice(0, 8)}...
                       </span>
                       <Button size="sm" variant="outline">
                         View Poll

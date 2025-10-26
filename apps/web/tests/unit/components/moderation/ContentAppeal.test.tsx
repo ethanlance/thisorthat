@@ -20,7 +20,9 @@ describe('ContentAppeal', () => {
     );
 
     expect(screen.getByText('Appeal Moderation Decision')).toBeInTheDocument();
-    expect(screen.getByText('Why do you believe this decision was incorrect? *')).toBeInTheDocument();
+    expect(
+      screen.getByText('Why do you believe this decision was incorrect? *')
+    ).toBeInTheDocument();
     expect(screen.getByText('poll Content')).toBeInTheDocument();
     expect(screen.getByText('Content ID: poll-123')).toBeInTheDocument();
   });
@@ -38,7 +40,9 @@ describe('ContentAppeal', () => {
     const submitButton = screen.getByText('Submit Appeal');
     fireEvent.click(submitButton);
 
-    expect(screen.getByText('Please provide a reason for your appeal')).toBeInTheDocument();
+    expect(
+      screen.getByText('Please provide a reason for your appeal')
+    ).toBeInTheDocument();
   });
 
   it('should submit an appeal successfully', async () => {
@@ -67,7 +71,10 @@ describe('ContentAppeal', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/content/appeal', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/content/appeal',
+        expect.any(Object)
+      );
     });
 
     expect(onAppealSubmitted).toHaveBeenCalled();
@@ -124,7 +131,11 @@ describe('ContentAppeal', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Appeal Submitted')).toBeInTheDocument();
-      expect(screen.getByText('Your appeal has been submitted and will be reviewed by our moderation team')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Your appeal has been submitted and will be reviewed by our moderation team'
+        )
+      ).toBeInTheDocument();
     });
   });
 
@@ -153,11 +164,23 @@ describe('ContentAppeal', () => {
     );
 
     expect(screen.getByText('Appeal Guidelines:')).toBeInTheDocument();
-    expect(screen.getByText('Be respectful and constructive in your appeal')).toBeInTheDocument();
-    expect(screen.getByText('Provide specific reasons why you believe the decision was incorrect')).toBeInTheDocument();
-    expect(screen.getByText('Include any relevant context or evidence')).toBeInTheDocument();
-    expect(screen.getByText('Appeals are reviewed by human moderators')).toBeInTheDocument();
-    expect(screen.getByText('You will be notified of the decision via email')).toBeInTheDocument();
+    expect(
+      screen.getByText('Be respectful and constructive in your appeal')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Provide specific reasons why you believe the decision was incorrect'
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Include any relevant context or evidence')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Appeals are reviewed by human moderators')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('You will be notified of the decision via email')
+    ).toBeInTheDocument();
   });
 
   it('should show different content types', () => {
@@ -222,16 +245,21 @@ describe('ContentAppeal', () => {
 
     // Fill in appeal reason with extra whitespace
     const reasonInput = screen.getByPlaceholderText(/explain why/i);
-    fireEvent.change(reasonInput, { target: { value: '  This was a mistake  ' } });
+    fireEvent.change(reasonInput, {
+      target: { value: '  This was a mistake  ' },
+    });
 
     // Submit the appeal
     const submitButton = screen.getByText('Submit Appeal');
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/content/appeal', expect.objectContaining({
-        body: expect.stringContaining('"appeal_reason":"This was a mistake"'),
-      }));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/content/appeal',
+        expect.objectContaining({
+          body: expect.stringContaining('"appeal_reason":"This was a mistake"'),
+        })
+      );
     });
   });
 });

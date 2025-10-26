@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -11,12 +11,8 @@ import {
   Zap,
   Clock,
   Image as ImageIcon,
-  Database,
-  Wifi,
   AlertTriangle,
   CheckCircle,
-  TrendingUp,
-  TrendingDown,
 } from 'lucide-react';
 import { usePerformanceMonitoring } from '@/lib/hooks/usePerformance';
 
@@ -29,7 +25,7 @@ export default function PerformanceMonitor({
   showDetails = false,
   className,
 }: PerformanceMonitorProps) {
-  const { metrics, score, report } = usePerformanceMonitoring();
+  const { score, report } = usePerformanceMonitoring();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getScoreColor = (score: number) => {
@@ -62,25 +58,6 @@ export default function PerformanceMonitor({
         return <AlertTriangle className="h-4 w-4 text-red-600" />;
       default:
         return <Clock className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const getMetricTrend = (current: number | undefined, budget: number) => {
-    if (current === undefined) return 'stable';
-    const percentage = (current / budget) * 100;
-    if (percentage <= 80) return 'good';
-    if (percentage <= 100) return 'stable';
-    return 'poor';
-  };
-
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'good':
-        return <TrendingDown className="h-3 w-3 text-green-600" />;
-      case 'poor':
-        return <TrendingUp className="h-3 w-3 text-red-600" />;
-      default:
-        return <Activity className="h-3 w-3 text-gray-400" />;
     }
   };
 

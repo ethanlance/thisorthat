@@ -1,12 +1,15 @@
 import React, { useEffect, useCallback, useMemo, useRef } from 'react';
-import { PerformanceService } from '@/lib/performance/PerformanceService';
+import {
+  PerformanceService,
+  PerformanceMetrics,
+} from '@/lib/performance/PerformanceService';
 
 export function usePerformance() {
   const performanceService = PerformanceService.getInstance();
 
   const recordMetric = useCallback(
-    (name: string, value: number) => {
-      performanceService.recordMetric(name as string, value);
+    (name: keyof PerformanceMetrics, value: number) => {
+      performanceService.recordMetric(name, value);
     },
     [performanceService]
   );
@@ -46,6 +49,7 @@ export function useOptimizedCallback<T extends (...args: unknown[]) => unknown>(
   callback: T,
   deps: React.DependencyList
 ): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useCallback(callback, deps);
 }
 
@@ -53,6 +57,7 @@ export function useOptimizedMemo<T>(
   factory: () => T,
   deps: React.DependencyList
 ): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(factory, deps);
 }
 

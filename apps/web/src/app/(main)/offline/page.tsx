@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OfflineStatus } from '@/components/offline/OfflineStatus';
-import { OfflinePollViewer } from '@/components/offline/OfflinePollViewer';
 import { OfflineDraftManager } from '@/components/offline/OfflineDraftManager';
 import { Database, WifiOff, Clock, Vote, FileText } from 'lucide-react';
 

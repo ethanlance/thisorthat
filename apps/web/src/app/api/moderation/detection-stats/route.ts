@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ContentDetectionService } from '@/lib/services/content-detection';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
     const {
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (!userData?.raw_user_meta_data?.role === 'moderator') {
+    if (userData?.raw_user_meta_data?.role !== 'moderator') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

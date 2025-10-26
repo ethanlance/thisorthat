@@ -203,8 +203,6 @@ function FeedbackForm({ onSuccess, onCancel, className }: FeedbackFormProps) {
     }
   };
 
-  const selectedType = feedbackTypes.find(t => t.value === formData.type);
-
   if (success) {
     return (
       <Card className={className}>

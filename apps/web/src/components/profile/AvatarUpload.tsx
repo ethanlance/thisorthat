@@ -55,7 +55,7 @@ export default function AvatarUpload({
     setError(null);
 
     try {
-      const avatarUrl = await ProfileService.uploadAvatar(user.id, file);
+      const avatarUrl = await ProfileService.uploadAvatar(file);
       onAvatarChange(avatarUrl);
       setPreviewUrl(null);
 

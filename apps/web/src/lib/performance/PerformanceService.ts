@@ -81,7 +81,11 @@ export class PerformanceService {
       const fidObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
-          this.recordMetric('fid', entry.processingStart - entry.startTime);
+          const eventEntry = entry as PerformanceEventTiming;
+          this.recordMetric(
+            'fid',
+            eventEntry.processingStart - eventEntry.startTime
+          );
         });
       });
       fidObserver.observe({ entryTypes: ['first-input'] });
@@ -95,8 +99,9 @@ export class PerformanceService {
       const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach((entry: PerformanceEntry) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+          const layoutEntry = entry as LayoutShift;
+          if (!layoutEntry.hadRecentInput) {
+            clsValue += layoutEntry.value;
             this.recordMetric('cls', clsValue);
           }
         });
@@ -200,7 +205,7 @@ export class PerformanceService {
     metric: keyof PerformanceMetrics,
     value: number
   ) {
-    const budget = this.budget[metric];
+    const budget = (this.budget as unknown as Record<string, number>)[metric];
     if (budget && value > budget) {
       console.warn(
         `Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`

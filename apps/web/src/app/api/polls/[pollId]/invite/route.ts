@@ -19,7 +19,7 @@ export async function POST(
 
     const { pollId } = await params;
     const body = await request.json();
-    const { email, message, access_level, expires_at } = body;
+    const { email, message } = body;
 
     // Validate required fields
     if (!email || !email.trim()) {

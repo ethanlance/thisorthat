@@ -55,46 +55,21 @@ export async function GET(request: NextRequest) {
     // Get additional analytics data
     const userIds = users?.map(user => user.id) || [];
 
-    const [
-      { data: sessionEvents, error: sessionEventsError },
-      { data: pollEvents, error: pollEventsError },
-      { data: socialEvents, error: socialEventsError },
-    ] = await Promise.all([
-      // Session events
-      userIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('session_id, timestamp, event, user_id')
-            .in('user_id', userIds)
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
+    const [{ data: sessionEvents, error: sessionEventsError }] =
+      await Promise.all([
+        // Session events
+        userIds.length > 0
+          ? supabase
+              .from('analytics_events')
+              .select('session_id, timestamp, event, user_id')
+              .in('user_id', userIds)
+              .gte('timestamp', startDate.toISOString())
+          : { data: [], error: null },
+      ]);
 
-      // Poll events
-      userIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('user_id, event, action, properties')
-            .in('user_id', userIds)
-            .eq('category', 'poll')
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
-
-      // Social events
-      userIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('user_id, event, action, properties')
-            .in('user_id', userIds)
-            .eq('category', 'social')
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
-    ]);
-
-    if (sessionEventsError || pollEventsError || socialEventsError) {
+    if (sessionEventsError) {
       console.error('Error fetching user event analytics:', {
         sessionEventsError,
-        pollEventsError,
-        socialEventsError,
       });
     }
 
@@ -103,12 +78,6 @@ export async function GET(request: NextRequest) {
       users?.map(user => {
         const userSessionEvents =
           sessionEvents?.filter(event => event.user_id === user.id) || [];
-
-        const userPollEvents =
-          pollEvents?.filter(event => event.user_id === user.id) || [];
-
-        const userSocialEvents =
-          socialEvents?.filter(event => event.user_id === user.id) || [];
 
         // Calculate session metrics
         const uniqueSessions = new Set(

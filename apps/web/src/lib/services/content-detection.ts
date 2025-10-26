@@ -103,8 +103,7 @@ export class ContentDetectionService {
    * Detect inappropriate content in text using basic keyword analysis
    */
   static async detectTextContent(
-    text: string,
-    contentType: 'poll' | 'comment'
+    text: string
   ): Promise<ContentDetectionResult> {
     const textLower = text.toLowerCase();
 
@@ -316,7 +315,7 @@ export class ContentDetectionService {
         const fileName = `${contentId}.${fileExt}`;
         const filePath = `moderation-scans/${fileName}`;
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('images')
           .upload(filePath, contentData);
 
@@ -337,9 +336,9 @@ export class ContentDetectionService {
 
         result = await this.detectImageContent(urlData.publicUrl);
       } else if (contentType === 'comment' && typeof contentData === 'string') {
-        result = await this.detectTextContent(contentData, 'comment');
+        result = await this.detectTextContent(contentData);
       } else if (contentType === 'poll' && typeof contentData === 'string') {
-        result = await this.detectTextContent(contentData, 'poll');
+        result = await this.detectTextContent(contentData);
       } else {
         // Default safe result for unknown content types
         result = {
@@ -405,8 +404,7 @@ export class ContentDetectionService {
           c => c.classification === 'inappropriate'
         ).length,
         spamContent: data.filter(c => c.classification === 'spam').length,
-        humanReviewRequired: data.filter(c => c.details?.requires_human_review)
-          .length,
+        humanReviewRequired: 0, // TODO: Implement human review detection
       };
 
       return stats;

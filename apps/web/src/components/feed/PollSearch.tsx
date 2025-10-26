@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,8 +45,6 @@ export default function PollSearch({
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<
     Array<{ id: string; name: string }>
   >([]);
@@ -203,7 +202,13 @@ export default function PollSearch({
       setPolls([]);
       setError(null);
     }
-  }, [debouncedSearchTerm, selectedCategories, selectedTags, sortBy]);
+  }, [
+    debouncedSearchTerm,
+    selectedCategories,
+    selectedTags,
+    sortBy,
+    handleSearch,
+  ]);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -251,7 +256,11 @@ export default function PollSearch({
                 <label className="text-sm font-medium">Sort by</label>
                 <Select
                   value={sortBy}
-                  onValueChange={(value: string) => setSortBy(value)}
+                  onValueChange={(value: string) =>
+                    setSortBy(
+                      value as 'trending' | 'popular' | 'relevance' | 'newest'
+                    )
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -443,15 +452,17 @@ export default function PollSearch({
                             <Badge variant="outline">
                               {formatDate(poll.created_at)}
                             </Badge>
-                            {poll.trending_score > 0 && (
-                              <Badge
-                                variant="secondary"
-                                className="bg-orange-100 text-orange-800"
-                              >
-                                <TrendingUp className="h-3 w-3 mr-1" />
-                                Trending
-                              </Badge>
-                            )}
+                            {'trending_score' in poll &&
+                              (poll as { trending_score: number })
+                                .trending_score > 0 && (
+                                <Badge
+                                  variant="secondary"
+                                  className="bg-orange-100 text-orange-800"
+                                >
+                                  <TrendingUp className="h-3 w-3 mr-1" />
+                                  Trending
+                                </Badge>
+                              )}
                             {poll.engagement_score > 100 && (
                               <Badge
                                 variant="secondary"
@@ -476,10 +487,11 @@ export default function PollSearch({
                                 Option A
                               </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <img
+                                <Image
                                   src={poll.option_a_image_url}
                                   alt={poll.option_a_label || 'Option A'}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  fill
+                                  className="object-cover rounded-lg"
                                 />
                               </div>
                               {poll.option_a_label && (
@@ -494,10 +506,11 @@ export default function PollSearch({
                                 Option B
                               </div>
                               <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <img
+                                <Image
                                   src={poll.option_b_image_url}
                                   alt={poll.option_b_label || 'Option B'}
-                                  className="w-full h-full object-cover rounded-lg"
+                                  fill
+                                  className="object-cover rounded-lg"
                                 />
                               </div>
                               {poll.option_b_label && (

@@ -1,3 +1,5 @@
+import { PerformanceService } from './PerformanceService';
+
 export interface CacheOptions {
   ttl?: number; // Time to live in milliseconds
   maxSize?: number; // Maximum number of items
@@ -71,7 +73,7 @@ export class CacheService {
     item.accessCount++;
     item.lastAccessed = Date.now();
 
-    return item.value;
+    return item.value as T;
   }
 
   public has(key: string): boolean {
@@ -214,7 +216,7 @@ export class CacheService {
 // API Cache Service
 export class ApiCacheService {
   private cache: CacheService;
-  private performanceService: unknown;
+  private performanceService: PerformanceService;
 
   constructor() {
     this.cache = CacheService.getInstance({
@@ -222,6 +224,7 @@ export class ApiCacheService {
       maxSize: 200,
       strategy: 'lru',
     });
+    this.performanceService = PerformanceService.getInstance();
   }
 
   public async get<T>(
@@ -362,7 +365,7 @@ export class BrowserCacheService {
               if (Date.now() - parsed.timestamp > parsed.ttl) {
                 localStorage.removeItem(key);
               }
-            } catch (error) {
+            } catch {
               localStorage.removeItem(key);
             }
           }

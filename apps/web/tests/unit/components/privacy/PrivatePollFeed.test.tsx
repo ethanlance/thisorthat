@@ -68,7 +68,9 @@ describe('PrivatePollFeed', () => {
       expect(screen.getByText('No Private Polls Yet')).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/you don't have access to any private polls yet/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/you don't have access to any private polls yet/i)
+    ).toBeInTheDocument();
   });
 
   it('should show different privacy level badges', async () => {
@@ -422,7 +424,9 @@ describe('PrivatePollFeed', () => {
       expect(screen.getByText('No Group Invitations')).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/you don't have any pending group invitations/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/you don't have any pending group invitations/i)
+    ).toBeInTheDocument();
   });
 
   it('should show empty state for poll invitations', async () => {
@@ -458,7 +462,9 @@ describe('PrivatePollFeed', () => {
       expect(screen.getByText('No Poll Invitations')).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/you don't have any pending poll invitations/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/you don't have any pending poll invitations/i)
+    ).toBeInTheDocument();
   });
 
   it('should handle loading state', () => {
@@ -475,7 +481,9 @@ describe('PrivatePollFeed', () => {
     render(<PrivatePollFeed />);
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load private polls')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load private polls')
+      ).toBeInTheDocument();
     });
   });
 

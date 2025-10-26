@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,17 +37,14 @@ export default function AnalyticsDashboard({
   const [businessMetrics, setBusinessMetrics] =
     useState<BusinessMetrics | null>(null);
   const [pollAnalytics, setPollAnalytics] = useState<PollAnalytics[]>([]);
+  const [, setUserAnalytics] = useState<unknown[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d');
+  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('7d');
 
   const analyticsService = AnalyticsService.getInstance();
 
-  useEffect(() => {
-    loadAnalyticsData();
-  }, [timeRange]);
-
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -67,7 +64,11 @@ export default function AnalyticsDashboard({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [analyticsService]);
+
+  useEffect(() => {
+    loadAnalyticsData();
+  }, [timeRange, loadAnalyticsData]);
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;

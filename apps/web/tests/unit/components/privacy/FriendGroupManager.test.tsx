@@ -50,7 +50,11 @@ describe('FriendGroupManager', () => {
       expect(screen.getByText('No Friend Groups Yet')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Create your first friend group to start sharing private polls')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Create your first friend group to start sharing private polls'
+      )
+    ).toBeInTheDocument();
   });
 
   it('should create a new friend group', async () => {
@@ -58,15 +62,16 @@ describe('FriendGroupManager', () => {
       if (url.includes('/api/friend-groups') && url.includes('POST')) {
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve({
-            group: {
-              id: 'group-123',
-              name: 'New Group',
-              description: 'A new group',
-              is_public: false,
-              member_count: 1,
-            },
-          }),
+          json: () =>
+            Promise.resolve({
+              group: {
+                id: 'group-123',
+                name: 'New Group',
+                description: 'A new group',
+                is_public: false,
+                member_count: 1,
+              },
+            }),
         });
       }
       return Promise.resolve({
@@ -98,7 +103,10 @@ describe('FriendGroupManager', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/friend-groups', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/friend-groups',
+        expect.any(Object)
+      );
     });
   });
 
@@ -121,7 +129,10 @@ describe('FriendGroupManager', () => {
     fireEvent.click(submitButton);
 
     // Should not make API call without required fields
-    expect(fetch).not.toHaveBeenCalledWith('/api/friend-groups', expect.any(Object));
+    expect(fetch).not.toHaveBeenCalledWith(
+      '/api/friend-groups',
+      expect.any(Object)
+    );
   });
 
   it('should show group privacy indicators', async () => {
@@ -273,7 +284,10 @@ describe('FriendGroupManager', () => {
     fireEvent.click(inviteButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/friend-groups/group-123/invite', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/friend-groups/group-123/invite',
+        expect.any(Object)
+      );
     });
   });
 
@@ -325,7 +339,9 @@ describe('FriendGroupManager', () => {
     render(<FriendGroupManager />);
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load friend groups')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load friend groups')
+      ).toBeInTheDocument();
     });
   });
 

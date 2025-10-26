@@ -121,7 +121,7 @@ export const usePoll = (pollId: string): UsePollReturn => {
         setIsVoting(false);
       }
     },
-    [poll, hasVoted, isVoting, user?.id]
+    [poll, hasVoted, isVoting, user]
   );
 
   // Initial fetch

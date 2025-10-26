@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -199,7 +200,7 @@ export default function PollFeed({
 
   useEffect(() => {
     loadPolls(true);
-  }, [feedType]);
+  }, [feedType, loadPolls]);
 
   if (loading) {
     return (
@@ -300,10 +301,11 @@ export default function PollFeed({
                           Option A
                         </div>
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                          <img
+                          <Image
                             src={poll.option_a_image_url}
                             alt={poll.option_a_label || 'Option A'}
-                            className="w-full h-full object-cover rounded-lg"
+                            fill
+                            className="object-cover rounded-lg"
                           />
                         </div>
                         {poll.option_a_label && (
@@ -318,10 +320,11 @@ export default function PollFeed({
                           Option B
                         </div>
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                          <img
+                          <Image
                             src={poll.option_b_image_url}
                             alt={poll.option_b_label || 'Option B'}
-                            className="w-full h-full object-cover rounded-lg"
+                            fill
+                            className="object-cover rounded-lg"
                           />
                         </div>
                         {poll.option_b_label && (

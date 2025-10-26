@@ -14,7 +14,9 @@ describe('UserSearch', () => {
     render(<UserSearch />);
 
     expect(screen.getByText('Discover Users')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/search for users/i)).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/search for users/i)
+    ).toBeInTheDocument();
   });
 
   it('should search users when typing', async () => {
@@ -32,8 +34,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -62,8 +70,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -90,9 +104,18 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'followUser').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'followUser'
+    ).mockResolvedValue(true);
 
     render(<UserSearch />);
 
@@ -106,7 +129,9 @@ describe('UserSearch', () => {
     const followButton = screen.getByText('Follow');
     fireEvent.click(followButton);
 
-    expect(require('@/lib/services/profile').ProfileService.followUser).toHaveBeenCalledWith('user-123');
+    expect(
+      require('@/lib/services/profile').ProfileService.followUser
+    ).toHaveBeenCalledWith('user-123');
   });
 
   it('should handle unfollow action in search results', async () => {
@@ -124,9 +149,18 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(true);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'unfollowUser').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'unfollowUser'
+    ).mockResolvedValue(true);
 
     render(<UserSearch />);
 
@@ -140,11 +174,16 @@ describe('UserSearch', () => {
     const unfollowButton = screen.getByText('Unfollow');
     fireEvent.click(unfollowButton);
 
-    expect(require('@/lib/services/profile').ProfileService.unfollowUser).toHaveBeenCalledWith('user-123');
+    expect(
+      require('@/lib/services/profile').ProfileService.unfollowUser
+    ).toHaveBeenCalledWith('user-123');
   });
 
   it('should show empty state when no search results', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue([]);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue([]);
 
     render(<UserSearch />);
 
@@ -171,8 +210,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -201,8 +246,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -232,8 +283,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -247,7 +304,10 @@ describe('UserSearch', () => {
   });
 
   it('should show loading state during search', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockImplementation(() => new Promise(() => {})); // Never resolves
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockImplementation(() => new Promise(() => {})); // Never resolves
 
     render(<UserSearch />);
 
@@ -258,7 +318,10 @@ describe('UserSearch', () => {
   });
 
   it('should show error state on search failure', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockRejectedValue(new Error('Search failed'));
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockRejectedValue(new Error('Search failed'));
 
     render(<UserSearch />);
 
@@ -277,7 +340,11 @@ describe('UserSearch', () => {
     fireEvent.change(searchInput, { target: { value: 'j' } });
 
     expect(screen.getByText('Search for Users')).toBeInTheDocument();
-    expect(screen.getByText('Enter a name, bio, or interest to discover other users on the platform.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Enter a name, bio, or interest to discover other users on the platform.'
+      )
+    ).toBeInTheDocument();
   });
 
   it('should handle user selection callback', async () => {
@@ -297,8 +364,14 @@ describe('UserSearch', () => {
 
     const mockOnUserSelect = vi.fn();
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch onUserSelect={mockOnUserSelect} />);
 
@@ -341,8 +414,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -369,8 +448,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 
@@ -397,8 +482,14 @@ describe('UserSearch', () => {
       },
     ];
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'searchUsers').mockResolvedValue(mockUsers);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'isFollowing').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'searchUsers'
+    ).mockResolvedValue(mockUsers);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'isFollowing'
+    ).mockResolvedValue(false);
 
     render(<UserSearch />);
 

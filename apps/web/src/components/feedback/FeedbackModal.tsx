@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FeedbackForm } from './FeedbackForm';
-import { Bug, Lightbulb, MessageSquare, X } from 'lucide-react';
+import { Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FeedbackModalProps {
@@ -49,7 +49,6 @@ const feedbackTypes = {
 export function FeedbackModal({
   trigger,
   initialType = 'general_feedback',
-  className,
 }: FeedbackModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(initialType);
@@ -112,10 +111,8 @@ export function FeedbackModal({
 
           {/* Feedback Form */}
           <FeedbackForm
-            initialType={selectedType}
             onSuccess={handleSuccess}
             onCancel={() => setIsOpen(false)}
-            compact
           />
         </div>
       </DialogContent>
@@ -160,7 +157,7 @@ export function QuickFeedbackButtons({ className }: { className?: string }) {
 
 // Floating feedback button
 export function FloatingFeedbackButton({ className }: { className?: string }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [, setIsOpen] = useState(false);
 
   return (
     <>

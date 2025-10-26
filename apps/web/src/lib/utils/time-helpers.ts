@@ -1,5 +1,3 @@
-import { TimeLeft } from '@/lib/services/expiration';
-
 /**
  * Format a timestamp as a relative time string (e.g., "2 hours ago", "in 5 minutes")
  */

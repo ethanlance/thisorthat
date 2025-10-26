@@ -24,15 +24,11 @@ import {
   UserPlus,
   UserMinus,
   Crown,
-  Shield,
   Globe,
   Lock,
-  MoreHorizontal,
   Trash2,
-  Edit,
   Loader2,
   AlertTriangle,
-  CheckCircle,
 } from 'lucide-react';
 
 interface FriendGroup {
@@ -329,9 +325,9 @@ export default function FriendGroupManager({
                 </div>
                 <div className="flex items-center space-x-1">
                   {group.is_public ? (
-                    <Globe className="h-4 w-4 text-green-500" title="Public" />
+                    <Globe className="h-4 w-4 text-green-500" />
                   ) : (
-                    <Lock className="h-4 w-4 text-orange-500" title="Private" />
+                    <Lock className="h-4 w-4 text-orange-500" />
                   )}
                   <Button
                     variant="ghost"

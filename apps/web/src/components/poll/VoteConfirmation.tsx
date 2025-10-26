@@ -15,13 +15,15 @@ interface VoteConfirmationProps {
 }
 
 export default function VoteConfirmation({
-  choice: _,
+  choice,
   optionLabel,
   onClose,
   onShare,
   showShareButton = true,
   className,
 }: VoteConfirmationProps) {
+  // choice is available but not used in this component
+  void choice;
   // Auto-close after 3 seconds if no interaction
   useEffect(() => {
     if (!onClose) return;

@@ -3,7 +3,6 @@ import { Database } from '@/types/database';
 
 type Poll = Database['public']['Tables']['polls']['Row'];
 type PollInsert = Database['public']['Tables']['polls']['Insert'];
-type PollShare = Database['public']['Tables']['poll_shares']['Row'];
 type PollShareInsert = Database['public']['Tables']['poll_shares']['Insert'];
 type PollInvitation = Database['public']['Tables']['poll_invitations']['Row'];
 type PollInvitationInsert =
@@ -96,6 +95,7 @@ export class PollPrivacyService {
    * Get user's accessible polls
    */
   static async getUserAccessiblePolls(
+    userId: string,
     limit: number = 50,
     offset: number = 0
   ): Promise<Poll[]> {
@@ -103,7 +103,7 @@ export class PollPrivacyService {
       const supabase = createClient();
 
       const { data, error } = await supabase.rpc('get_user_accessible_polls', {
-        p_user_id: (await supabase.auth.getUser()).data.user?.id,
+        p_user_id: userId,
         p_limit: limit,
         p_offset: offset,
       });
@@ -216,7 +216,7 @@ export class PollPrivacyService {
       }
 
       // Create invitations for each email
-      const invitations: PollInvitationInsert[] = emails.map(email => ({
+      const invitations: PollInvitationInsert[] = emails.map(() => ({
         poll_id: pollId,
         invited_user_id: '', // Will be set when user accepts
         invited_by: user.id,
@@ -379,9 +379,9 @@ export class PollPrivacyService {
   }
 
   /**
-   * Revoke poll access
+   * Revoke poll access by share ID
    */
-  static async revokePollAccess(shareId: string): Promise<boolean> {
+  static async revokePollAccessByShareId(shareId: string): Promise<boolean> {
     try {
       const supabase = createClient();
 
@@ -482,6 +482,65 @@ export class PollPrivacyService {
         total_invitations: 0,
         pending_invitations: 0,
       };
+    }
+  }
+
+  /**
+   * Update poll access for a user
+   */
+  static async updatePollAccess(
+    pollId: string,
+    userId: string,
+    accessLevel: 'view' | 'vote' | 'comment'
+  ): Promise<boolean> {
+    try {
+      const supabase = createClient();
+
+      // Update or insert poll access
+      const { error } = await supabase.from('poll_shares').upsert({
+        poll_id: pollId,
+        user_id: userId,
+        access_level: accessLevel,
+      });
+
+      if (error) {
+        console.error('Error updating poll access:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in updatePollAccess:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Revoke poll access for a user
+   */
+  static async revokePollAccess(
+    pollId: string,
+    userId: string
+  ): Promise<boolean> {
+    try {
+      const supabase = createClient();
+
+      // Remove from poll_shares table
+      const { error: shareError } = await supabase
+        .from('poll_shares')
+        .delete()
+        .eq('poll_id', pollId)
+        .eq('user_id', userId);
+
+      if (shareError) {
+        console.error('Error revoking poll access:', shareError);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in revokePollAccess:', error);
+      return false;
     }
   }
 }

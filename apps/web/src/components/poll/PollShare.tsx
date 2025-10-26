@@ -23,9 +23,11 @@ export default function PollShare({
   pollId,
   pollTitle,
   pollDescription,
-  pollImages: _,
+  pollImages,
   className,
 }: PollShareProps) {
+  // pollImages is available but not used in this component
+  void pollImages;
   const [shareSuccess, setShareSuccess] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
 

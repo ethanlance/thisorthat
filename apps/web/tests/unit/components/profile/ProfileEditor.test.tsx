@@ -28,7 +28,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -58,7 +61,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -90,8 +96,14 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'updateProfile').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'updateProfile'
+    ).mockResolvedValue(true);
 
     render(<ProfileEditor />);
 
@@ -106,7 +118,9 @@ describe('ProfileEditor', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(require('@/lib/services/profile').ProfileService.updateProfile).toHaveBeenCalled();
+      expect(
+        require('@/lib/services/profile').ProfileService.updateProfile
+      ).toHaveBeenCalled();
     });
   });
 
@@ -128,7 +142,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -168,7 +185,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -201,7 +221,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -238,7 +261,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -271,7 +297,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -303,7 +332,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -335,7 +367,10 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor />);
 
@@ -368,8 +403,14 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'updateProfile').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'updateProfile'
+    ).mockResolvedValue(true);
 
     render(<ProfileEditor />);
 
@@ -381,7 +422,9 @@ describe('ProfileEditor', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Profile updated successfully!')).toBeInTheDocument();
+      expect(
+        screen.getByText('Profile updated successfully!')
+      ).toBeInTheDocument();
     });
   });
 
@@ -403,8 +446,14 @@ describe('ProfileEditor', () => {
       following_count: 15,
     };
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'updateProfile').mockResolvedValue(false);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'updateProfile'
+    ).mockResolvedValue(false);
 
     render(<ProfileEditor />);
 
@@ -421,7 +470,10 @@ describe('ProfileEditor', () => {
   });
 
   it('should show loading state', () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockImplementation(() => new Promise(() => {})); // Never resolves
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockImplementation(() => new Promise(() => {})); // Never resolves
 
     render(<ProfileEditor />);
 
@@ -429,7 +481,10 @@ describe('ProfileEditor', () => {
   });
 
   it('should show error state when profile not found', async () => {
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(null);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(null);
 
     render(<ProfileEditor />);
 
@@ -458,7 +513,10 @@ describe('ProfileEditor', () => {
 
     const mockOnCancel = vi.fn();
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
 
     render(<ProfileEditor onCancel={mockOnCancel} />);
 
@@ -492,8 +550,14 @@ describe('ProfileEditor', () => {
 
     const mockOnSave = vi.fn();
 
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
-    vi.spyOn(require('@/lib/services/profile').ProfileService, 'updateProfile').mockResolvedValue(true);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'getCurrentUserProfile'
+    ).mockResolvedValue(mockProfile);
+    vi.spyOn(
+      require('@/lib/services/profile').ProfileService,
+      'updateProfile'
+    ).mockResolvedValue(true);
 
     render(<ProfileEditor onSave={mockOnSave} />);
 

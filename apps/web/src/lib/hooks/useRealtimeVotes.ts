@@ -47,7 +47,7 @@ export const useRealtimeVotes = (pollId: string): UseRealtimeVotesReturn => {
 
         setVoteCounts(counts);
         setLastUpdate(new Date());
-      } catch (err) {
+      } catch {
         setError('Failed to fetch initial votes');
       }
     };

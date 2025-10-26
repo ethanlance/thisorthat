@@ -167,12 +167,8 @@ export function useApiErrorHandler() {
       // Convert unknown error to Error object
       const errorObj =
         error instanceof Error ? error : new Error(String(error));
-      const formattedError = ErrorHandlingService.createUserFriendlyMessage(
-        errorObj,
-        context
-          ? { timestamp: new Date().toISOString(), component: context }
-          : undefined
-      );
+      const formattedError =
+        ErrorHandlingService.createUserFriendlyMessage(errorObj);
 
       // Log the error
       ErrorHandlingService.logError(

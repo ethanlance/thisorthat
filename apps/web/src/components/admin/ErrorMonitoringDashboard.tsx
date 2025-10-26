@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   ErrorHandlingService,
@@ -28,9 +28,6 @@ import {
   Search,
   Filter,
   Download,
-  Eye,
-  Clock,
-  User,
   Activity,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -86,13 +83,7 @@ export function ErrorMonitoringDashboard() {
     user?.user_metadata?.role === 'admin' ||
     user?.user_metadata?.role === 'moderator';
 
-  useEffect(() => {
-    if (isAdmin) {
-      loadData();
-    }
-  }, [isAdmin]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const errorStats = await ErrorHandlingService.getErrorStats('day');
@@ -108,7 +99,13 @@ export function ErrorMonitoringDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadData();
+    }
+  }, [isAdmin, loadData]);
 
   const filteredErrorLogs = errorLogs.filter(log => {
     if (errorSeverityFilter !== 'all' && log.severity !== errorSeverityFilter)

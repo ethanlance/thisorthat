@@ -1,5 +1,3 @@
-import { Database } from '@/types/database';
-
 export interface OfflinePoll {
   id: string;
   title: string;
@@ -71,6 +69,14 @@ export class OfflineStorage {
   }
 
   private async initDB(): Promise<void> {
+    // Check if indexedDB is available (not available during SSR)
+    if (typeof indexedDB === 'undefined') {
+      console.warn(
+        'IndexedDB not available, skipping offline storage initialization'
+      );
+      return;
+    }
+
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
@@ -127,7 +133,7 @@ export class OfflineStorage {
   private async waitForDB(): Promise<IDBDatabase> {
     if (this.db) return this.db;
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const checkDB = () => {
         if (this.db) {
           resolve(this.db);
@@ -236,7 +242,7 @@ export class OfflineStorage {
     const index = store.index('synced');
 
     return new Promise((resolve, reject) => {
-      const request = index.getAll(false);
+      const request = index.getAll();
       request.onsuccess = () => resolve(request.result || []);
       request.onerror = () => reject(request.error);
     });
@@ -296,7 +302,7 @@ export class OfflineStorage {
     const index = store.index('synced');
 
     return new Promise((resolve, reject) => {
-      const request = index.getAll(false);
+      const request = index.getAll();
       request.onsuccess = () => resolve(request.result || []);
       request.onerror = () => reject(request.error);
     });

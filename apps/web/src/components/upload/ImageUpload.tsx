@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Alert } from '@/components/ui/alert';
 import {
   validateImageFile,
   compressImage,
-  getFileSizeString,
 } from '@/lib/storage/image-validation';
 import { uploadPollImage } from '@/lib/storage/image-upload';
 import { ContentDetectionResult } from '@/lib/services/content-detection';
@@ -89,7 +88,14 @@ export default function ImageUpload({
         setIsUploading(false);
       }
     },
-    [onImageSelect, onUploadComplete, onError, pollId, option]
+    [
+      onImageSelect,
+      onUploadComplete,
+      onError,
+      pollId,
+      option,
+      onModerationResult,
+    ]
   );
 
   const handleDragOver = useCallback(
@@ -160,6 +166,7 @@ export default function ImageUpload({
         <div className="p-6 text-center">
           {preview ? (
             <div className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={preview}
                 alt={`Option ${option.toUpperCase()} preview`}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -197,11 +198,14 @@ export default function MobileCamera({
               <canvas ref={canvasRef} className="hidden" />
             </>
           ) : (
-            <img
-              src={capturedImage}
-              alt="Captured"
-              className="w-full h-full object-cover"
-            />
+            <div className="relative w-full h-full">
+              <Image
+                src={capturedImage}
+                alt="Captured"
+                fill
+                className="object-cover"
+              />
+            </div>
           )}
 
           {/* Camera Controls Overlay */}

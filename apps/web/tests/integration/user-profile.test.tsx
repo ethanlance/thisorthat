@@ -298,7 +298,9 @@ describe('User Profile System', () => {
         following_count: 15,
       };
 
-      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(
+        mockProfile
+      );
 
       render(<ProfileEditor />);
 
@@ -328,7 +330,9 @@ describe('User Profile System', () => {
         following_count: 15,
       };
 
-      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(
+        mockProfile
+      );
       vi.spyOn(ProfileService, 'updateProfile').mockResolvedValue(true);
 
       render(<ProfileEditor />);
@@ -372,7 +376,9 @@ describe('User Profile System', () => {
         following_count: 15,
       };
 
-      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(
+        mockProfile
+      );
 
       render(<ProfileEditor />);
 
@@ -412,7 +418,9 @@ describe('User Profile System', () => {
         following_count: 15,
       };
 
-      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(mockProfile);
+      vi.spyOn(ProfileService, 'getCurrentUserProfile').mockResolvedValue(
+        mockProfile
+      );
 
       render(<ProfileEditor />);
 
@@ -434,7 +442,9 @@ describe('User Profile System', () => {
       render(<UserSearch />);
 
       expect(screen.getByText('Discover Users')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/search for users/i)).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText(/search for users/i)
+      ).toBeInTheDocument();
     });
 
     it('should search users when typing', async () => {
@@ -596,7 +606,10 @@ describe('User Profile System', () => {
       expect(followSuccess).toBe(true);
 
       // 5. Check following status
-      const isFollowing = await ProfileService.isFollowing('user-123', 'user-456');
+      const isFollowing = await ProfileService.isFollowing(
+        'user-123',
+        'user-456'
+      );
       expect(isFollowing).toBeDefined();
     });
 
@@ -606,11 +619,13 @@ describe('User Profile System', () => {
       expect(publicProfile).toBeDefined();
 
       // Test private profile access
-      const privateProfile = await ProfileService.getUserProfile('private-user');
+      const privateProfile =
+        await ProfileService.getUserProfile('private-user');
       expect(privateProfile).toBeDefined();
 
       // Test friends-only profile access
-      const friendsProfile = await ProfileService.getUserProfile('friends-user');
+      const friendsProfile =
+        await ProfileService.getUserProfile('friends-user');
       expect(friendsProfile).toBeDefined();
     });
 

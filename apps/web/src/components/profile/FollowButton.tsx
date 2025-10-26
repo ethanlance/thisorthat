@@ -45,7 +45,7 @@ export default function FollowButton({
     };
 
     checkFollowStatus();
-  }, [user?.id, userId]);
+  }, [user, userId]);
 
   // Don't show follow button for own profile
   if (!user || user.id === userId) {
@@ -58,11 +58,11 @@ export default function FollowButton({
     setIsToggling(true);
     try {
       if (isFollowing) {
-        await ProfileService.unfollowUser(user.id, userId);
+        await ProfileService.unfollowUser(userId);
         setIsFollowing(false);
         toast.success(`Unfollowed ${displayName || 'user'}`);
       } else {
-        await ProfileService.followUser(user.id, userId);
+        await ProfileService.followUser(userId);
         setIsFollowing(true);
         toast.success(`Following ${displayName || 'user'}`);
       }

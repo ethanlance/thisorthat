@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { ProfileService, UserAchievement } from '@/lib/services/profile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trophy, Star, Target, Users, Calendar, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 

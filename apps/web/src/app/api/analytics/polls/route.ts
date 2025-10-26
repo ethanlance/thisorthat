@@ -53,69 +53,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get additional analytics data
-    const pollIds = polls?.map(poll => poll.id) || [];
-
-    const [
-      { data: voteEvents, error: voteEventsError },
-      { data: shareEvents, error: shareEventsError },
-      { data: commentEvents, error: commentEventsError },
-    ] = await Promise.all([
-      // Vote events
-      pollIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('properties, timestamp')
-            .in('properties->pollId', pollIds)
-            .eq('action', 'vote')
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
-
-      // Share events
-      pollIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('properties, timestamp')
-            .in('properties->pollId', pollIds)
-            .eq('action', 'share')
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
-
-      // Comment events
-      pollIds.length > 0
-        ? supabase
-            .from('analytics_events')
-            .select('properties, timestamp')
-            .in('properties->pollId', pollIds)
-            .eq('action', 'comment')
-            .gte('timestamp', startDate.toISOString())
-        : { data: [], error: null },
-    ]);
-
-    if (voteEventsError || shareEventsError || commentEventsError) {
-      console.error('Error fetching poll event analytics:', {
-        voteEventsError,
-        shareEventsError,
-        commentEventsError,
-      });
-    }
+    // Note: Event analytics queries removed as they were not being used
 
     // Process analytics data
     const analytics =
       polls?.map(poll => {
-        const pollVoteEvents =
-          voteEvents?.filter(event => event.properties?.pollId === poll.id) ||
-          [];
-
-        const pollShareEvents =
-          shareEvents?.filter(event => event.properties?.pollId === poll.id) ||
-          [];
-
-        const pollCommentEvents =
-          commentEvents?.filter(
-            event => event.properties?.pollId === poll.id
-          ) || [];
-
         const views = poll.poll_metrics?.[0]?.view_count || 0;
         const votes = poll.votes_count || 0;
         const shares = poll.shares_count || 0;

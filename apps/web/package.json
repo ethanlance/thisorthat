@@ -16,7 +16,9 @@
     "test:coverage": "vitest run --coverage",
     "lighthouse": "lhci autorun",
     "validate": "./scripts/validate.sh",
+    "validate:build": "../../scripts/validate-build.sh",
     "build:vercel": "NODE_ENV=production npm run build",
+    "build:production": "NODE_ENV=production next build",
     "prepare": "cd ../.. && husky apps/web/.husky || true"
   },
   "dependencies": {
@@ -48,6 +50,10 @@
     "supabase": "^2.53.6",
     "tailwind-merge": "^3.3.1"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@lhci/cli": "^0.12.0",
@@ -75,12 +81,12 @@
     "web-vitals": "^4.2.4"
   },
   "lint-staged": {
-    "apps/web/**/*.{ts,tsx,js,jsx}": [
+    "src/**/*.{ts,tsx,js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "apps/web/**/*.{ts,tsx}": [
-      "bash -c 'cd apps/web && npx tsc --noEmit'"
+    "src/**/*.{ts,tsx}": [
+      "npx tsc --noEmit"
     ]
   }
 }

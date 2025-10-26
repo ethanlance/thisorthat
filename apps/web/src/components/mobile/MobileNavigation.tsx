@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   Home,
   Search,
@@ -30,18 +29,21 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const navigationItems = [
-    { id: 'home', label: 'Home', icon: Home, path: '/' },
-    { id: 'discover', label: 'Discover', icon: Search, path: '/discover' },
-    { id: 'create', label: 'Create', icon: Plus, path: '/poll/create' },
-    {
-      id: 'notifications',
-      label: 'Notifications',
-      icon: Bell,
-      path: '/notifications',
-    },
-    { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
-  ];
+  const navigationItems = useMemo(
+    () => [
+      { id: 'home', label: 'Home', icon: Home, path: '/' },
+      { id: 'discover', label: 'Discover', icon: Search, path: '/discover' },
+      { id: 'create', label: 'Create', icon: Plus, path: '/poll/create' },
+      {
+        id: 'notifications',
+        label: 'Notifications',
+        icon: Bell,
+        path: '/notifications',
+      },
+      { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
+    ],
+    []
+  );
 
   const menuItems = [
     { label: 'My Polls', path: '/polls' },
@@ -60,7 +62,19 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
     // Update navigation history
     setCanGoBack(window.history.length > 1);
     setCanGoForward(false); // Forward navigation is not easily detectable
-  }, [pathname]);
+  }, [pathname, navigationItems]);
+
+  const handleGoBack = useCallback(() => {
+    if (canGoBack) {
+      router.back();
+    }
+  }, [canGoBack, router]);
+
+  const handleGoForward = useCallback(() => {
+    if (canGoForward) {
+      router.forward();
+    }
+  }, [canGoForward, router]);
 
   useEffect(() => {
     const touchGestures = TouchGestures.getInstance();
@@ -88,23 +102,11 @@ export default function MobileNavigation({ className }: MobileNavigationProps) {
       removeSwipeListener();
       removePullToRefresh();
     };
-  }, []);
+  }, [handleGoBack, handleGoForward]);
 
   const handleTabClick = (item: (typeof navigationItems)[0]) => {
     setActiveTab(item.id);
     router.push(item.path);
-  };
-
-  const handleGoBack = () => {
-    if (canGoBack) {
-      router.back();
-    }
-  };
-
-  const handleGoForward = () => {
-    if (canGoForward) {
-      router.forward();
-    }
   };
 
   const toggleMenu = () => {

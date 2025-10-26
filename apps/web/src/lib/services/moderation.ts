@@ -1,18 +1,12 @@
 import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
-type ContentReport = Database['public']['Tables']['content_reports']['Row'];
 type ContentReportInsert =
   Database['public']['Tables']['content_reports']['Insert'];
-type ModerationAction =
-  Database['public']['Tables']['moderation_actions']['Row'];
 type ModerationActionInsert =
   Database['public']['Tables']['moderation_actions']['Insert'];
-type ContentClassification =
-  Database['public']['Tables']['content_classifications']['Row'];
 type ContentClassificationInsert =
   Database['public']['Tables']['content_classifications']['Insert'];
-type ContentAppeal = Database['public']['Tables']['content_appeals']['Row'];
 type ContentAppealInsert =
   Database['public']['Tables']['content_appeals']['Insert'];
 

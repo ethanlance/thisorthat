@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/types/database';
 
 interface PollCategory {
   id: string;
@@ -18,21 +17,6 @@ interface PollTag {
   description: string | null;
   usage_count: number;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-interface PollMetrics {
-  id: string;
-  poll_id: string;
-  view_count: number;
-  vote_count: number;
-  comment_count: number;
-  share_count: number;
-  engagement_score: number;
-  trending_score: number;
-  popularity_score: number;
-  last_calculated: string;
   created_at: string;
   updated_at: string;
 }

@@ -292,10 +292,7 @@ export class ErrorHandlingService {
   /**
    * Create user-friendly error message
    */
-  static createUserFriendlyMessage(
-    error: Error,
-    context?: ErrorContext
-  ): string {
+  static createUserFriendlyMessage(error: Error): string {
     const errorType = this.categorizeError(error);
 
     const messages = {
@@ -319,7 +316,7 @@ export class ErrorHandlingService {
   /**
    * Get suggested actions for error recovery
    */
-  static getRecoveryActions(error: Error, context?: ErrorContext): string[] {
+  static getRecoveryActions(error: Error): string[] {
     const errorType = this.categorizeError(error);
 
     const actions = {

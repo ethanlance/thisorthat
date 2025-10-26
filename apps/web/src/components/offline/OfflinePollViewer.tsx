@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -15,16 +15,17 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   WifiOff,
-  Clock,
   Database,
   AlertCircle,
   CheckCircle,
   Vote,
-  Users,
   Calendar,
 } from 'lucide-react';
-import { OfflineStorage, OfflinePoll } from '@/lib/offline/OfflineStorage';
-import { OfflineSync } from '@/lib/offline/OfflineSync';
+import {
+  OfflineStorage,
+  OfflinePoll,
+  OfflineVote,
+} from '@/lib/offline/OfflineStorage';
 import { cn } from '@/lib/utils';
 
 interface OfflinePollViewerProps {
@@ -45,18 +46,12 @@ export function OfflinePollViewer({
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   const offlineStorage = OfflineStorage.getInstance();
-  const offlineSync = OfflineSync.getInstance();
 
-  useEffect(() => {
-    loadPoll();
-    checkNetworkStatus();
-  }, [pollId]);
-
-  const checkNetworkStatus = () => {
+  const checkNetworkStatus = useCallback(() => {
     setIsOffline(!navigator.onLine);
-  };
+  }, []);
 
-  const loadPoll = async () => {
+  const loadPoll = useCallback(async () => {
     try {
       setLoading(true);
       const cachedPoll = await offlineStorage.getCachedPoll(pollId);
@@ -79,39 +74,47 @@ export function OfflinePollViewer({
     } finally {
       setLoading(false);
     }
-  };
+  }, [pollId, offlineStorage, isOffline]);
 
-  const handleVote = async (choice: 'option_a' | 'option_b') => {
-    if (!poll) return;
+  useEffect(() => {
+    loadPoll();
+    checkNetworkStatus();
+  }, [pollId, loadPoll, checkNetworkStatus]);
 
-    try {
-      // Create offline vote
-      const vote: OfflineVote = {
-        id: `offline_${Date.now()}_${Math.random()}`,
-        poll_id: poll.id,
-        choice,
-        user_id: undefined, // Will be set when synced
-        anonymous_id: `anon_${Date.now()}`,
-        created_at: new Date().toISOString(),
-        synced: false,
-      };
+  const handleVote = useCallback(
+    async (choice: 'option_a' | 'option_b') => {
+      if (!poll) return;
 
-      await offlineStorage.saveOfflineVote(vote);
-      setUserVote(choice);
+      try {
+        // Create offline vote
+        const vote: OfflineVote = {
+          id: `offline_${Date.now()}_${Math.random()}`,
+          poll_id: poll.id,
+          choice,
+          user_id: undefined, // Will be set when synced
+          anonymous_id: `anon_${Date.now()}`,
+          created_at: new Date().toISOString(),
+          synced: false,
+        };
 
-      // Update local vote counts optimistically
-      const updatedPoll = { ...poll };
-      if (choice === 'option_a') {
-        updatedPoll.option_a_votes += 1;
-      } else {
-        updatedPoll.option_b_votes += 1;
+        await offlineStorage.saveOfflineVote(vote);
+        setUserVote(choice);
+
+        // Update local vote counts optimistically
+        const updatedPoll = { ...poll };
+        if (choice === 'option_a') {
+          updatedPoll.option_a_votes += 1;
+        } else {
+          updatedPoll.option_b_votes += 1;
+        }
+        updatedPoll.votes_count += 1;
+        setPoll(updatedPoll);
+      } catch (err) {
+        console.error('Error saving vote:', err);
       }
-      updatedPoll.votes_count += 1;
-      setPoll(updatedPoll);
-    } catch (err) {
-      console.error('Error saving vote:', err);
-    }
-  };
+    },
+    [poll, offlineStorage]
+  );
 
   const formatTimeAgo = (dateString: string): string => {
     const date = new Date(dateString);

@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import { Poll, PollInsert, PollUpdate } from '@/lib/supabase/types';
-import { PollFormData } from '@/lib/validation/poll-validation';
+import { Poll, PollUpdate } from '@/lib/supabase/types';
 
 const supabase = createClient();
 

@@ -12,7 +12,7 @@ export async function GET() {
     };
 
     return NextResponse.json(health);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         status: 'unhealthy',

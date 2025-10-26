@@ -19,7 +19,6 @@ import PollPrivacySettings, {
   PollPrivacySettings as PrivacySettings,
 } from '@/components/privacy/PollPrivacySettings';
 import { uploadPollImage } from '@/lib/storage/image-upload';
-import { PollsService } from '@/lib/services/polls';
 import { PollPrivacyService } from '@/lib/services/poll-privacy';
 import {
   PollFormData,

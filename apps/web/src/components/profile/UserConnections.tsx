@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ProfileService, UserSearchResult } from '@/lib/services/profile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,37 +25,44 @@ export default function UserConnections({
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
-  const loadUsers = async (reset = false) => {
-    setIsLoading(true);
-    try {
-      const newUsers =
-        type === 'followers'
-          ? await ProfileService.getFollowers(userId, limit, reset ? 0 : offset)
-          : await ProfileService.getFollowing(
-              userId,
-              limit,
-              reset ? 0 : offset
-            );
+  const loadUsers = useCallback(
+    async (reset = false) => {
+      setIsLoading(true);
+      try {
+        const newUsers =
+          type === 'followers'
+            ? await ProfileService.getUserFollowers(
+                userId,
+                limit,
+                reset ? 0 : offset
+              )
+            : await ProfileService.getUserFollowing(
+                userId,
+                limit,
+                reset ? 0 : offset
+              );
 
-      if (reset) {
-        setUsers(newUsers);
-        setOffset(newUsers.length);
-      } else {
-        setUsers(prev => [...prev, ...newUsers]);
-        setOffset(prev => prev + newUsers.length);
+        if (reset) {
+          setUsers(newUsers);
+          setOffset(newUsers.length);
+        } else {
+          setUsers(prev => [...prev, ...newUsers]);
+          setOffset(prev => prev + newUsers.length);
+        }
+
+        setHasMore(newUsers.length === limit);
+      } catch (error) {
+        console.error(`Error loading ${type}:`, error);
+      } finally {
+        setIsLoading(false);
       }
-
-      setHasMore(newUsers.length === limit);
-    } catch (error) {
-      console.error(`Error loading ${type}:`, error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [userId, type, limit, offset]
+  );
 
   useEffect(() => {
     loadUsers(true);
-  }, [userId, type]);
+  }, [userId, type, loadUsers]);
 
   const handleLoadMore = () => {
     loadUsers(false);

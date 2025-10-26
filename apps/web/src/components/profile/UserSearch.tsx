@@ -16,7 +16,6 @@ import {
   AlertTriangle,
   Globe,
   Lock,
-  Star,
   TrendingUp,
 } from 'lucide-react';
 import { ProfileService, UserSearchResult } from '@/lib/services/profile';
@@ -40,9 +39,9 @@ export default function UserSearch({
     Record<string, boolean>
   >({});
 
-  // Debounce search
-  const debouncedSearch = useCallback(
-    debounce(async (term: string) => {
+  // Search function
+  const handleSearch = useCallback(
+    async (term: string) => {
       if (term.trim().length < 2) {
         setUsers([]);
         return;
@@ -82,8 +81,28 @@ export default function UserSearch({
       } finally {
         setLoading(false);
       }
-    }, 300),
+    },
     [currentUser]
+  );
+
+  // Debounce search with timeout
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+
+  const debouncedSearch = useCallback(
+    (term: string) => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+
+      const timeout = setTimeout(() => {
+        handleSearch(term);
+      }, 300);
+
+      setSearchTimeout(timeout);
+    },
+    [handleSearch, searchTimeout]
   );
 
   useEffect(() => {
@@ -361,16 +380,4 @@ export default function UserSearch({
       )}
     </div>
   );
-}
-
-// Debounce utility function
-function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
 }

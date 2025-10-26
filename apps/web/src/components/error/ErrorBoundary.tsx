@@ -50,7 +50,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     });
 
     // Log error to service
-    const errorId = this.errorService.logError({
+    this.errorService.logError({
       type: 'system',
       severity: 'high',
       message: error.message,

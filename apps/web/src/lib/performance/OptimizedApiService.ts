@@ -38,11 +38,9 @@ export class OptimizedApiService {
   ): Promise<ApiResponse<T>> {
     const {
       method = 'GET',
-      headers = {},
       body,
       cache = true,
       cacheTTL,
-      timeout = 10000,
       retries = 3,
       retryDelay = 1000,
     } = options;
@@ -52,14 +50,14 @@ export class OptimizedApiService {
 
     // Check cache for GET requests
     if (method === 'GET' && cache) {
-      const cached = this.cache.get(
+      const cached = await this.cache.get(
         cacheKey,
         () => this.makeRequest(url, options),
         cacheTTL
       );
       if (cached) {
         return {
-          data: cached,
+          data: cached as T,
           status: 200,
           statusText: 'OK',
           headers: new Headers(),
@@ -91,7 +89,7 @@ export class OptimizedApiService {
         this.performanceService.recordApiResponseTime(url, duration);
 
         return {
-          data: response,
+          data: response as T,
           status: 200,
           statusText: 'OK',
           headers: new Headers(),
@@ -117,7 +115,7 @@ export class OptimizedApiService {
     url: string,
     options: ApiRequestOptions
   ): Promise<T> {
-    const { method = 'GET', headers = {}, body, timeout = 10000 } = options;
+    const { method = 'GET', body, timeout = 10000, headers = {} } = options;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -232,7 +230,7 @@ export class OptimizedApiService {
     );
 
     if (this.pendingRequests.has(key)) {
-      return this.pendingRequests.get(key)!;
+      return this.pendingRequests.get(key)! as Promise<ApiResponse<T>>;
     }
 
     const promise = this.request<T>(endpoint, options);

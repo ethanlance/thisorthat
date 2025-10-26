@@ -50,17 +50,14 @@ export default function OptimizedImage({
   const imageRef = useRef<HTMLDivElement>(null);
 
   const { observe, unobserve } = useIntersectionObserver(
-    useCallback(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setIsInView(true);
-            unobserve();
-          }
-        });
-      },
-      [unobserve]
-    ),
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          unobserve();
+        }
+      });
+    },
     {
       rootMargin: '50px',
       threshold: 0.1,

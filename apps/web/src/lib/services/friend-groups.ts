@@ -568,9 +568,64 @@ export class FriendGroupService {
   }
 
   /**
+   * Update a friend group
+   */
+  static async updateGroup(
+    groupId: string,
+    updates: {
+      name?: string;
+      description?: string;
+      is_public?: boolean;
+    }
+  ): Promise<boolean> {
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('friend_groups')
+        .update(updates)
+        .eq('id', groupId);
+
+      if (error) {
+        console.error('Error updating group:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in updateGroup:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Delete a friend group
+   */
+  static async deleteGroup(groupId: string): Promise<boolean> {
+    try {
+      const supabase = createClient();
+      const { error } = await supabase
+        .from('friend_groups')
+        .delete()
+        .eq('id', groupId);
+
+      if (error) {
+        console.error('Error deleting group:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteGroup:', error);
+      return false;
+    }
+  }
+
+  /**
    * Get group details with members
    */
-  static async getGroupDetails(groupId: string): Promise<FriendGroupWithMembers | null> {
+  static async getGroupDetails(
+    groupId: string
+  ): Promise<FriendGroupWithMembers | null> {
     try {
       const supabase = createClient();
       const { data: group, error: groupError } = await supabase

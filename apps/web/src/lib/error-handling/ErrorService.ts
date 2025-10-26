@@ -61,6 +61,9 @@ export class ErrorService {
   }
 
   private initializeErrorHandling() {
+    // Only initialize on client side
+    if (typeof window === 'undefined') return;
+
     // Global error handlers
     window.addEventListener('error', this.handleGlobalError.bind(this));
     window.addEventListener(
@@ -76,7 +79,7 @@ export class ErrorService {
       message: event.message,
       userMessage: 'Something went wrong. Please try again.',
       context: {
-        url: window.location.href,
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
         userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
         component: 'global',
@@ -93,7 +96,7 @@ export class ErrorService {
       message: event.reason?.message || 'Unhandled promise rejection',
       userMessage: 'Something went wrong. Please try again.',
       context: {
-        url: window.location.href,
+        url: typeof window !== 'undefined' ? window.location.href : 'unknown',
         userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
         component: 'global',
@@ -129,7 +132,7 @@ export class ErrorService {
     return errorReport.id;
   }
 
-  public getUserFriendlyMessage(error: Error, context?: ErrorContext): string {
+  public getUserFriendlyMessage(error: Error): string {
     // Network errors
     if (error.name === 'NetworkError' || error.message.includes('fetch')) {
       return 'Unable to connect to the server. Please check your internet connection and try again.';
@@ -175,10 +178,7 @@ export class ErrorService {
     return 'Something went wrong. Please try again.';
   }
 
-  public getErrorRecoveryOptions(
-    error: Error,
-    context?: ErrorContext
-  ): string[] {
+  public getErrorRecoveryOptions(error: Error): string[] {
     const options: string[] = [];
 
     // Network errors

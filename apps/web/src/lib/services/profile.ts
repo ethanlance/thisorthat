@@ -1,10 +1,9 @@
 import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 
-type UserProfile = Database['public']['Tables']['user_interests']['Row'];
-type UserFollow = Database['public']['Tables']['user_follows']['Row'];
-type UserAchievement = Database['public']['Tables']['user_achievements']['Row'];
-type UserActivity = Database['public']['Tables']['user_activity']['Row'];
+export type UserAchievement =
+  Database['public']['Tables']['user_achievements']['Row'];
+export type UserActivity = Database['public']['Tables']['user_activity']['Row'];
 
 export interface UserProfileData {
   id: string;
@@ -172,7 +171,7 @@ export class ProfileService {
       const fileExt = file.name.split('.').pop();
       const fileName = `avatars/${user.id}.${fileExt}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, {
           cacheControl: '3600',
@@ -193,6 +192,31 @@ export class ProfileService {
     } catch (error) {
       console.error('Error in uploadAvatar:', error);
       return null;
+    }
+  }
+
+  /**
+   * Delete user avatar
+   */
+  static async deleteAvatar(userId: string): Promise<boolean> {
+    try {
+      const supabase = createClient();
+
+      const fileName = `avatars/${userId}.jpg`;
+
+      const { error } = await supabase.storage
+        .from('avatars')
+        .remove([fileName]);
+
+      if (error) {
+        console.error('Error deleting avatar:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteAvatar:', error);
+      return false;
     }
   }
 
@@ -347,7 +371,7 @@ export class ProfileService {
           `
           follower_id,
           created_at,
-          follower:auth.users!user_follows_follower_id_fkey(
+          follower:profiles!user_follows_follower_id_fkey(
             id,
             display_name,
             bio,
@@ -369,13 +393,13 @@ export class ProfileService {
 
       return (data || []).map(follow => ({
         id: follow.follower_id,
-        display_name: follow.follower?.display_name || null,
-        bio: follow.follower?.bio || null,
-        avatar_url: follow.follower?.avatar_url || null,
-        interests: follow.follower?.interests || null,
-        privacy_level: follow.follower?.privacy_level || 'public',
+        display_name: follow.follower?.[0]?.display_name || null,
+        bio: follow.follower?.[0]?.bio || null,
+        avatar_url: follow.follower?.[0]?.avatar_url || null,
+        interests: follow.follower?.[0]?.interests || null,
+        privacy_level: follow.follower?.[0]?.privacy_level || 'public',
         last_active_at:
-          follow.follower?.last_active_at || new Date().toISOString(),
+          follow.follower?.[0]?.last_active_at || new Date().toISOString(),
         polls_created: 0, // Would need separate query
         followers_count: 0, // Would need separate query
       }));
@@ -402,7 +426,7 @@ export class ProfileService {
           `
           following_id,
           created_at,
-          following:auth.users!user_follows_following_id_fkey(
+          following:profiles!user_follows_following_id_fkey(
             id,
             display_name,
             bio,
@@ -424,13 +448,13 @@ export class ProfileService {
 
       return (data || []).map(follow => ({
         id: follow.following_id,
-        display_name: follow.following?.display_name || null,
-        bio: follow.following?.bio || null,
-        avatar_url: follow.following?.avatar_url || null,
-        interests: follow.following?.interests || null,
-        privacy_level: follow.following?.privacy_level || 'public',
+        display_name: follow.following?.[0]?.display_name || null,
+        bio: follow.following?.[0]?.bio || null,
+        avatar_url: follow.following?.[0]?.avatar_url || null,
+        interests: follow.following?.[0]?.interests || null,
+        privacy_level: follow.following?.[0]?.privacy_level || 'public',
         last_active_at:
-          follow.following?.last_active_at || new Date().toISOString(),
+          follow.following?.[0]?.last_active_at || new Date().toISOString(),
         polls_created: 0, // Would need separate query
         followers_count: 0, // Would need separate query
       }));

@@ -36,6 +36,7 @@ export default function ImagePreview({
     <>
       <Card className={`relative group ${className}`}>
         <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
             alt={alt}
@@ -78,6 +79,7 @@ export default function ImagePreview({
           onClick={() => setIsZoomed(false)}
         >
           <div className="relative max-w-4xl max-h-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={src}
               alt={alt}

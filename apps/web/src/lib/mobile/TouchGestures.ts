@@ -166,7 +166,8 @@ export class TouchGestures {
         x: this.touchStart?.x || 0,
         y: this.touchStart?.y || 0,
         timestamp: this.touchStart?.timestamp || 0,
-        duration: this.touchEnd?.timestamp - this.touchStart?.timestamp || 0,
+        duration:
+          (this.touchEnd?.timestamp || 0) - (this.touchStart?.timestamp || 0),
       },
     });
     document.dispatchEvent(longPressEvent);
@@ -204,10 +205,7 @@ export class TouchGestures {
     };
   }
 
-  public addTapListener(
-    callback: (x: number, y: number) => void,
-    options: TouchGestureOptions = {}
-  ) {
+  public addTapListener(callback: (x: number, y: number) => void) {
     const listener = (event: CustomEvent) => {
       const { x, y } = event.detail;
       callback(x, y);
@@ -221,8 +219,7 @@ export class TouchGestures {
   }
 
   public addLongPressListener(
-    callback: (x: number, y: number, duration: number) => void,
-    options: TouchGestureOptions = {}
+    callback: (x: number, y: number, duration: number) => void
   ) {
     const listener = (event: CustomEvent) => {
       const { x, y, duration } = event.detail;
@@ -237,11 +234,9 @@ export class TouchGestures {
   }
 
   public addPinchListener(
-    callback: (scale: number, center: { x: number; y: number }) => void,
-    options: TouchGestureOptions = {}
+    callback: (scale: number, center: { x: number; y: number }) => void
   ) {
     let initialDistance: number | null = null;
-    let initialScale: number = 1;
 
     const handleTouchStart = (event: TouchEvent) => {
       if (event.touches.length === 2) {
@@ -251,7 +246,6 @@ export class TouchGestures {
           Math.pow(touch2.clientX - touch1.clientX, 2) +
             Math.pow(touch2.clientY - touch1.clientY, 2)
         );
-        initialScale = 1;
       }
     };
 

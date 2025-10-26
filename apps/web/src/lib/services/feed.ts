@@ -1,13 +1,25 @@
 import { createClient } from '@/lib/supabase/client';
-import { Database } from '@/types/database';
 
-type PollCategory = Database['public']['Tables']['poll_categories']['Row'];
-type PollTag = Database['public']['Tables']['poll_tags']['Row'];
-type UserFeedPreferences =
-  Database['public']['Tables']['user_feed_preferences']['Row'];
-type PollMetrics = Database['public']['Tables']['poll_metrics']['Row'];
-type UserPollInteraction =
-  Database['public']['Tables']['user_poll_interactions']['Row'];
+interface PollCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string;
+  icon: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface PollTag {
+  id: string;
+  name: string;
+  description: string | null;
+  usage_count: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface FeedPoll {
   poll_id: string;
@@ -479,16 +491,16 @@ export class FeedService {
 
       return (data || []).map(item => ({
         poll_id: item.poll_id,
-        creator_id: item.polls?.creator_id || '',
-        option_a_image_url: item.polls?.option_a_image_url || '',
-        option_a_label: item.polls?.option_a_label || null,
-        option_b_image_url: item.polls?.option_b_image_url || '',
-        option_b_label: item.polls?.option_b_label || null,
-        description: item.polls?.description || null,
-        expires_at: item.polls?.expires_at || '',
-        is_public: item.polls?.is_public || false,
-        privacy_level: item.polls?.privacy_level || 'public',
-        created_at: item.polls?.created_at || '',
+        creator_id: item.polls?.[0]?.creator_id || '',
+        option_a_image_url: item.polls?.[0]?.option_a_image_url || '',
+        option_a_label: item.polls?.[0]?.option_a_label || null,
+        option_b_image_url: item.polls?.[0]?.option_b_image_url || '',
+        option_b_label: item.polls?.[0]?.option_b_label || null,
+        description: item.polls?.[0]?.description || null,
+        expires_at: item.polls?.[0]?.expires_at || '',
+        is_public: item.polls?.[0]?.is_public || false,
+        privacy_level: item.polls?.[0]?.privacy_level || 'public',
+        created_at: item.polls?.[0]?.created_at || '',
         engagement_score: 0,
         trending_score: 0,
         popularity_score: 0,
@@ -580,9 +592,9 @@ export class FeedService {
         is_public: poll.is_public,
         privacy_level: poll.privacy_level,
         created_at: poll.created_at,
-        engagement_score: poll.poll_metrics?.engagement_score || 0,
-        trending_score: poll.poll_metrics?.trending_score || 0,
-        popularity_score: poll.poll_metrics?.popularity_score || 0,
+        engagement_score: poll.poll_metrics?.[0]?.engagement_score || 0,
+        trending_score: poll.poll_metrics?.[0]?.trending_score || 0,
+        popularity_score: poll.poll_metrics?.[0]?.popularity_score || 0,
         categories: [],
         tags: [],
       }));
