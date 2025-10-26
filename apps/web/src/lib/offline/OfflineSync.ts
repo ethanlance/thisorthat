@@ -18,11 +18,15 @@ export class OfflineSync {
   private static instance: OfflineSync;
   private storage: OfflineStorage;
   private supabase = createClient();
-  private isOnline: boolean = navigator.onLine;
+  private isOnline: boolean = false;
   private syncInProgress: boolean = false;
 
   private constructor() {
     this.storage = OfflineStorage.getInstance();
+    // Initialize online status safely
+    if (typeof window !== 'undefined' && typeof navigator !== 'undefined') {
+      this.isOnline = navigator.onLine;
+    }
     this.setupNetworkListeners();
   }
 
